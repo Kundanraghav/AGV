@@ -1,0 +1,55 @@
+Exactly the same as flag cd699a to enter into the tomcat thing thru 
+metasploit but then I need to navigate to the C folder again or 
+just activate powershell
+
+In powershell, do the following commands
+
+Get-Module -ListAvailable
+
+Import-Module ActiveDirectory
+
+Get-ADForest
+
+Get-ADDomainController
+
+Get-ADObject -Filter * -Properties * | Where-Object {$_.Description -match "59ecca"}
+
+and then flag is found
+
+Topics Covered:
+1. PowerShell Basics
+
+Using PowerShell command-line interface
+Running cmdlets (PowerShell commands)
+Piping output between commands using |
+
+2. PowerShell Module Management
+
+Get-Module -ListAvailable: Discovering what modules are installed on the system
+Import-Module: Loading modules to access their cmdlets (specifically the ActiveDirectory module)
+
+3. Active Directory (AD) Enumeration
+
+Domain Information: Used Get-ADDomain to gather details about the AD domain (name, controllers, SID, etc.)
+Forest Information: Used Get-ADForest to understand the forest structure (root domain, forest functional level)
+Domain Controller Discovery: Used Get-ADDomainController to identify and gather info about domain controllers (server names, IPs, FSMO roles)
+
+4. Active Directory Object Querying
+
+Get-ADObject: Retrieved ALL objects from Active Directory
+-Filter *: Used wildcard to get every object (users, computers, groups, OUs, etc.)
+-Properties *: Pulled all properties/attributes for each object
+
+5. Data Filtering with PowerShell
+
+Where-Object: Filtered results based on conditions
+Regular expression matching: Used -match operator to search for patterns
+Pattern searching: Looked for keywords like "flag", "CTF", and special characters { } commonly found in CTF flags
+
+6. CTF Flag Discovery
+
+Searched AD object descriptions for hidden flags
+Used enumeration techniques to find flags embedded in AD metadata
+
+
+Summary: Windows Active Directory reconnaissance and enumeration using PowerShell to discover domain structure and locate hidden CTF flags in object properties

