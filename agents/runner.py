@@ -6,18 +6,18 @@ Each call runs `claude -p` with a system prompt and returns parsed JSON.
 import json
 import subprocess
 import re
-from agents.prompts import CORELANG_SYSTEM_PROMPT, MITRE_SYSTEM_PROMPT, RAW_SYSTEM_PROMPT
+from agents.prompts import ACTIONS_EFFECTS_SYSTEM_PROMPT, MITRE_SYSTEM_PROMPT, RAW_SYSTEM_PROMPT
 
 AGENT_PROMPTS = {
-    "corelang": CORELANG_SYSTEM_PROMPT,
+    "actions_effects": ACTIONS_EFFECTS_SYSTEM_PROMPT,
     "mitre": MITRE_SYSTEM_PROMPT,
     "raw": RAW_SYSTEM_PROMPT,
 }
 
 
-def _null_corelang(entry_id):
-    return {"entry_id": entry_id, "asset": "Unknown", "step": "unknown",
-            "full": "Unknown.unknown", "confidence": 0.0, "notes": "agent error"}
+def _null_actions_effects(entry_id):
+    return {"entry_id": entry_id, "action_name": "unknown", "action_description": "",
+            "phase": "noise", "produces_effects": [], "requires_effects": [], "is_noise": True}
 
 
 def _null_mitre(entry_id):
@@ -31,7 +31,7 @@ def _null_raw(entry_id, command=""):
 
 
 NULL_FACTORIES = {
-    "corelang": _null_corelang,
+    "actions_effects": _null_actions_effects,
     "mitre": _null_mitre,
     "raw": _null_raw,
 }
@@ -40,12 +40,10 @@ NULL_FACTORIES = {
 def _extract_json(text):
     """Extract a JSON array from Claude output, stripping any markdown fences."""
     text = text.strip()
-    # Remove markdown code fences
     text = re.sub(r'^```(?:json)?\s*', '', text, flags=re.MULTILINE)
     text = re.sub(r'\s*```\s*$', '', text, flags=re.MULTILINE)
     text = text.strip()
 
-    # Find JSON array boundaries
     start = text.find('[')
     end = text.rfind(']')
     if start == -1 or end == -1 or end < start:
@@ -58,7 +56,7 @@ def run_agent(agent_name, batch, timeout=180):
     Run a Claude agent on a batch of entries.
 
     Args:
-        agent_name: "corelang", "mitre", or "raw"
+        agent_name: "actions_effects", "mitre", or "raw"
         batch: list of entry dicts (already have entry_id assigned)
         timeout: seconds before giving up
 
@@ -97,15 +95,12 @@ def run_agent(agent_name, batch, timeout=180):
 
         parsed = json.loads(json_str)
 
-        # Validate length matches
         if len(parsed) != len(batch):
             print(f"  [WARN] {agent_name} agent: expected {len(batch)} results, got {len(parsed)}")
-            # Pad or trim to match
             while len(parsed) < len(batch):
                 parsed.append(null_factory(entry_ids[len(parsed)]))
             parsed = parsed[:len(batch)]
 
-        # Ensure entry_ids are correct (agent might have hallucinated them)
         for i, item in enumerate(parsed):
             item["entry_id"] = entry_ids[i]
 

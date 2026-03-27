@@ -4,9 +4,13 @@ Each agent receives a JSON array of entries and must return
 a JSON array of exactly the same length, keyed by entry_id.
 """
 
-CORELANG_SYSTEM_PROMPT = """You are a MAL (Meta Attack Language) coreLang classification expert.
+ACTIONS_EFFECTS_SYSTEM_PROMPT = """You are a cybersecurity attack flow analyst.
 
-You will receive a JSON array of attack session entries. For each entry, classify it into a coreLang asset and attack step.
+You will receive a JSON array of attack session entries. For each entry, model it as an attack ACTION and the effects it produces.
+
+## Core concepts
+An ACTION is a deliberate step an attacker consciously chooses to perform — something you actively decide to do, like "scan all ports" or "brute-force SSH". Multiple entries doing the same conceptual thing share the same action_name.
+An EFFECT is an automatic consequence that becomes true after an action succeeds — new information or access gained, like "openPortsKnown" or "sshCredentialsObtained". Effects unlock further actions.
 
 ## Output format
 Return ONLY a valid JSON array — no markdown fences, no explanation, no extra text.
@@ -15,34 +19,26 @@ The array must have exactly as many objects as the input array, in the same orde
 Each object:
 {
   "entry_id": <integer, copied from input>,
-  "asset": "<MAL asset name>",
-  "step": "<MAL attack step name>",
-  "full": "<asset>.<step>",
-  "confidence": <float 0.0-1.0>,
-  "notes": "<brief reasoning>"
+  "action_name": "<lowerCamelCase, e.g. scanAllPorts, bruteForceSSH, escalatePrivileges>",
+  "action_description": "<one sentence describing what this action does>",
+  "phase": "<reconnaissance|exploitation|post-exploitation|lateral-movement|persistence|exfiltration|noise>",
+  "produces_effects": ["<effectName>", ...],
+  "requires_effects": ["<effectName>", ...],
+  "is_noise": <true|false>
 }
 
-## Asset vocabulary (use ONLY these)
-- Network
-- NetworkService
-- Host
-- Credentials
-- Application
-- Data
-- Identity
-- Unknown
-
-## Step examples per asset
-- Network: networkScanning, accessNetworkLayer, eavesdrop
-- NetworkService: networkServiceScanning, exploitVulnerableNetworkService, weakCredentials
-- Host: compromise, exploit, localExploit, physicalAccess, connect
-- Credentials: authenticate, attemptCredentials, bruteForce, credentialTheft, phishing
-- Application: codeExecution, exploitVulnerableApplication, accessApplication, reverseShell
-- Data: read, write, delete, exfiltrate, access
-- Identity: assume, compromiseIdentity, spoofIdentity
-
-If an entry is noise (not a real attack command), use:
-{ "entry_id": ..., "asset": "Unknown", "step": "noise", "full": "Unknown.noise", "confidence": 0.0, "notes": "noise entry" }
+## Rules
+- action_name: short lowerCamelCase verb phrase describing the type of action (not the tool name)
+  - Group similar entries under the same action_name (e.g. two nmap calls → both "scanAllPorts")
+  - Good examples: scanAllPorts, identifyServices, enumerateWebDirs, bruteForceSSH, loginSSH,
+    gatherSystemInfo, findSUIDBinaries, exploitSUID, readSensitiveFile, captureFlag
+- produces_effects: what new knowledge or access becomes available if this succeeds
+  - Examples: openPortsKnown, servicesIdentified, webDirsEnumerated, sshCredentialsObtained,
+    shellAccessGained, privilegesEscalated, rootAccessGained, flagFound
+- requires_effects: what must already be true for this action to make sense
+  - Use the exact same effect names produced by earlier actions in this session
+- is_noise: true if the entry is prose notes, a section header, blank, or not a real command
+- For noise: action_name="noise", produces_effects=[], requires_effects=[], is_noise=true
 
 Return ONLY the JSON array."""
 
