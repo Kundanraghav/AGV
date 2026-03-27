@@ -112,8 +112,8 @@ const GRAPH = {
       "raw": {
         "entry_id": 0,
         "tool": "nmap",
-        "action": "scanAllPorts",
-        "target": "",
+        "action": "port_scan",
+        "target": "10.10.10.5",
         "phase": "reconnaissance",
         "is_noise": false,
         "cleaned_command": "nmap -Pn -T4 -p- 10.10.10.5"
@@ -123,12 +123,12 @@ const GRAPH = {
         "technique_id": "T1046",
         "technique_name": "Network Service Discovery",
         "tactic": "discovery",
-        "confidence": 0.7
+        "confidence": 0.99
       },
       "actions_effects": {
         "entry_id": 0,
         "action_name": "scanAllPorts",
-        "action_description": "Scan all TCP ports on target",
+        "action_description": "Perform a full TCP port scan on the target to discover all open ports.",
         "phase": "reconnaissance",
         "produces_effects": [
           "openPortsKnown"
@@ -154,8 +154,8 @@ const GRAPH = {
       "raw": {
         "entry_id": 1,
         "tool": "nmap",
-        "action": "scanAllPorts",
-        "target": "",
+        "action": "service_version_scan",
+        "target": "10.10.10.5",
         "phase": "reconnaissance",
         "is_noise": false,
         "cleaned_command": "nmap -sV -sC -p 22,80,3306 10.10.10.5"
@@ -165,17 +165,19 @@ const GRAPH = {
         "technique_id": "T1046",
         "technique_name": "Network Service Discovery",
         "tactic": "discovery",
-        "confidence": 0.7
+        "confidence": 0.97
       },
       "actions_effects": {
         "entry_id": 1,
-        "action_name": "scanAllPorts",
-        "action_description": "Scan all TCP ports on target",
+        "action_name": "identifyServices",
+        "action_description": "Run service version and default script scans against discovered open ports to fingerprint running services.",
         "phase": "reconnaissance",
         "produces_effects": [
+          "servicesIdentified"
+        ],
+        "requires_effects": [
           "openPortsKnown"
         ],
-        "requires_effects": [],
         "is_noise": false
       },
       "color_command": "#4e9af1",
@@ -196,8 +198,8 @@ const GRAPH = {
       "raw": {
         "entry_id": 2,
         "tool": "gobuster",
-        "action": "enumerateWebDirs",
-        "target": "",
+        "action": "directory_enumeration",
+        "target": "http://10.10.10.5",
         "phase": "reconnaissance",
         "is_noise": false,
         "cleaned_command": "gobuster dir -u http://10.10.10.5 -w /usr/share/wordlists/dirb/common.txt"
@@ -207,18 +209,18 @@ const GRAPH = {
         "technique_id": "T1083",
         "technique_name": "File and Directory Discovery",
         "tactic": "discovery",
-        "confidence": 0.7
+        "confidence": 0.92
       },
       "actions_effects": {
         "entry_id": 2,
         "action_name": "enumerateWebDirs",
-        "action_description": "Enumerate web directories",
+        "action_description": "Brute-force common directory and file paths on the web server to discover hidden resources.",
         "phase": "reconnaissance",
         "produces_effects": [
-          "webDirsKnown"
+          "webDirsEnumerated"
         ],
         "requires_effects": [
-          "openPortsKnown"
+          "servicesIdentified"
         ],
         "is_noise": false
       },
@@ -240,34 +242,34 @@ const GRAPH = {
       "raw": {
         "entry_id": 3,
         "tool": "nikto",
-        "action": "scanWebApp",
-        "target": "",
+        "action": "web_vulnerability_scan",
+        "target": "http://10.10.10.5",
         "phase": "reconnaissance",
         "is_noise": false,
         "cleaned_command": "nikto -h http://10.10.10.5"
       },
       "mitre": {
         "entry_id": 3,
-        "technique_id": "T1059",
-        "technique_name": "Command and Scripting",
-        "tactic": "execution",
-        "confidence": 0.7
+        "technique_id": "T1595.003",
+        "technique_name": "Active Scanning: Wordlist Scanning",
+        "tactic": "reconnaissance",
+        "confidence": 0.88
       },
       "actions_effects": {
         "entry_id": 3,
-        "action_name": "scanWebApp",
-        "action_description": "Scan web app for vulns",
+        "action_name": "scanWebVulnerabilities",
+        "action_description": "Run an automated web vulnerability scanner against the target HTTP service to identify misconfigurations and known issues.",
         "phase": "reconnaissance",
         "produces_effects": [
-          "webVulnsKnown"
+          "webVulnerabilitiesIdentified"
         ],
         "requires_effects": [
-          "openPortsKnown"
+          "servicesIdentified"
         ],
         "is_noise": false
       },
       "color_command": "#4e9af1",
-      "color_mitre": "#f1c94e",
+      "color_mitre": "#4e9af1",
       "color_action": "#4e9af1"
     },
     {
@@ -284,29 +286,29 @@ const GRAPH = {
       "raw": {
         "entry_id": 4,
         "tool": "hydra",
-        "action": "bruteForceCredentials",
-        "target": "",
+        "action": "brute_force",
+        "target": "http://10.10.10.5/admin/login",
         "phase": "exploitation",
         "is_noise": false,
         "cleaned_command": "hydra -l admin -P /usr/share/wordlists/rockyou.txt 10.10.10.5 http-post-form \"/admin/login:username=^USER^&password=^PASS^:Invalid\""
       },
       "mitre": {
         "entry_id": 4,
-        "technique_id": "T1110",
-        "technique_name": "Brute Force",
+        "technique_id": "T1110.001",
+        "technique_name": "Brute Force: Password Guessing",
         "tactic": "credential-access",
-        "confidence": 0.7
+        "confidence": 0.98
       },
       "actions_effects": {
         "entry_id": 4,
-        "action_name": "bruteForceCredentials",
-        "action_description": "Brute-force login service",
+        "action_name": "bruteForceWebLogin",
+        "action_description": "Perform a dictionary-based brute-force attack against the discovered admin login form to obtain valid credentials.",
         "phase": "exploitation",
         "produces_effects": [
-          "credentialsObtained"
+          "webCredentialsObtained"
         ],
         "requires_effects": [
-          "openPortsKnown"
+          "webDirsEnumerated"
         ],
         "is_noise": false
       },
@@ -328,8 +330,8 @@ const GRAPH = {
       "raw": {
         "entry_id": 5,
         "tool": "ssh",
-        "action": "loginSSH",
-        "target": "",
+        "action": "remote_login",
+        "target": "admin@10.10.10.5",
         "phase": "exploitation",
         "is_noise": false,
         "cleaned_command": "ssh admin@10.10.10.5"
@@ -339,18 +341,18 @@ const GRAPH = {
         "technique_id": "T1078",
         "technique_name": "Valid Accounts",
         "tactic": "initial-access",
-        "confidence": 0.7
+        "confidence": 0.95
       },
       "actions_effects": {
         "entry_id": 5,
         "action_name": "loginSSH",
-        "action_description": "Log in via SSH",
+        "action_description": "Authenticate to the SSH service using credentials obtained from the brute-force attack to establish a remote shell session.",
         "phase": "exploitation",
         "produces_effects": [
           "shellAccessGained"
         ],
         "requires_effects": [
-          "credentialsObtained"
+          "webCredentialsObtained"
         ],
         "is_noise": false
       },
@@ -372,8 +374,8 @@ const GRAPH = {
       "raw": {
         "entry_id": 6,
         "tool": "whoami",
-        "action": "gatherSystemInfo",
-        "target": "",
+        "action": "user_enumeration",
+        "target": "localhost",
         "phase": "post-exploitation",
         "is_noise": false,
         "cleaned_command": "whoami"
@@ -383,15 +385,15 @@ const GRAPH = {
         "technique_id": "T1033",
         "technique_name": "System Owner/User Discovery",
         "tactic": "discovery",
-        "confidence": 0.7
+        "confidence": 0.99
       },
       "actions_effects": {
         "entry_id": 6,
         "action_name": "gatherSystemInfo",
-        "action_description": "Gather system user info",
+        "action_description": "Query the current user identity to understand the privilege level of the obtained shell.",
         "phase": "post-exploitation",
         "produces_effects": [
-          "systemInfoKnown"
+          "currentUserKnown"
         ],
         "requires_effects": [
           "shellAccessGained"
@@ -416,8 +418,8 @@ const GRAPH = {
       "raw": {
         "entry_id": 7,
         "tool": "id",
-        "action": "gatherSystemInfo",
-        "target": "",
+        "action": "user_privilege_enumeration",
+        "target": "localhost",
         "phase": "post-exploitation",
         "is_noise": false,
         "cleaned_command": "id"
@@ -427,15 +429,15 @@ const GRAPH = {
         "technique_id": "T1033",
         "technique_name": "System Owner/User Discovery",
         "tactic": "discovery",
-        "confidence": 0.7
+        "confidence": 0.99
       },
       "actions_effects": {
         "entry_id": 7,
         "action_name": "gatherSystemInfo",
-        "action_description": "Gather system user info",
+        "action_description": "Query the current user's UID, GID, and group memberships to assess privilege context.",
         "phase": "post-exploitation",
         "produces_effects": [
-          "systemInfoKnown"
+          "currentUserKnown"
         ],
         "requires_effects": [
           "shellAccessGained"
@@ -460,26 +462,26 @@ const GRAPH = {
       "raw": {
         "entry_id": 8,
         "tool": "sudo",
-        "action": "executeCommand",
-        "target": "",
+        "action": "sudo_permission_enumeration",
+        "target": "localhost",
         "phase": "post-exploitation",
         "is_noise": false,
         "cleaned_command": "sudo -l"
       },
       "mitre": {
         "entry_id": 8,
-        "technique_id": "T1059",
-        "technique_name": "Command and Scripting",
-        "tactic": "execution",
-        "confidence": 0.7
+        "technique_id": "T1548.003",
+        "technique_name": "Abuse Elevation Control Mechanism: Sudo and Sudo Caching",
+        "tactic": "privilege-escalation",
+        "confidence": 0.96
       },
       "actions_effects": {
         "entry_id": 8,
-        "action_name": "executeCommand",
-        "action_description": "Execute sudo",
+        "action_name": "checkSudoPrivileges",
+        "action_description": "List sudo permissions available to the current user to identify potential privilege escalation paths.",
         "phase": "post-exploitation",
         "produces_effects": [
-          "commandExecuted"
+          "sudoPrivilegesKnown"
         ],
         "requires_effects": [
           "shellAccessGained"
@@ -487,7 +489,7 @@ const GRAPH = {
         "is_noise": false
       },
       "color_command": "#f1c94e",
-      "color_mitre": "#f1c94e",
+      "color_mitre": "#e84a4a",
       "color_action": "#f1c94e"
     },
     {
@@ -504,26 +506,26 @@ const GRAPH = {
       "raw": {
         "entry_id": 9,
         "tool": "find",
-        "action": "findSUIDBinaries",
-        "target": "",
+        "action": "suid_binary_enumeration",
+        "target": "localhost",
         "phase": "post-exploitation",
         "is_noise": false,
         "cleaned_command": "find / -perm -4000 -type f 2>/dev/null"
       },
       "mitre": {
         "entry_id": 9,
-        "technique_id": "T1083",
-        "technique_name": "File and Directory Discovery",
-        "tactic": "discovery",
-        "confidence": 0.7
+        "technique_id": "T1548.001",
+        "technique_name": "Abuse Elevation Control Mechanism: Setuid and Setgid",
+        "tactic": "privilege-escalation",
+        "confidence": 0.97
       },
       "actions_effects": {
         "entry_id": 9,
         "action_name": "findSUIDBinaries",
-        "action_description": "Find SUID binaries",
+        "action_description": "Search the filesystem for binaries with the SUID bit set that could be leveraged for privilege escalation.",
         "phase": "post-exploitation",
         "produces_effects": [
-          "suidBinariesKnown"
+          "suidBinariesFound"
         ],
         "requires_effects": [
           "shellAccessGained"
@@ -531,7 +533,7 @@ const GRAPH = {
         "is_noise": false
       },
       "color_command": "#f1c94e",
-      "color_mitre": "#e8884a",
+      "color_mitre": "#e84a4a",
       "color_action": "#f1c94e"
     },
     {
@@ -548,34 +550,34 @@ const GRAPH = {
       "raw": {
         "entry_id": 10,
         "tool": "python3",
-        "action": "executeCommand",
-        "target": "",
-        "phase": "post-exploitation",
+        "action": "privilege_escalation",
+        "target": "localhost",
+        "phase": "exploitation",
         "is_noise": false,
         "cleaned_command": "python3 -c 'import os; os.setuid(0); os.system(\"/bin/bash\")'"
       },
       "mitre": {
         "entry_id": 10,
-        "technique_id": "T1059",
-        "technique_name": "Command and Scripting",
-        "tactic": "execution",
-        "confidence": 0.7
+        "technique_id": "T1548.001",
+        "technique_name": "Abuse Elevation Control Mechanism: Setuid and Setgid",
+        "tactic": "privilege-escalation",
+        "confidence": 0.98
       },
       "actions_effects": {
         "entry_id": 10,
-        "action_name": "executeCommand",
-        "action_description": "Execute python3",
+        "action_name": "exploitSUID",
+        "action_description": "Exploit a discovered SUID binary by invoking a Python privilege escalation payload to spawn a root shell.",
         "phase": "post-exploitation",
         "produces_effects": [
-          "commandExecuted"
+          "rootAccessGained"
         ],
         "requires_effects": [
-          "shellAccessGained"
+          "suidBinariesFound"
         ],
         "is_noise": false
       },
-      "color_command": "#f1c94e",
-      "color_mitre": "#f1c94e",
+      "color_command": "#e84a4a",
+      "color_mitre": "#e84a4a",
       "color_action": "#f1c94e"
     },
     {
@@ -592,9 +594,9 @@ const GRAPH = {
       "raw": {
         "entry_id": 11,
         "tool": "cat",
-        "action": "readSensitiveFile",
-        "target": "",
-        "phase": "post-exploitation",
+        "action": "flag_exfiltration",
+        "target": "/root/flag.txt",
+        "phase": "exfiltration",
         "is_noise": false,
         "cleaned_command": "cat /root/flag.txt"
       },
@@ -602,24 +604,24 @@ const GRAPH = {
         "entry_id": 11,
         "technique_id": "T1083",
         "technique_name": "File and Directory Discovery",
-        "tactic": "discovery",
-        "confidence": 0.7
+        "tactic": "collection",
+        "confidence": 0.85
       },
       "actions_effects": {
         "entry_id": 11,
-        "action_name": "readSensitiveFile",
-        "action_description": "Read a file",
+        "action_name": "captureFlag",
+        "action_description": "Read the root flag file to confirm full system compromise and complete the challenge objective.",
         "phase": "post-exploitation",
         "produces_effects": [
-          "fileContentsRead"
+          "flagFound"
         ],
         "requires_effects": [
-          "shellAccessGained"
+          "rootAccessGained"
         ],
         "is_noise": false
       },
-      "color_command": "#f1c94e",
-      "color_mitre": "#e8884a",
+      "color_command": "#ff4757",
+      "color_mitre": "#a0522d",
       "color_action": "#f1c94e"
     },
     {
@@ -636,9 +638,9 @@ const GRAPH = {
       "raw": {
         "entry_id": 12,
         "tool": "cat",
-        "action": "readSensitiveFile",
-        "target": "",
-        "phase": "post-exploitation",
+        "action": "flag_exfiltration",
+        "target": "/home/user/user.txt",
+        "phase": "exfiltration",
         "is_noise": false,
         "cleaned_command": "cat /home/user/user.txt"
       },
@@ -646,24 +648,24 @@ const GRAPH = {
         "entry_id": 12,
         "technique_id": "T1083",
         "technique_name": "File and Directory Discovery",
-        "tactic": "discovery",
-        "confidence": 0.7
+        "tactic": "collection",
+        "confidence": 0.85
       },
       "actions_effects": {
         "entry_id": 12,
-        "action_name": "readSensitiveFile",
-        "action_description": "Read a file",
+        "action_name": "captureFlag",
+        "action_description": "Read the user-level flag file from the home directory to capture the user flag.",
         "phase": "post-exploitation",
         "produces_effects": [
-          "fileContentsRead"
+          "flagFound"
         ],
         "requires_effects": [
           "shellAccessGained"
         ],
         "is_noise": false
       },
-      "color_command": "#f1c94e",
-      "color_mitre": "#e8884a",
+      "color_command": "#ff4757",
+      "color_mitre": "#a0522d",
       "color_action": "#f1c94e"
     }
   ],
@@ -674,12 +676,11 @@ const GRAPH = {
       "layer": "actions",
       "label": "scanAllPorts",
       "name": "scanAllPorts",
-      "description": "Scan all TCP ports on target",
+      "description": "Perform a full TCP port scan on the target to discover all open ports.",
       "phase": "reconnaissance",
       "color": "#4e9af1",
       "entry_ids": [
-        0,
-        1
+        0
       ],
       "produces_effects": [
         "openPortsKnown"
@@ -687,60 +688,79 @@ const GRAPH = {
       "requires_effects": []
     },
     {
+      "id": "action::identifyServices",
+      "node_type": "action",
+      "layer": "actions",
+      "label": "identifyServices",
+      "name": "identifyServices",
+      "description": "Run service version and default script scans against discovered open ports to fingerprint running services.",
+      "phase": "reconnaissance",
+      "color": "#4e9af1",
+      "entry_ids": [
+        1
+      ],
+      "produces_effects": [
+        "servicesIdentified"
+      ],
+      "requires_effects": [
+        "openPortsKnown"
+      ]
+    },
+    {
       "id": "action::enumerateWebDirs",
       "node_type": "action",
       "layer": "actions",
       "label": "enumerateWebDirs",
       "name": "enumerateWebDirs",
-      "description": "Enumerate web directories",
+      "description": "Brute-force common directory and file paths on the web server to discover hidden resources.",
       "phase": "reconnaissance",
       "color": "#4e9af1",
       "entry_ids": [
         2
       ],
       "produces_effects": [
-        "webDirsKnown"
+        "webDirsEnumerated"
       ],
       "requires_effects": [
-        "openPortsKnown"
+        "servicesIdentified"
       ]
     },
     {
-      "id": "action::scanWebApp",
+      "id": "action::scanWebVulnerabilities",
       "node_type": "action",
       "layer": "actions",
-      "label": "scanWebApp",
-      "name": "scanWebApp",
-      "description": "Scan web app for vulns",
+      "label": "scanWebVulnerabilities",
+      "name": "scanWebVulnerabilities",
+      "description": "Run an automated web vulnerability scanner against the target HTTP service to identify misconfigurations and known issues.",
       "phase": "reconnaissance",
       "color": "#4e9af1",
       "entry_ids": [
         3
       ],
       "produces_effects": [
-        "webVulnsKnown"
+        "webVulnerabilitiesIdentified"
       ],
       "requires_effects": [
-        "openPortsKnown"
+        "servicesIdentified"
       ]
     },
     {
-      "id": "action::bruteForceCredentials",
+      "id": "action::bruteForceWebLogin",
       "node_type": "action",
       "layer": "actions",
-      "label": "bruteForceCredentials",
-      "name": "bruteForceCredentials",
-      "description": "Brute-force login service",
+      "label": "bruteForceWebLogin",
+      "name": "bruteForceWebLogin",
+      "description": "Perform a dictionary-based brute-force attack against the discovered admin login form to obtain valid credentials.",
       "phase": "exploitation",
       "color": "#e84a4a",
       "entry_ids": [
         4
       ],
       "produces_effects": [
-        "credentialsObtained"
+        "webCredentialsObtained"
       ],
       "requires_effects": [
-        "openPortsKnown"
+        "webDirsEnumerated"
       ]
     },
     {
@@ -749,7 +769,7 @@ const GRAPH = {
       "layer": "actions",
       "label": "loginSSH",
       "name": "loginSSH",
-      "description": "Log in via SSH",
+      "description": "Authenticate to the SSH service using credentials obtained from the brute-force attack to establish a remote shell session.",
       "phase": "exploitation",
       "color": "#e84a4a",
       "entry_ids": [
@@ -759,7 +779,7 @@ const GRAPH = {
         "shellAccessGained"
       ],
       "requires_effects": [
-        "credentialsObtained"
+        "webCredentialsObtained"
       ]
     },
     {
@@ -768,7 +788,7 @@ const GRAPH = {
       "layer": "actions",
       "label": "gatherSystemInfo",
       "name": "gatherSystemInfo",
-      "description": "Gather system user info",
+      "description": "Query the current user identity to understand the privilege level of the obtained shell.",
       "phase": "post-exploitation",
       "color": "#f1c94e",
       "entry_ids": [
@@ -776,27 +796,26 @@ const GRAPH = {
         7
       ],
       "produces_effects": [
-        "systemInfoKnown"
+        "currentUserKnown"
       ],
       "requires_effects": [
         "shellAccessGained"
       ]
     },
     {
-      "id": "action::executeCommand",
+      "id": "action::checkSudoPrivileges",
       "node_type": "action",
       "layer": "actions",
-      "label": "executeCommand",
-      "name": "executeCommand",
-      "description": "Execute sudo",
+      "label": "checkSudoPrivileges",
+      "name": "checkSudoPrivileges",
+      "description": "List sudo permissions available to the current user to identify potential privilege escalation paths.",
       "phase": "post-exploitation",
       "color": "#f1c94e",
       "entry_ids": [
-        8,
-        10
+        8
       ],
       "produces_effects": [
-        "commandExecuted"
+        "sudoPrivilegesKnown"
       ],
       "requires_effects": [
         "shellAccessGained"
@@ -808,26 +827,45 @@ const GRAPH = {
       "layer": "actions",
       "label": "findSUIDBinaries",
       "name": "findSUIDBinaries",
-      "description": "Find SUID binaries",
+      "description": "Search the filesystem for binaries with the SUID bit set that could be leveraged for privilege escalation.",
       "phase": "post-exploitation",
       "color": "#f1c94e",
       "entry_ids": [
         9
       ],
       "produces_effects": [
-        "suidBinariesKnown"
+        "suidBinariesFound"
       ],
       "requires_effects": [
         "shellAccessGained"
       ]
     },
     {
-      "id": "action::readSensitiveFile",
+      "id": "action::exploitSUID",
       "node_type": "action",
       "layer": "actions",
-      "label": "readSensitiveFile",
-      "name": "readSensitiveFile",
-      "description": "Read a file",
+      "label": "exploitSUID",
+      "name": "exploitSUID",
+      "description": "Exploit a discovered SUID binary by invoking a Python privilege escalation payload to spawn a root shell.",
+      "phase": "post-exploitation",
+      "color": "#f1c94e",
+      "entry_ids": [
+        10
+      ],
+      "produces_effects": [
+        "rootAccessGained"
+      ],
+      "requires_effects": [
+        "suidBinariesFound"
+      ]
+    },
+    {
+      "id": "action::captureFlag",
+      "node_type": "action",
+      "layer": "actions",
+      "label": "captureFlag",
+      "name": "captureFlag",
+      "description": "Read the root flag file to confirm full system compromise and complete the challenge objective.",
       "phase": "post-exploitation",
       "color": "#f1c94e",
       "entry_ids": [
@@ -835,9 +873,10 @@ const GRAPH = {
         12
       ],
       "produces_effects": [
-        "fileContentsRead"
+        "flagFound"
       ],
       "requires_effects": [
+        "rootAccessGained",
         "shellAccessGained"
       ]
     },
@@ -852,44 +891,59 @@ const GRAPH = {
         "scanAllPorts"
       ],
       "enables_actions": [
-        "enumerateWebDirs",
-        "scanWebApp",
-        "bruteForceCredentials"
+        "identifyServices"
       ]
     },
     {
-      "id": "effect::webDirsKnown",
+      "id": "effect::servicesIdentified",
       "node_type": "effect",
       "layer": "actions",
-      "label": "webDirsKnown",
-      "name": "webDirsKnown",
+      "label": "servicesIdentified",
+      "name": "servicesIdentified",
+      "color": "#6e48aa",
+      "produced_by": [
+        "identifyServices"
+      ],
+      "enables_actions": [
+        "enumerateWebDirs",
+        "scanWebVulnerabilities"
+      ]
+    },
+    {
+      "id": "effect::webDirsEnumerated",
+      "node_type": "effect",
+      "layer": "actions",
+      "label": "webDirsEnumerated",
+      "name": "webDirsEnumerated",
       "color": "#6e48aa",
       "produced_by": [
         "enumerateWebDirs"
       ],
-      "enables_actions": []
+      "enables_actions": [
+        "bruteForceWebLogin"
+      ]
     },
     {
-      "id": "effect::webVulnsKnown",
+      "id": "effect::webVulnerabilitiesIdentified",
       "node_type": "effect",
       "layer": "actions",
-      "label": "webVulnsKnown",
-      "name": "webVulnsKnown",
+      "label": "webVulnerabilitiesIdentified",
+      "name": "webVulnerabilitiesIdentified",
       "color": "#6e48aa",
       "produced_by": [
-        "scanWebApp"
+        "scanWebVulnerabilities"
       ],
       "enables_actions": []
     },
     {
-      "id": "effect::credentialsObtained",
+      "id": "effect::webCredentialsObtained",
       "node_type": "effect",
       "layer": "actions",
-      "label": "credentialsObtained",
-      "name": "credentialsObtained",
+      "label": "webCredentialsObtained",
+      "name": "webCredentialsObtained",
       "color": "#6e48aa",
       "produced_by": [
-        "bruteForceCredentials"
+        "bruteForceWebLogin"
       ],
       "enables_actions": [
         "loginSSH"
@@ -907,17 +961,17 @@ const GRAPH = {
       ],
       "enables_actions": [
         "gatherSystemInfo",
-        "executeCommand",
+        "checkSudoPrivileges",
         "findSUIDBinaries",
-        "readSensitiveFile"
+        "captureFlag"
       ]
     },
     {
-      "id": "effect::systemInfoKnown",
+      "id": "effect::currentUserKnown",
       "node_type": "effect",
       "layer": "actions",
-      "label": "systemInfoKnown",
-      "name": "systemInfoKnown",
+      "label": "currentUserKnown",
+      "name": "currentUserKnown",
       "color": "#6e48aa",
       "produced_by": [
         "gatherSystemInfo"
@@ -925,38 +979,54 @@ const GRAPH = {
       "enables_actions": []
     },
     {
-      "id": "effect::commandExecuted",
+      "id": "effect::sudoPrivilegesKnown",
       "node_type": "effect",
       "layer": "actions",
-      "label": "commandExecuted",
-      "name": "commandExecuted",
+      "label": "sudoPrivilegesKnown",
+      "name": "sudoPrivilegesKnown",
       "color": "#6e48aa",
       "produced_by": [
-        "executeCommand"
+        "checkSudoPrivileges"
       ],
       "enables_actions": []
     },
     {
-      "id": "effect::suidBinariesKnown",
+      "id": "effect::suidBinariesFound",
       "node_type": "effect",
       "layer": "actions",
-      "label": "suidBinariesKnown",
-      "name": "suidBinariesKnown",
+      "label": "suidBinariesFound",
+      "name": "suidBinariesFound",
       "color": "#6e48aa",
       "produced_by": [
         "findSUIDBinaries"
       ],
-      "enables_actions": []
+      "enables_actions": [
+        "exploitSUID"
+      ]
     },
     {
-      "id": "effect::fileContentsRead",
+      "id": "effect::rootAccessGained",
       "node_type": "effect",
       "layer": "actions",
-      "label": "fileContentsRead",
-      "name": "fileContentsRead",
+      "label": "rootAccessGained",
+      "name": "rootAccessGained",
       "color": "#6e48aa",
       "produced_by": [
-        "readSensitiveFile"
+        "exploitSUID"
+      ],
+      "enables_actions": [
+        "captureFlag"
+      ]
+    },
+    {
+      "id": "effect::flagFound",
+      "node_type": "effect",
+      "layer": "actions",
+      "label": "flagFound",
+      "name": "flagFound",
+      "color": "#6e48aa",
+      "produced_by": [
+        "captureFlag"
       ],
       "enables_actions": []
     }
@@ -983,29 +1053,26 @@ const GRAPH = {
       "color": "#e8884a",
       "entry_ids": [
         2,
-        9,
         11,
         12
       ]
     },
     {
-      "id": "mitre::T1059",
+      "id": "mitre::T1595.003",
       "layer": "mitre",
-      "label": "T1059",
-      "technique_name": "Command and Scripting",
-      "tactic": "execution",
-      "color": "#f1c94e",
+      "label": "T1595.003",
+      "technique_name": "Active Scanning: Wordlist Scanning",
+      "tactic": "reconnaissance",
+      "color": "#4e9af1",
       "entry_ids": [
-        3,
-        8,
-        10
+        3
       ]
     },
     {
-      "id": "mitre::T1110",
+      "id": "mitre::T1110.001",
       "layer": "mitre",
-      "label": "T1110",
-      "technique_name": "Brute Force",
+      "label": "T1110.001",
+      "technique_name": "Brute Force: Password Guessing",
       "tactic": "credential-access",
       "color": "#da77f2",
       "entry_ids": [
@@ -1033,6 +1100,29 @@ const GRAPH = {
       "entry_ids": [
         6,
         7
+      ]
+    },
+    {
+      "id": "mitre::T1548.003",
+      "layer": "mitre",
+      "label": "T1548.003",
+      "technique_name": "Abuse Elevation Control Mechanism: Sudo and Sudo Caching",
+      "tactic": "privilege-escalation",
+      "color": "#e84a4a",
+      "entry_ids": [
+        8
+      ]
+    },
+    {
+      "id": "mitre::T1548.001",
+      "layer": "mitre",
+      "label": "T1548.001",
+      "technique_name": "Abuse Elevation Control Mechanism: Setuid and Setgid",
+      "tactic": "privilege-escalation",
+      "color": "#e84a4a",
+      "entry_ids": [
+        9,
+        10
       ]
     }
   ],
@@ -1116,38 +1206,50 @@ const GRAPH = {
       "layer": "actions"
     },
     {
-      "source": "action::enumerateWebDirs",
-      "target": "effect::webDirsKnown",
+      "source": "action::identifyServices",
+      "target": "effect::servicesIdentified",
       "type": "produces",
       "layer": "actions"
     },
     {
       "source": "effect::openPortsKnown",
+      "target": "action::identifyServices",
+      "type": "enables",
+      "layer": "actions"
+    },
+    {
+      "source": "action::enumerateWebDirs",
+      "target": "effect::webDirsEnumerated",
+      "type": "produces",
+      "layer": "actions"
+    },
+    {
+      "source": "effect::servicesIdentified",
       "target": "action::enumerateWebDirs",
       "type": "enables",
       "layer": "actions"
     },
     {
-      "source": "action::scanWebApp",
-      "target": "effect::webVulnsKnown",
+      "source": "action::scanWebVulnerabilities",
+      "target": "effect::webVulnerabilitiesIdentified",
       "type": "produces",
       "layer": "actions"
     },
     {
-      "source": "effect::openPortsKnown",
-      "target": "action::scanWebApp",
+      "source": "effect::servicesIdentified",
+      "target": "action::scanWebVulnerabilities",
       "type": "enables",
       "layer": "actions"
     },
     {
-      "source": "action::bruteForceCredentials",
-      "target": "effect::credentialsObtained",
+      "source": "action::bruteForceWebLogin",
+      "target": "effect::webCredentialsObtained",
       "type": "produces",
       "layer": "actions"
     },
     {
-      "source": "effect::openPortsKnown",
-      "target": "action::bruteForceCredentials",
+      "source": "effect::webDirsEnumerated",
+      "target": "action::bruteForceWebLogin",
       "type": "enables",
       "layer": "actions"
     },
@@ -1158,14 +1260,14 @@ const GRAPH = {
       "layer": "actions"
     },
     {
-      "source": "effect::credentialsObtained",
+      "source": "effect::webCredentialsObtained",
       "target": "action::loginSSH",
       "type": "enables",
       "layer": "actions"
     },
     {
       "source": "action::gatherSystemInfo",
-      "target": "effect::systemInfoKnown",
+      "target": "effect::currentUserKnown",
       "type": "produces",
       "layer": "actions"
     },
@@ -1176,20 +1278,20 @@ const GRAPH = {
       "layer": "actions"
     },
     {
-      "source": "action::executeCommand",
-      "target": "effect::commandExecuted",
+      "source": "action::checkSudoPrivileges",
+      "target": "effect::sudoPrivilegesKnown",
       "type": "produces",
       "layer": "actions"
     },
     {
       "source": "effect::shellAccessGained",
-      "target": "action::executeCommand",
+      "target": "action::checkSudoPrivileges",
       "type": "enables",
       "layer": "actions"
     },
     {
       "source": "action::findSUIDBinaries",
-      "target": "effect::suidBinariesKnown",
+      "target": "effect::suidBinariesFound",
       "type": "produces",
       "layer": "actions"
     },
@@ -1200,14 +1302,32 @@ const GRAPH = {
       "layer": "actions"
     },
     {
-      "source": "action::readSensitiveFile",
-      "target": "effect::fileContentsRead",
+      "source": "action::exploitSUID",
+      "target": "effect::rootAccessGained",
       "type": "produces",
       "layer": "actions"
     },
     {
+      "source": "effect::suidBinariesFound",
+      "target": "action::exploitSUID",
+      "type": "enables",
+      "layer": "actions"
+    },
+    {
+      "source": "action::captureFlag",
+      "target": "effect::flagFound",
+      "type": "produces",
+      "layer": "actions"
+    },
+    {
+      "source": "effect::rootAccessGained",
+      "target": "action::captureFlag",
+      "type": "enables",
+      "layer": "actions"
+    },
+    {
       "source": "effect::shellAccessGained",
-      "target": "action::readSensitiveFile",
+      "target": "action::captureFlag",
       "type": "enables",
       "layer": "actions"
     },
@@ -1219,18 +1339,18 @@ const GRAPH = {
     },
     {
       "source": "mitre::T1083",
-      "target": "mitre::T1059",
+      "target": "mitre::T1595.003",
       "type": "sequence",
       "layer": "mitre"
     },
     {
-      "source": "mitre::T1059",
-      "target": "mitre::T1110",
+      "source": "mitre::T1595.003",
+      "target": "mitre::T1110.001",
       "type": "sequence",
       "layer": "mitre"
     },
     {
-      "source": "mitre::T1110",
+      "source": "mitre::T1110.001",
       "target": "mitre::T1078",
       "type": "sequence",
       "layer": "mitre"
@@ -1238,6 +1358,18 @@ const GRAPH = {
     {
       "source": "mitre::T1078",
       "target": "mitre::T1033",
+      "type": "sequence",
+      "layer": "mitre"
+    },
+    {
+      "source": "mitre::T1033",
+      "target": "mitre::T1548.003",
+      "type": "sequence",
+      "layer": "mitre"
+    },
+    {
+      "source": "mitre::T1548.003",
+      "target": "mitre::T1548.001",
       "type": "sequence",
       "layer": "mitre"
     },
@@ -1255,7 +1387,7 @@ const GRAPH = {
     },
     {
       "source": "cmd::1",
-      "target": "action::scanAllPorts",
+      "target": "action::identifyServices",
       "type": "maps_to",
       "layer": "cross"
     },
@@ -1279,25 +1411,25 @@ const GRAPH = {
     },
     {
       "source": "cmd::3",
-      "target": "action::scanWebApp",
+      "target": "action::scanWebVulnerabilities",
       "type": "maps_to",
       "layer": "cross"
     },
     {
       "source": "cmd::3",
-      "target": "mitre::T1059",
+      "target": "mitre::T1595.003",
       "type": "maps_to",
       "layer": "cross"
     },
     {
       "source": "cmd::4",
-      "target": "action::bruteForceCredentials",
+      "target": "action::bruteForceWebLogin",
       "type": "maps_to",
       "layer": "cross"
     },
     {
       "source": "cmd::4",
-      "target": "mitre::T1110",
+      "target": "mitre::T1110.001",
       "type": "maps_to",
       "layer": "cross"
     },
@@ -1339,13 +1471,13 @@ const GRAPH = {
     },
     {
       "source": "cmd::8",
-      "target": "action::executeCommand",
+      "target": "action::checkSudoPrivileges",
       "type": "maps_to",
       "layer": "cross"
     },
     {
       "source": "cmd::8",
-      "target": "mitre::T1059",
+      "target": "mitre::T1548.003",
       "type": "maps_to",
       "layer": "cross"
     },
@@ -1357,25 +1489,25 @@ const GRAPH = {
     },
     {
       "source": "cmd::9",
-      "target": "mitre::T1083",
+      "target": "mitre::T1548.001",
       "type": "maps_to",
       "layer": "cross"
     },
     {
       "source": "cmd::10",
-      "target": "action::executeCommand",
+      "target": "action::exploitSUID",
       "type": "maps_to",
       "layer": "cross"
     },
     {
       "source": "cmd::10",
-      "target": "mitre::T1059",
+      "target": "mitre::T1548.001",
       "type": "maps_to",
       "layer": "cross"
     },
     {
       "source": "cmd::11",
-      "target": "action::readSensitiveFile",
+      "target": "action::captureFlag",
       "type": "maps_to",
       "layer": "cross"
     },
@@ -1387,7 +1519,7 @@ const GRAPH = {
     },
     {
       "source": "cmd::12",
-      "target": "action::readSensitiveFile",
+      "target": "action::captureFlag",
       "type": "maps_to",
       "layer": "cross"
     },

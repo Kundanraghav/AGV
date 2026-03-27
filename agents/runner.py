@@ -4,9 +4,26 @@ Each call runs `claude -p` with a system prompt and returns parsed JSON.
 """
 
 import json
+import os
 import subprocess
+import sys
 import re
 from agents.prompts import ACTIONS_EFFECTS_SYSTEM_PROMPT, MITRE_SYSTEM_PROMPT, RAW_SYSTEM_PROMPT
+
+
+def _claude_cmd(args):
+    """
+    Build the claude CLI command.
+    On Windows, calls node.exe + cli.js directly to avoid cmd.exe quote-mangling.
+    """
+    if sys.platform == "win32":
+        cli = os.path.join(os.environ.get("APPDATA", ""), "npm",
+                           "node_modules", "@anthropic-ai", "claude-code", "cli.js")
+        if os.path.exists(cli):
+            return ["node", cli] + args
+        # fallback
+        return ["cmd.exe", "/c", "claude"] + args
+    return ["claude"] + args
 
 AGENT_PROMPTS = {
     "actions_effects": ACTIONS_EFFECTS_SYSTEM_PROMPT,
@@ -74,7 +91,7 @@ def run_agent(agent_name, batch, timeout=180):
 
     try:
         result = subprocess.run(
-            ["claude", "-p", prompt_text, "--system-prompt", system_prompt],
+            _claude_cmd(["-p", prompt_text, "--system-prompt", system_prompt]),
             capture_output=True,
             text=True,
             timeout=timeout,
