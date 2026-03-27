@@ -242,6 +242,12 @@ def build_html(graph):
   .layer-btn:hover {{ border-color: #58a6ff; color: #58a6ff; }}
   .layer-btn.active {{ background: #1f6feb; border-color: #1f6feb; color: #fff; }}
 
+  #flag-bar {{ padding: 6px 20px; background: #161b22; border-bottom: 1px solid #30363d; display: flex; gap: 6px; overflow-x: auto; flex-shrink: 0; }}
+  #flag-bar::-webkit-scrollbar {{ height: 4px; }} #flag-bar::-webkit-scrollbar-thumb {{ background: #30363d; border-radius: 2px; }}
+  .flag-btn {{ padding: 3px 10px; border: 1px solid #30363d; border-radius: 12px; background: transparent; color: #8b949e; cursor: pointer; font-size: 12px; white-space: nowrap; transition: all 0.15s; flex-shrink: 0; }}
+  .flag-btn:hover {{ border-color: #f1c94e; color: #f1c94e; }}
+  .flag-btn.active {{ background: #f1c94e22; border-color: #f1c94e; color: #f1c94e; }}
+
   #main {{ display: flex; flex: 1; overflow: hidden; }}
   #graph-container {{ flex: 1; position: relative; overflow: hidden; }}
   svg {{ width: 100%; height: 100%; }}
@@ -295,6 +301,8 @@ def build_html(graph):
   </div>
 </div>
 
+<div id="flag-bar"></div>
+
 <div id="main">
   <div id="graph-container">
     <div id="stats"></div>
@@ -318,6 +326,7 @@ const GRAPH = {graph_json};
 const COLOR_MAPS = GRAPH.color_maps;
 
 let activeLayer = 'command';
+let selectedFlag = null;
 let simulation = null;
 
 // ── SVG setup ──────────────────────────────────────────────────────────────
@@ -344,6 +353,28 @@ const nodeGroup = container.append('g').attr('class', 'nodes');
 document.getElementById('meta-text').textContent =
   `${{GRAPH.meta.total_entries}} entries · ${{GRAPH.meta.source_files.length}} file(s)`;
 
+// ── Flag filter ────────────────────────────────────────────────────────────
+function renderFlagButtons() {{
+  const bar = document.getElementById('flag-bar');
+  const files = GRAPH.meta.source_files;
+  if (files.length <= 1) {{ bar.style.display = 'none'; return; }}
+
+  const flagName = f => f.replace(/[.]txt$/i, '');
+  let html = `<button class="flag-btn active" data-flag="">All</button>`;
+  html += files.map(f => `<button class="flag-btn" data-flag="${{f}}">${{flagName(f)}}</button>`).join('');
+  bar.innerHTML = html;
+
+  bar.querySelectorAll('.flag-btn').forEach(btn => {{
+    btn.addEventListener('click', () => {{
+      bar.querySelectorAll('.flag-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      selectedFlag = btn.dataset.flag || null;
+      closePanel();
+      renderGraph();
+    }});
+  }});
+}}
+
 // ── Layer toggle ───────────────────────────────────────────────────────────
 document.querySelectorAll('.layer-btn').forEach(btn => {{
   btn.addEventListener('click', () => {{
@@ -358,10 +389,32 @@ document.querySelectorAll('.layer-btn').forEach(btn => {{
 
 // ── Graph rendering ────────────────────────────────────────────────────────
 function getVisibleNodes() {{
-  if (activeLayer === 'command') return GRAPH.nodes;
-  if (activeLayer === 'mitre')   return GRAPH.mitre_nodes;
-  if (activeLayer === 'actions') return GRAPH.actions_effects_nodes;
-  return [];
+  let nodes;
+  if (activeLayer === 'command')      nodes = GRAPH.nodes;
+  else if (activeLayer === 'mitre')   nodes = GRAPH.mitre_nodes;
+  else                                nodes = GRAPH.actions_effects_nodes;
+
+  if (!selectedFlag) return nodes;
+
+  const flagEids = new Set(
+    GRAPH.nodes.filter(n => n.source_file === selectedFlag).map(n => n.entry_id)
+  );
+
+  if (activeLayer === 'command') return nodes.filter(n => n.source_file === selectedFlag);
+
+  if (activeLayer === 'mitre') return nodes.filter(n => (n.entry_ids || []).some(eid => flagEids.has(eid)));
+
+  if (activeLayer === 'actions') {{
+    const visibleActions = new Set(
+      nodes.filter(n => n.node_type === 'action' && (n.entry_ids || []).some(eid => flagEids.has(eid))).map(n => n.name)
+    );
+    return nodes.filter(n =>
+      n.node_type === 'action'
+        ? visibleActions.has(n.name)
+        : (n.produced_by || []).some(a => visibleActions.has(a)) || (n.enables_actions || []).some(a => visibleActions.has(a))
+    );
+  }}
+  return nodes;
 }}
 
 function getVisibleEdges(nodeIds) {{
@@ -637,6 +690,7 @@ function renderLegend() {{
 }}
 
 // ── Init ───────────────────────────────────────────────────────────────────
+renderFlagButtons();
 renderGraph();
 renderLegend();
 </script>
