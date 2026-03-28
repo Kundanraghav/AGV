@@ -1,0 +1,37 @@
+[
+  {
+    "command": "Get-Module -ListAvailable",
+    "reasoning": "Inside a PowerShell session (obtained via Metasploit meterpreter → shell → powershell). Check which PowerShell modules are available on the system.",
+    "output": "ActiveDirectory module available",
+    "exit_code": null,
+    "agent": "flag59ecca"
+  },
+  {
+    "command": "Import-Module ActiveDirectory",
+    "reasoning": "Load the Active Directory module to access AD enumeration cmdlets.",
+    "output": "Module loaded successfully",
+    "exit_code": null,
+    "agent": "flag59ecca"
+  },
+  {
+    "command": "Get-ADForest",
+    "reasoning": "Enumerate the Active Directory forest structure to understand the domain layout.",
+    "output": "Forest root domain: internal.initech.local",
+    "exit_code": null,
+    "agent": "flag59ecca"
+  },
+  {
+    "command": "Get-ADDomainController",
+    "reasoning": "Discover domain controllers in the environment — their names, IPs, and FSMO roles.",
+    "output": "Domain controller details retrieved",
+    "exit_code": null,
+    "agent": "flag59ecca"
+  },
+  {
+    "command": "Get-ADObject -Filter * -Properties * | Where-Object {$_.Description -match \"59ecca\"}",
+    "reasoning": "Query ALL Active Directory objects with all their properties, then filter for any object whose Description attribute contains the flag ID. CTF flags are often hidden in AD object metadata.",
+    "output": "AD object found with flag{59ecca...} in its Description field",
+    "exit_code": null,
+    "agent": "flag59ecca"
+  }
+]

