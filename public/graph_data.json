@@ -133,11 +133,11 @@
       },
       "actions_effects": {
         "entry_id": 2,
-        "action_name": "analyzeTrafficForFlag",
+        "action_name": "analyzePacketCapture",
         "action_description": "Extract printable strings from the captured pcap and filter for flag-related keywords.",
         "phase": "exfiltration",
         "produces_effects": [
-          "flagFound"
+          "sensitiveDataObtained"
         ],
         "requires_effects": [
           "trafficCaptured"
@@ -177,11 +177,11 @@
       },
       "actions_effects": {
         "entry_id": 3,
-        "action_name": "analyzeTrafficForFlag",
+        "action_name": "analyzePacketCapture",
         "action_description": "Grep captured pcap strings directly for the known flag ID to confirm its presence.",
         "phase": "exfiltration",
         "produces_effects": [
-          "flagFound"
+          "sensitiveDataObtained"
         ],
         "requires_effects": [
           "trafficCaptured"
@@ -221,11 +221,11 @@
       },
       "actions_effects": {
         "entry_id": 4,
-        "action_name": "analyzeTrafficForFlag",
+        "action_name": "analyzePacketCapture",
         "action_description": "Re-read the pcap filtering to HTTP port 80 traffic and extract ASCII content to locate the flag.",
         "phase": "exfiltration",
         "produces_effects": [
-          "flagFound"
+          "sensitiveDataObtained"
         ],
         "requires_effects": [
           "trafficCaptured"
@@ -445,7 +445,7 @@
         "phase": "post-exploitation",
         "produces_effects": [
           "webFilesEnumerated",
-          "flagFound"
+          "sensitiveDataObtained"
         ],
         "requires_effects": [
           "shellAccessGained",
@@ -620,7 +620,7 @@
         "action_description": "Navigate to the discovered recherche.php page and inspect its source to extract an embedded flag.",
         "phase": "exfiltration",
         "produces_effects": [
-          "flagFound"
+          "sensitiveDataObtained"
         ],
         "requires_effects": [
           "hiddenLinksDiscovered"
@@ -704,11 +704,11 @@
       },
       "actions_effects": {
         "entry_id": 15,
-        "action_name": "loadADModule",
+        "action_name": "prepareADEnumeration",
         "action_description": "Import the Active Directory PowerShell module to enable AD enumeration cmdlets.",
         "phase": "post-exploitation",
         "produces_effects": [
-          "adModuleLoaded"
+          "adEnumerationReady"
         ],
         "requires_effects": [
           "availableModulesKnown"
@@ -755,7 +755,7 @@
           "adForestStructureKnown"
         ],
         "requires_effects": [
-          "adModuleLoaded"
+          "adEnumerationReady"
         ],
         "is_noise": false
       },
@@ -799,7 +799,7 @@
           "domainControllersKnown"
         ],
         "requires_effects": [
-          "adModuleLoaded",
+          "adEnumerationReady",
           "adForestStructureKnown"
         ],
         "is_noise": false
@@ -837,14 +837,14 @@
       },
       "actions_effects": {
         "entry_id": 18,
-        "action_name": "searchADObjectsForFlag",
+        "action_name": "queryADObjectAttributes",
         "action_description": "Query all Active Directory objects and filter by Description attribute to find a flag hidden in AD metadata.",
         "phase": "exfiltration",
         "produces_effects": [
-          "flagFound"
+          "sensitiveDataObtained"
         ],
         "requires_effects": [
-          "adModuleLoaded",
+          "adEnumerationReady",
           "adForestStructureKnown",
           "domainControllersKnown"
         ],
@@ -972,7 +972,7 @@
         "action_description": "Log into the Tomcat manager with discovered credentials and manually browse application pages to locate an embedded flag.",
         "phase": "post-exploitation",
         "produces_effects": [
-          "flagFound"
+          "sensitiveDataObtained"
         ],
         "requires_effects": [
           "tomcatCredentialsObtained"
@@ -1234,7 +1234,7 @@
         "action_description": "Inject a sed command into the malicious cron script that rewrites the www-data /etc/passwd entry to UID 0 (root) when run as root.",
         "phase": "persistence",
         "produces_effects": [
-          "passwdManipulationInjected"
+          "cronPayloadInjected"
         ],
         "requires_effects": [
           "maliciousCronScriptStarted"
@@ -1281,7 +1281,7 @@
           "cronScriptComplete"
         ],
         "requires_effects": [
-          "passwdManipulationInjected"
+          "cronPayloadInjected"
         ],
         "is_noise": false
       },
@@ -1362,7 +1362,7 @@
       },
       "actions_effects": {
         "entry_id": 30,
-        "action_name": "verifyPasswdModification",
+        "action_name": "verifyPrivilegeChange",
         "action_description": "Read /etc/passwd to confirm the dual www-data entries (UID 0 and UID 33) were written correctly by the cron job.",
         "phase": "post-exploitation",
         "produces_effects": [
@@ -1411,7 +1411,7 @@
         "phase": "post-exploitation",
         "produces_effects": [
           "rootAccessGained",
-          "flagFound"
+          "sensitiveDataObtained"
         ],
         "requires_effects": [
           "passwdModificationConfirmed",
@@ -1587,7 +1587,7 @@
         "phase": "exploitation",
         "produces_effects": [
           "ftpAccessGained",
-          "flagFound"
+          "sensitiveDataObtained"
         ],
         "requires_effects": [
           "ftpCredentialsObtained"
@@ -1627,11 +1627,11 @@
       },
       "actions_effects": {
         "entry_id": 36,
-        "action_name": "launchMetasploit",
+        "action_name": "prepareExploitFramework",
         "action_description": "Start the Metasploit Framework console in preparation for exploiting the Tomcat manager with previously obtained credentials.",
         "phase": "exploitation",
         "produces_effects": [
-          "metasploitReady"
+          "exploitFrameworkReady"
         ],
         "requires_effects": [
           "tomcatCredentialsObtained"
@@ -1671,14 +1671,14 @@
       },
       "actions_effects": {
         "entry_id": 37,
-        "action_name": "selectExploitModule",
+        "action_name": "configureExploitModule",
         "action_description": "Load the Metasploit tomcat_mgr_upload exploit module that deploys a malicious WAR file via authenticated manager access.",
         "phase": "exploitation",
         "produces_effects": [
-          "exploitModuleLoaded"
+          "exploitConfigured"
         ],
         "requires_effects": [
-          "metasploitReady"
+          "exploitFrameworkReady"
         ],
         "is_noise": false
       },
@@ -1719,10 +1719,10 @@
         "action_description": "Configure the Tomcat WAR upload exploit with target host, port, and stolen credentials, then execute it to open a Meterpreter session.",
         "phase": "exploitation",
         "produces_effects": [
-          "meterpreterSessionOpened"
+          "remoteSessionOpened"
         ],
         "requires_effects": [
-          "exploitModuleLoaded",
+          "exploitConfigured",
           "tomcatCredentialsObtained"
         ],
         "is_noise": false
@@ -1767,7 +1767,7 @@
           "shellAccessGained"
         ],
         "requires_effects": [
-          "meterpreterSessionOpened"
+          "remoteSessionOpened"
         ],
         "is_noise": false
       },
@@ -1804,11 +1804,11 @@
       },
       "actions_effects": {
         "entry_id": 40,
-        "action_name": "searchForFlagFile",
+        "action_name": "searchFilesystem",
         "action_description": "Recursively search the entire C: drive for a file matching the flag hash in its name.",
         "phase": "post-exploitation",
         "produces_effects": [
-          "flagFileLocated"
+          "sensitiveFileLocated"
         ],
         "requires_effects": [
           "shellAccessGained"
@@ -1848,14 +1848,14 @@
       },
       "actions_effects": {
         "entry_id": 41,
-        "action_name": "captureFlag",
+        "action_name": "exfiltrateFile",
         "action_description": "Download the located flag file from the compromised Windows host to the attacker machine via Meterpreter.",
         "phase": "exfiltration",
         "produces_effects": [
-          "flagExfiltrated"
+          "fileExfiltrated"
         ],
         "requires_effects": [
-          "flagFileLocated"
+          "sensitiveFileLocated"
         ],
         "is_noise": false
       },
@@ -2073,7 +2073,7 @@
         "action_description": "Add the crash_override user (whose password is known) to the HelpDesk AD group to enable RDP access.",
         "phase": "post-exploitation",
         "produces_effects": [
-          "userAddedToHelpDeskGroup"
+          "groupMembershipModified"
         ],
         "requires_effects": [
           "adGroupFullControlGranted",
@@ -2121,7 +2121,7 @@
           "rdpSessionEstablished"
         ],
         "requires_effects": [
-          "userAddedToHelpDeskGroup",
+          "groupMembershipModified",
           "credentialsObtained"
         ],
         "is_noise": false
@@ -2167,7 +2167,7 @@
         ],
         "requires_effects": [
           "rdpSessionEstablished",
-          "userAddedToHelpDeskGroup"
+          "groupMembershipModified"
         ],
         "is_noise": false
       },
@@ -2251,7 +2251,7 @@
           "sqlInjectionConfirmed"
         ],
         "requires_effects": [
-          "webAppAccess"
+          "webApplicationAccessed"
         ],
         "is_noise": false
       },
@@ -2381,7 +2381,7 @@
         "phase": "exfiltration",
         "produces_effects": [
           "databaseContentsDumped",
-          "flagFound"
+          "sensitiveDataObtained"
         ],
         "requires_effects": [
           "databaseTablesKnown"
@@ -2478,11 +2478,11 @@
       ]
     },
     {
-      "id": "action::analyzeTrafficForFlag",
+      "id": "action::analyzePacketCapture",
       "node_type": "action",
       "layer": "actions",
-      "label": "analyzeTrafficForFlag",
-      "name": "analyzeTrafficForFlag",
+      "label": "analyzePacketCapture",
+      "name": "analyzePacketCapture",
       "description": "Extract printable strings from the captured pcap and filter for flag-related keywords.",
       "phase": "exfiltration",
       "color": "#ff4757",
@@ -2492,7 +2492,7 @@
         4
       ],
       "produces_effects": [
-        "flagFound"
+        "sensitiveDataObtained"
       ],
       "requires_effects": [
         "trafficCaptured"
@@ -2561,7 +2561,7 @@
       "produces_effects": [
         "webRootContentsKnown",
         "webFilesEnumerated",
-        "flagFound"
+        "sensitiveDataObtained"
       ],
       "requires_effects": [
         "shellAccessGained",
@@ -2619,7 +2619,7 @@
       ],
       "produces_effects": [
         "hiddenLinksDiscovered",
-        "flagFound"
+        "sensitiveDataObtained"
       ],
       "requires_effects": [
         "authenticatedWebAccess",
@@ -2627,11 +2627,11 @@
       ]
     },
     {
-      "id": "action::loadADModule",
+      "id": "action::prepareADEnumeration",
       "node_type": "action",
       "layer": "actions",
-      "label": "loadADModule",
-      "name": "loadADModule",
+      "label": "prepareADEnumeration",
+      "name": "prepareADEnumeration",
       "description": "Import the Active Directory PowerShell module to enable AD enumeration cmdlets.",
       "phase": "post-exploitation",
       "color": "#f1c94e",
@@ -2639,7 +2639,7 @@
         15
       ],
       "produces_effects": [
-        "adModuleLoaded"
+        "adEnumerationReady"
       ],
       "requires_effects": [
         "availableModulesKnown"
@@ -2663,16 +2663,16 @@
         "domainControllersKnown"
       ],
       "requires_effects": [
-        "adModuleLoaded",
+        "adEnumerationReady",
         "adForestStructureKnown"
       ]
     },
     {
-      "id": "action::searchADObjectsForFlag",
+      "id": "action::queryADObjectAttributes",
       "node_type": "action",
       "layer": "actions",
-      "label": "searchADObjectsForFlag",
-      "name": "searchADObjectsForFlag",
+      "label": "queryADObjectAttributes",
+      "name": "queryADObjectAttributes",
       "description": "Query all Active Directory objects and filter by Description attribute to find a flag hidden in AD metadata.",
       "phase": "exfiltration",
       "color": "#ff4757",
@@ -2680,10 +2680,10 @@
         18
       ],
       "produces_effects": [
-        "flagFound"
+        "sensitiveDataObtained"
       ],
       "requires_effects": [
-        "adModuleLoaded",
+        "adEnumerationReady",
         "adForestStructureKnown",
         "domainControllersKnown"
       ]
@@ -2736,7 +2736,7 @@
         21
       ],
       "produces_effects": [
-        "flagFound"
+        "sensitiveDataObtained"
       ],
       "requires_effects": [
         "tomcatCredentialsObtained"
@@ -2779,13 +2779,13 @@
       ],
       "produces_effects": [
         "maliciousCronScriptStarted",
-        "passwdManipulationInjected",
+        "cronPayloadInjected",
         "cronScriptComplete"
       ],
       "requires_effects": [
         "writableCronJobFound",
         "maliciousCronScriptStarted",
-        "passwdManipulationInjected"
+        "cronPayloadInjected"
       ]
     },
     {
@@ -2808,11 +2808,11 @@
       ]
     },
     {
-      "id": "action::verifyPasswdModification",
+      "id": "action::verifyPrivilegeChange",
       "node_type": "action",
       "layer": "actions",
-      "label": "verifyPasswdModification",
-      "name": "verifyPasswdModification",
+      "label": "verifyPrivilegeChange",
+      "name": "verifyPrivilegeChange",
       "description": "Read /etc/passwd to confirm the dual www-data entries (UID 0 and UID 33) were written correctly by the cron job.",
       "phase": "post-exploitation",
       "color": "#f1c94e",
@@ -2840,7 +2840,7 @@
       ],
       "produces_effects": [
         "rootAccessGained",
-        "flagFound"
+        "sensitiveDataObtained"
       ],
       "requires_effects": [
         "passwdModificationConfirmed",
@@ -2897,18 +2897,18 @@
       ],
       "produces_effects": [
         "ftpAccessGained",
-        "flagFound"
+        "sensitiveDataObtained"
       ],
       "requires_effects": [
         "ftpCredentialsObtained"
       ]
     },
     {
-      "id": "action::launchMetasploit",
+      "id": "action::prepareExploitFramework",
       "node_type": "action",
       "layer": "actions",
-      "label": "launchMetasploit",
-      "name": "launchMetasploit",
+      "label": "prepareExploitFramework",
+      "name": "prepareExploitFramework",
       "description": "Start the Metasploit Framework console in preparation for exploiting the Tomcat manager with previously obtained credentials.",
       "phase": "exploitation",
       "color": "#e84a4a",
@@ -2916,18 +2916,18 @@
         36
       ],
       "produces_effects": [
-        "metasploitReady"
+        "exploitFrameworkReady"
       ],
       "requires_effects": [
         "tomcatCredentialsObtained"
       ]
     },
     {
-      "id": "action::selectExploitModule",
+      "id": "action::configureExploitModule",
       "node_type": "action",
       "layer": "actions",
-      "label": "selectExploitModule",
-      "name": "selectExploitModule",
+      "label": "configureExploitModule",
+      "name": "configureExploitModule",
       "description": "Load the Metasploit tomcat_mgr_upload exploit module that deploys a malicious WAR file via authenticated manager access.",
       "phase": "exploitation",
       "color": "#e84a4a",
@@ -2935,10 +2935,10 @@
         37
       ],
       "produces_effects": [
-        "exploitModuleLoaded"
+        "exploitConfigured"
       ],
       "requires_effects": [
-        "metasploitReady"
+        "exploitFrameworkReady"
       ]
     },
     {
@@ -2954,10 +2954,10 @@
         38
       ],
       "produces_effects": [
-        "meterpreterSessionOpened"
+        "remoteSessionOpened"
       ],
       "requires_effects": [
-        "exploitModuleLoaded",
+        "exploitConfigured",
         "tomcatCredentialsObtained"
       ]
     },
@@ -2977,15 +2977,15 @@
         "shellAccessGained"
       ],
       "requires_effects": [
-        "meterpreterSessionOpened"
+        "remoteSessionOpened"
       ]
     },
     {
-      "id": "action::searchForFlagFile",
+      "id": "action::searchFilesystem",
       "node_type": "action",
       "layer": "actions",
-      "label": "searchForFlagFile",
-      "name": "searchForFlagFile",
+      "label": "searchFilesystem",
+      "name": "searchFilesystem",
       "description": "Recursively search the entire C: drive for a file matching the flag hash in its name.",
       "phase": "post-exploitation",
       "color": "#f1c94e",
@@ -2993,18 +2993,18 @@
         40
       ],
       "produces_effects": [
-        "flagFileLocated"
+        "sensitiveFileLocated"
       ],
       "requires_effects": [
         "shellAccessGained"
       ]
     },
     {
-      "id": "action::captureFlag",
+      "id": "action::exfiltrateFile",
       "node_type": "action",
       "layer": "actions",
-      "label": "captureFlag",
-      "name": "captureFlag",
+      "label": "exfiltrateFile",
+      "name": "exfiltrateFile",
       "description": "Download the located flag file from the compromised Windows host to the attacker machine via Meterpreter.",
       "phase": "exfiltration",
       "color": "#ff4757",
@@ -3012,10 +3012,10 @@
         41
       ],
       "produces_effects": [
-        "flagExfiltrated"
+        "fileExfiltrated"
       ],
       "requires_effects": [
-        "flagFileLocated"
+        "sensitiveFileLocated"
       ]
     },
     {
@@ -3108,7 +3108,7 @@
         46
       ],
       "produces_effects": [
-        "userAddedToHelpDeskGroup"
+        "groupMembershipModified"
       ],
       "requires_effects": [
         "adGroupFullControlGranted",
@@ -3131,7 +3131,7 @@
         "rdpSessionEstablished"
       ],
       "requires_effects": [
-        "userAddedToHelpDeskGroup",
+        "groupMembershipModified",
         "credentialsObtained"
       ]
     },
@@ -3152,7 +3152,7 @@
       ],
       "requires_effects": [
         "rdpSessionEstablished",
-        "userAddedToHelpDeskGroup"
+        "groupMembershipModified"
       ]
     },
     {
@@ -3171,7 +3171,7 @@
         "sqlInjectionConfirmed"
       ],
       "requires_effects": [
-        "webAppAccess"
+        "webApplicationAccessed"
       ]
     },
     {
@@ -3226,7 +3226,7 @@
       ],
       "produces_effects": [
         "databaseContentsDumped",
-        "flagFound"
+        "sensitiveDataObtained"
       ],
       "requires_effects": [
         "databaseTablesKnown"
@@ -3281,7 +3281,7 @@
         "captureNetworkTraffic",
         "gatherSystemInfo",
         "enumerateWebFiles",
-        "searchForFlagFile",
+        "searchFilesystem",
         "readSensitiveFile",
         "enumerateADGroups",
         "takeADObjectOwnership"
@@ -3298,21 +3298,21 @@
         "captureNetworkTraffic"
       ],
       "enables_actions": [
-        "analyzeTrafficForFlag"
+        "analyzePacketCapture"
       ]
     },
     {
-      "id": "effect::flagFound",
+      "id": "effect::sensitiveDataObtained",
       "node_type": "effect",
       "layer": "actions",
-      "label": "flagFound",
-      "name": "flagFound",
+      "label": "sensitiveDataObtained",
+      "name": "sensitiveDataObtained",
       "color": "#6e48aa",
       "produced_by": [
-        "analyzeTrafficForFlag",
+        "analyzePacketCapture",
         "enumerateWebFiles",
         "inspectWebPageSource",
-        "searchADObjectsForFlag",
+        "queryADObjectAttributes",
         "browseWebApplication",
         "escalatePrivilegesViaCron",
         "loginFTP",
@@ -3397,7 +3397,8 @@
         "accessWebApplication"
       ],
       "enables_actions": [
-        "createWebAccount"
+        "createWebAccount",
+        "testSQLInjection"
       ]
     },
     {
@@ -3439,22 +3440,22 @@
         "gatherSystemInfo"
       ],
       "enables_actions": [
-        "loadADModule"
+        "prepareADEnumeration"
       ]
     },
     {
-      "id": "effect::adModuleLoaded",
+      "id": "effect::adEnumerationReady",
       "node_type": "effect",
       "layer": "actions",
-      "label": "adModuleLoaded",
-      "name": "adModuleLoaded",
+      "label": "adEnumerationReady",
+      "name": "adEnumerationReady",
       "color": "#6e48aa",
       "produced_by": [
-        "loadADModule"
+        "prepareADEnumeration"
       ],
       "enables_actions": [
         "enumerateActiveDirectory",
-        "searchADObjectsForFlag"
+        "queryADObjectAttributes"
       ]
     },
     {
@@ -3469,7 +3470,7 @@
       ],
       "enables_actions": [
         "enumerateActiveDirectory",
-        "searchADObjectsForFlag"
+        "queryADObjectAttributes"
       ]
     },
     {
@@ -3483,7 +3484,7 @@
         "enumerateActiveDirectory"
       ],
       "enables_actions": [
-        "searchADObjectsForFlag"
+        "queryADObjectAttributes"
       ]
     },
     {
@@ -3522,7 +3523,7 @@
       ],
       "enables_actions": [
         "browseWebApplication",
-        "launchMetasploit",
+        "prepareExploitFramework",
         "exploitTomcatManager"
       ]
     },
@@ -3579,11 +3580,11 @@
       ]
     },
     {
-      "id": "effect::passwdManipulationInjected",
+      "id": "effect::cronPayloadInjected",
       "node_type": "effect",
       "layer": "actions",
-      "label": "passwdManipulationInjected",
-      "name": "passwdManipulationInjected",
+      "label": "cronPayloadInjected",
+      "name": "cronPayloadInjected",
       "color": "#6e48aa",
       "produced_by": [
         "writeMaliciousCronScript"
@@ -3603,7 +3604,7 @@
         "writeMaliciousCronScript"
       ],
       "enables_actions": [
-        "verifyPasswdModification"
+        "verifyPrivilegeChange"
       ]
     },
     {
@@ -3628,7 +3629,7 @@
       "name": "passwdModificationConfirmed",
       "color": "#6e48aa",
       "produced_by": [
-        "verifyPasswdModification"
+        "verifyPrivilegeChange"
       ],
       "enables_actions": [
         "escalatePrivilegesViaCron"
@@ -3699,39 +3700,39 @@
       "enables_actions": []
     },
     {
-      "id": "effect::metasploitReady",
+      "id": "effect::exploitFrameworkReady",
       "node_type": "effect",
       "layer": "actions",
-      "label": "metasploitReady",
-      "name": "metasploitReady",
+      "label": "exploitFrameworkReady",
+      "name": "exploitFrameworkReady",
       "color": "#6e48aa",
       "produced_by": [
-        "launchMetasploit"
+        "prepareExploitFramework"
       ],
       "enables_actions": [
-        "selectExploitModule"
+        "configureExploitModule"
       ]
     },
     {
-      "id": "effect::exploitModuleLoaded",
+      "id": "effect::exploitConfigured",
       "node_type": "effect",
       "layer": "actions",
-      "label": "exploitModuleLoaded",
-      "name": "exploitModuleLoaded",
+      "label": "exploitConfigured",
+      "name": "exploitConfigured",
       "color": "#6e48aa",
       "produced_by": [
-        "selectExploitModule"
+        "configureExploitModule"
       ],
       "enables_actions": [
         "exploitTomcatManager"
       ]
     },
     {
-      "id": "effect::meterpreterSessionOpened",
+      "id": "effect::remoteSessionOpened",
       "node_type": "effect",
       "layer": "actions",
-      "label": "meterpreterSessionOpened",
-      "name": "meterpreterSessionOpened",
+      "label": "remoteSessionOpened",
+      "name": "remoteSessionOpened",
       "color": "#6e48aa",
       "produced_by": [
         "exploitTomcatManager"
@@ -3741,28 +3742,28 @@
       ]
     },
     {
-      "id": "effect::flagFileLocated",
+      "id": "effect::sensitiveFileLocated",
       "node_type": "effect",
       "layer": "actions",
-      "label": "flagFileLocated",
-      "name": "flagFileLocated",
+      "label": "sensitiveFileLocated",
+      "name": "sensitiveFileLocated",
       "color": "#6e48aa",
       "produced_by": [
-        "searchForFlagFile"
+        "searchFilesystem"
       ],
       "enables_actions": [
-        "captureFlag"
+        "exfiltrateFile"
       ]
     },
     {
-      "id": "effect::flagExfiltrated",
+      "id": "effect::fileExfiltrated",
       "node_type": "effect",
       "layer": "actions",
-      "label": "flagExfiltrated",
-      "name": "flagExfiltrated",
+      "label": "fileExfiltrated",
+      "name": "fileExfiltrated",
       "color": "#6e48aa",
       "produced_by": [
-        "captureFlag"
+        "exfiltrateFile"
       ],
       "enables_actions": []
     },
@@ -3824,11 +3825,11 @@
       ]
     },
     {
-      "id": "effect::userAddedToHelpDeskGroup",
+      "id": "effect::groupMembershipModified",
       "node_type": "effect",
       "layer": "actions",
-      "label": "userAddedToHelpDeskGroup",
-      "name": "userAddedToHelpDeskGroup",
+      "label": "groupMembershipModified",
+      "name": "groupMembershipModified",
       "color": "#6e48aa",
       "produced_by": [
         "modifyGroupMembership"
@@ -3876,18 +3877,6 @@
       ],
       "enables_actions": [
         "enumerateDatabases"
-      ]
-    },
-    {
-      "id": "effect::webAppAccess",
-      "node_type": "effect",
-      "layer": "actions",
-      "label": "webAppAccess",
-      "name": "webAppAccess",
-      "color": "#6e48aa",
-      "produced_by": [],
-      "enables_actions": [
-        "testSQLInjection"
       ]
     },
     {
@@ -4547,14 +4536,14 @@
       "layer": "actions"
     },
     {
-      "source": "action::analyzeTrafficForFlag",
-      "target": "effect::flagFound",
+      "source": "action::analyzePacketCapture",
+      "target": "effect::sensitiveDataObtained",
       "type": "produces",
       "layer": "actions"
     },
     {
       "source": "effect::trafficCaptured",
-      "target": "action::analyzeTrafficForFlag",
+      "target": "action::analyzePacketCapture",
       "type": "enables",
       "layer": "actions"
     },
@@ -4626,7 +4615,7 @@
     },
     {
       "source": "action::enumerateWebFiles",
-      "target": "effect::flagFound",
+      "target": "effect::sensitiveDataObtained",
       "type": "produces",
       "layer": "actions"
     },
@@ -4668,7 +4657,7 @@
     },
     {
       "source": "action::inspectWebPageSource",
-      "target": "effect::flagFound",
+      "target": "effect::sensitiveDataObtained",
       "type": "produces",
       "layer": "actions"
     },
@@ -4685,14 +4674,14 @@
       "layer": "actions"
     },
     {
-      "source": "action::loadADModule",
-      "target": "effect::adModuleLoaded",
+      "source": "action::prepareADEnumeration",
+      "target": "effect::adEnumerationReady",
       "type": "produces",
       "layer": "actions"
     },
     {
       "source": "effect::availableModulesKnown",
-      "target": "action::loadADModule",
+      "target": "action::prepareADEnumeration",
       "type": "enables",
       "layer": "actions"
     },
@@ -4709,7 +4698,7 @@
       "layer": "actions"
     },
     {
-      "source": "effect::adModuleLoaded",
+      "source": "effect::adEnumerationReady",
       "target": "action::enumerateActiveDirectory",
       "type": "enables",
       "layer": "actions"
@@ -4721,26 +4710,26 @@
       "layer": "actions"
     },
     {
-      "source": "action::searchADObjectsForFlag",
-      "target": "effect::flagFound",
+      "source": "action::queryADObjectAttributes",
+      "target": "effect::sensitiveDataObtained",
       "type": "produces",
       "layer": "actions"
     },
     {
-      "source": "effect::adModuleLoaded",
-      "target": "action::searchADObjectsForFlag",
+      "source": "effect::adEnumerationReady",
+      "target": "action::queryADObjectAttributes",
       "type": "enables",
       "layer": "actions"
     },
     {
       "source": "effect::adForestStructureKnown",
-      "target": "action::searchADObjectsForFlag",
+      "target": "action::queryADObjectAttributes",
       "type": "enables",
       "layer": "actions"
     },
     {
       "source": "effect::domainControllersKnown",
-      "target": "action::searchADObjectsForFlag",
+      "target": "action::queryADObjectAttributes",
       "type": "enables",
       "layer": "actions"
     },
@@ -4764,7 +4753,7 @@
     },
     {
       "source": "action::browseWebApplication",
-      "target": "effect::flagFound",
+      "target": "effect::sensitiveDataObtained",
       "type": "produces",
       "layer": "actions"
     },
@@ -4800,7 +4789,7 @@
     },
     {
       "source": "action::writeMaliciousCronScript",
-      "target": "effect::passwdManipulationInjected",
+      "target": "effect::cronPayloadInjected",
       "type": "produces",
       "layer": "actions"
     },
@@ -4823,7 +4812,7 @@
       "layer": "actions"
     },
     {
-      "source": "effect::passwdManipulationInjected",
+      "source": "effect::cronPayloadInjected",
       "target": "action::writeMaliciousCronScript",
       "type": "enables",
       "layer": "actions"
@@ -4841,14 +4830,14 @@
       "layer": "actions"
     },
     {
-      "source": "action::verifyPasswdModification",
+      "source": "action::verifyPrivilegeChange",
       "target": "effect::passwdModificationConfirmed",
       "type": "produces",
       "layer": "actions"
     },
     {
       "source": "effect::cronScriptComplete",
-      "target": "action::verifyPasswdModification",
+      "target": "action::verifyPrivilegeChange",
       "type": "enables",
       "layer": "actions"
     },
@@ -4860,7 +4849,7 @@
     },
     {
       "source": "action::escalatePrivilegesViaCron",
-      "target": "effect::flagFound",
+      "target": "effect::sensitiveDataObtained",
       "type": "produces",
       "layer": "actions"
     },
@@ -4902,7 +4891,7 @@
     },
     {
       "source": "action::loginFTP",
-      "target": "effect::flagFound",
+      "target": "effect::sensitiveDataObtained",
       "type": "produces",
       "layer": "actions"
     },
@@ -4913,37 +4902,37 @@
       "layer": "actions"
     },
     {
-      "source": "action::launchMetasploit",
-      "target": "effect::metasploitReady",
+      "source": "action::prepareExploitFramework",
+      "target": "effect::exploitFrameworkReady",
       "type": "produces",
       "layer": "actions"
     },
     {
       "source": "effect::tomcatCredentialsObtained",
-      "target": "action::launchMetasploit",
+      "target": "action::prepareExploitFramework",
       "type": "enables",
       "layer": "actions"
     },
     {
-      "source": "action::selectExploitModule",
-      "target": "effect::exploitModuleLoaded",
+      "source": "action::configureExploitModule",
+      "target": "effect::exploitConfigured",
       "type": "produces",
       "layer": "actions"
     },
     {
-      "source": "effect::metasploitReady",
-      "target": "action::selectExploitModule",
+      "source": "effect::exploitFrameworkReady",
+      "target": "action::configureExploitModule",
       "type": "enables",
       "layer": "actions"
     },
     {
       "source": "action::exploitTomcatManager",
-      "target": "effect::meterpreterSessionOpened",
+      "target": "effect::remoteSessionOpened",
       "type": "produces",
       "layer": "actions"
     },
     {
-      "source": "effect::exploitModuleLoaded",
+      "source": "effect::exploitConfigured",
       "target": "action::exploitTomcatManager",
       "type": "enables",
       "layer": "actions"
@@ -4961,32 +4950,32 @@
       "layer": "actions"
     },
     {
-      "source": "effect::meterpreterSessionOpened",
+      "source": "effect::remoteSessionOpened",
       "target": "action::dropToShell",
       "type": "enables",
       "layer": "actions"
     },
     {
-      "source": "action::searchForFlagFile",
-      "target": "effect::flagFileLocated",
+      "source": "action::searchFilesystem",
+      "target": "effect::sensitiveFileLocated",
       "type": "produces",
       "layer": "actions"
     },
     {
       "source": "effect::shellAccessGained",
-      "target": "action::searchForFlagFile",
+      "target": "action::searchFilesystem",
       "type": "enables",
       "layer": "actions"
     },
     {
-      "source": "action::captureFlag",
-      "target": "effect::flagExfiltrated",
+      "source": "action::exfiltrateFile",
+      "target": "effect::fileExfiltrated",
       "type": "produces",
       "layer": "actions"
     },
     {
-      "source": "effect::flagFileLocated",
-      "target": "action::captureFlag",
+      "source": "effect::sensitiveFileLocated",
+      "target": "action::exfiltrateFile",
       "type": "enables",
       "layer": "actions"
     },
@@ -5046,7 +5035,7 @@
     },
     {
       "source": "action::modifyGroupMembership",
-      "target": "effect::userAddedToHelpDeskGroup",
+      "target": "effect::groupMembershipModified",
       "type": "produces",
       "layer": "actions"
     },
@@ -5069,7 +5058,7 @@
       "layer": "actions"
     },
     {
-      "source": "effect::userAddedToHelpDeskGroup",
+      "source": "effect::groupMembershipModified",
       "target": "action::loginRDP",
       "type": "enables",
       "layer": "actions"
@@ -5093,7 +5082,7 @@
       "layer": "actions"
     },
     {
-      "source": "effect::userAddedToHelpDeskGroup",
+      "source": "effect::groupMembershipModified",
       "target": "action::escalateToDomainAdmin",
       "type": "enables",
       "layer": "actions"
@@ -5105,7 +5094,7 @@
       "layer": "actions"
     },
     {
-      "source": "effect::webAppAccess",
+      "source": "effect::webApplicationAccessed",
       "target": "action::testSQLInjection",
       "type": "enables",
       "layer": "actions"
@@ -5142,7 +5131,7 @@
     },
     {
       "source": "action::dumpDatabase",
-      "target": "effect::flagFound",
+      "target": "effect::sensitiveDataObtained",
       "type": "produces",
       "layer": "actions"
     },
@@ -5352,7 +5341,7 @@
     },
     {
       "source": "cmd::2",
-      "target": "action::analyzeTrafficForFlag",
+      "target": "action::analyzePacketCapture",
       "type": "maps_to",
       "layer": "cross"
     },
@@ -5364,7 +5353,7 @@
     },
     {
       "source": "cmd::3",
-      "target": "action::analyzeTrafficForFlag",
+      "target": "action::analyzePacketCapture",
       "type": "maps_to",
       "layer": "cross"
     },
@@ -5376,7 +5365,7 @@
     },
     {
       "source": "cmd::4",
-      "target": "action::analyzeTrafficForFlag",
+      "target": "action::analyzePacketCapture",
       "type": "maps_to",
       "layer": "cross"
     },
@@ -5484,7 +5473,7 @@
     },
     {
       "source": "cmd::15",
-      "target": "action::loadADModule",
+      "target": "action::prepareADEnumeration",
       "type": "maps_to",
       "layer": "cross"
     },
@@ -5520,7 +5509,7 @@
     },
     {
       "source": "cmd::18",
-      "target": "action::searchADObjectsForFlag",
+      "target": "action::queryADObjectAttributes",
       "type": "maps_to",
       "layer": "cross"
     },
@@ -5658,7 +5647,7 @@
     },
     {
       "source": "cmd::30",
-      "target": "action::verifyPasswdModification",
+      "target": "action::verifyPrivilegeChange",
       "type": "maps_to",
       "layer": "cross"
     },
@@ -5730,7 +5719,7 @@
     },
     {
       "source": "cmd::36",
-      "target": "action::launchMetasploit",
+      "target": "action::prepareExploitFramework",
       "type": "maps_to",
       "layer": "cross"
     },
@@ -5742,7 +5731,7 @@
     },
     {
       "source": "cmd::37",
-      "target": "action::selectExploitModule",
+      "target": "action::configureExploitModule",
       "type": "maps_to",
       "layer": "cross"
     },
@@ -5778,7 +5767,7 @@
     },
     {
       "source": "cmd::40",
-      "target": "action::searchForFlagFile",
+      "target": "action::searchFilesystem",
       "type": "maps_to",
       "layer": "cross"
     },
@@ -5790,7 +5779,7 @@
     },
     {
       "source": "cmd::41",
-      "target": "action::captureFlag",
+      "target": "action::exfiltrateFile",
       "type": "maps_to",
       "layer": "cross"
     },
