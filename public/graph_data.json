@@ -134,7 +134,7 @@
       "actions_effects": {
         "entry_id": 2,
         "action_name": "analyzePacketCapture",
-        "action_description": "Extract printable strings from the captured pcap and filter for flag-related keywords.",
+        "action_description": "Switch to the web server user and extract printable strings from the pcap, filtering for target data.",
         "phase": "exfiltration",
         "produces_effects": [
           "sensitiveDataObtained"
@@ -178,7 +178,7 @@
       "actions_effects": {
         "entry_id": 3,
         "action_name": "analyzePacketCapture",
-        "action_description": "Grep captured pcap strings directly for the known flag ID to confirm its presence.",
+        "action_description": "Grep captured pcap strings directly for a known identifier to confirm target data presence.",
         "phase": "exfiltration",
         "produces_effects": [
           "sensitiveDataObtained"
@@ -222,7 +222,7 @@
       "actions_effects": {
         "entry_id": 4,
         "action_name": "analyzePacketCapture",
-        "action_description": "Re-read the pcap filtering to HTTP port 80 traffic and extract ASCII content to locate the flag.",
+        "action_description": "Re-read the pcap filtering to HTTP port 80 traffic and extract ASCII content to locate target data.",
         "phase": "exfiltration",
         "produces_effects": [
           "sensitiveDataObtained"
@@ -838,7 +838,7 @@
       "actions_effects": {
         "entry_id": 18,
         "action_name": "queryADObjectAttributes",
-        "action_description": "Query all Active Directory objects and filter by Description attribute to find a flag hidden in AD metadata.",
+        "action_description": "Query all Active Directory objects and filter by Description attribute to find target data in AD metadata.",
         "phase": "exfiltration",
         "produces_effects": [
           "sensitiveDataObtained"
@@ -932,7 +932,9 @@
         "produces_effects": [
           "tomcatCredentialsObtained"
         ],
-        "requires_effects": [],
+        "requires_effects": [
+          "openPortsKnown"
+        ],
         "is_noise": false
       },
       "color_command": "#e84a4a",
@@ -969,7 +971,7 @@
       "actions_effects": {
         "entry_id": 21,
         "action_name": "browseWebApplication",
-        "action_description": "Log into the Tomcat manager with discovered credentials and manually browse application pages to locate an embedded flag.",
+        "action_description": "Log into the web application with discovered credentials and browse application pages to locate exposed data.",
         "phase": "post-exploitation",
         "produces_effects": [
           "sensitiveDataObtained"
@@ -1407,7 +1409,7 @@
       "actions_effects": {
         "entry_id": 31,
         "action_name": "escalatePrivilegesViaCron",
-        "action_description": "Use su to switch to the now-UID-0 www-data account and access the /root directory to retrieve the flag.",
+        "action_description": "Use su to switch to the now-UID-0 account and access the protected directory to retrieve the objective.",
         "phase": "post-exploitation",
         "produces_effects": [
           "rootAccessGained",
@@ -1583,7 +1585,7 @@
       "actions_effects": {
         "entry_id": 35,
         "action_name": "loginFTP",
-        "action_description": "Connect to the FTP server with discovered credentials to browse its contents and retrieve the flag file.",
+        "action_description": "Connect to the FTP server with discovered credentials to browse its contents and retrieve target files.",
         "phase": "exploitation",
         "produces_effects": [
           "ftpAccessGained",
@@ -1805,7 +1807,7 @@
       "actions_effects": {
         "entry_id": 40,
         "action_name": "searchFilesystem",
-        "action_description": "Recursively search the entire C: drive for a file matching the flag hash in its name.",
+        "action_description": "Recursively list all files on the C: drive and filter for a file matching a known identifier.",
         "phase": "post-exploitation",
         "produces_effects": [
           "sensitiveFileLocated"
@@ -1849,7 +1851,7 @@
       "actions_effects": {
         "entry_id": 41,
         "action_name": "exfiltrateFile",
-        "action_description": "Download the located flag file from the compromised Windows host to the attacker machine via Meterpreter.",
+        "action_description": "Use meterpreter's download command to transfer the target file from the compromised host to the attacker machine.",
         "phase": "exfiltration",
         "produces_effects": [
           "fileExfiltrated"
@@ -2377,7 +2379,7 @@
       "actions_effects": {
         "entry_id": 53,
         "action_name": "dumpDatabase",
-        "action_description": "Use sqlmap to dump the full contents of the cuiteur database, recovering application data including the flag.",
+        "action_description": "Use sqlmap to dump the full contents of the target database, recovering stored application data.",
         "phase": "exfiltration",
         "produces_effects": [
           "databaseContentsDumped",
@@ -2483,7 +2485,7 @@
       "layer": "actions",
       "label": "analyzePacketCapture",
       "name": "analyzePacketCapture",
-      "description": "Extract printable strings from the captured pcap and filter for flag-related keywords.",
+      "description": "Extract printable strings from a captured packet file and search for target data.",
       "phase": "exfiltration",
       "color": "#ff4757",
       "entry_ids": [
@@ -2673,7 +2675,7 @@
       "layer": "actions",
       "label": "queryADObjectAttributes",
       "name": "queryADObjectAttributes",
-      "description": "Query all Active Directory objects and filter by Description attribute to find a flag hidden in AD metadata.",
+      "description": "Query Active Directory objects filtering by attribute values to locate target data in AD metadata.",
       "phase": "exfiltration",
       "color": "#ff4757",
       "entry_ids": [
@@ -2721,7 +2723,9 @@
       "produces_effects": [
         "tomcatCredentialsObtained"
       ],
-      "requires_effects": []
+      "requires_effects": [
+        "openPortsKnown"
+      ]
     },
     {
       "id": "action::browseWebApplication",
@@ -2729,7 +2733,7 @@
       "layer": "actions",
       "label": "browseWebApplication",
       "name": "browseWebApplication",
-      "description": "Log into the Tomcat manager with discovered credentials and manually browse application pages to locate an embedded flag.",
+      "description": "Log into an authenticated web application with discovered credentials and browse its pages for exposed data.",
       "phase": "post-exploitation",
       "color": "#f1c94e",
       "entry_ids": [
@@ -2832,7 +2836,7 @@
       "layer": "actions",
       "label": "escalatePrivilegesViaCron",
       "name": "escalatePrivilegesViaCron",
-      "description": "Use su to switch to the now-UID-0 www-data account and access the /root directory to retrieve the flag.",
+      "description": "Switch to a user account that gained root privileges via the modified cron script and access protected resources.",
       "phase": "post-exploitation",
       "color": "#f1c94e",
       "entry_ids": [
@@ -2889,7 +2893,7 @@
       "layer": "actions",
       "label": "loginFTP",
       "name": "loginFTP",
-      "description": "Connect to the FTP server with discovered credentials to browse its contents and retrieve the flag file.",
+      "description": "Connect to an FTP server using discovered credentials and retrieve files from it.",
       "phase": "exploitation",
       "color": "#e84a4a",
       "entry_ids": [
@@ -2986,7 +2990,7 @@
       "layer": "actions",
       "label": "searchFilesystem",
       "name": "searchFilesystem",
-      "description": "Recursively search the entire C: drive for a file matching the flag hash in its name.",
+      "description": "Recursively search the filesystem for files matching a known pattern.",
       "phase": "post-exploitation",
       "color": "#f1c94e",
       "entry_ids": [
@@ -3005,7 +3009,7 @@
       "layer": "actions",
       "label": "exfiltrateFile",
       "name": "exfiltrateFile",
-      "description": "Download the located flag file from the compromised Windows host to the attacker machine via Meterpreter.",
+      "description": "Transfer a located file from the compromised host to the attacker machine.",
       "phase": "exfiltration",
       "color": "#ff4757",
       "entry_ids": [
@@ -3218,7 +3222,7 @@
       "layer": "actions",
       "label": "dumpDatabase",
       "name": "dumpDatabase",
-      "description": "Use sqlmap to dump the full contents of the cuiteur database, recovering application data including the flag.",
+      "description": "Use sqlmap to dump the full contents of a target database, recovering stored application data.",
       "phase": "exfiltration",
       "color": "#ff4757",
       "entry_ids": [
@@ -3509,7 +3513,9 @@
       "produced_by": [
         "scanNetwork"
       ],
-      "enables_actions": []
+      "enables_actions": [
+        "bruteForceHTTPAuth"
+      ]
     },
     {
       "id": "effect::tomcatCredentialsObtained",
@@ -5932,6 +5938,12 @@
       "target": "mitre::T1552.001",
       "type": "maps_to",
       "layer": "cross"
+    },
+    {
+      "source": "effect::openPortsKnown",
+      "target": "action::bruteForceHTTPAuth",
+      "type": "enables",
+      "layer": "actions"
     }
   ],
   "color_maps": {
