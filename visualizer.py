@@ -287,6 +287,24 @@ def build_html(graph):
   .tooltip {{ position: absolute; background: #21262d; border: 1px solid #30363d; border-radius: 6px; padding: 8px 10px; font-size: 12px; pointer-events: none; max-width: 260px; word-break: break-all; z-index: 10; }}
 
   #stats {{ position: absolute; top: 12px; left: 16px; font-size: 11px; color: #8b949e; }}
+
+  #mal-panel {{ flex: 1; overflow-y: auto; padding: 28px 32px; display: none; }}
+  .mal-summary {{ display: flex; gap: 16px; margin-bottom: 28px; }}
+  .mal-stat {{ background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 14px 20px; min-width: 110px; }}
+  .mal-stat .num {{ font-size: 26px; font-weight: 700; color: #f0f6fc; line-height: 1; }}
+  .mal-stat .lbl {{ font-size: 11px; color: #8b949e; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 4px; }}
+  .mal-section {{ margin-bottom: 36px; }}
+  .mal-section-title {{ font-size: 13px; font-weight: 600; color: #f0f6fc; margin-bottom: 10px; display: flex; align-items: center; gap: 12px; }}
+  .mal-search {{ padding: 5px 10px; background: #21262d; border: 1px solid #30363d; border-radius: 6px; color: #c9d1d9; font-size: 12px; outline: none; width: 200px; }}
+  .mal-search:focus {{ border-color: #58a6ff; }}
+  .mal-table {{ width: 100%; border-collapse: collapse; font-size: 12px; }}
+  .mal-table th {{ text-align: left; padding: 7px 12px; border-bottom: 1px solid #30363d; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: #8b949e; font-weight: 500; white-space: nowrap; }}
+  .mal-table td {{ padding: 8px 12px; border-bottom: 1px solid #21262d; vertical-align: top; }}
+  .mal-table tr:hover td {{ background: #161b22; }}
+  .mal-aname {{ font-weight: 600; color: #f0f6fc; font-family: 'Consolas', 'Courier New', monospace; font-size: 12px; }}
+  .mal-ename {{ color: #b388ff; font-family: 'Consolas', 'Courier New', monospace; font-size: 12px; }}
+  .mal-desc {{ color: #8b949e; font-size: 11px; max-width: 280px; }}
+  .mal-tag {{ display: inline-block; padding: 1px 7px; border-radius: 8px; font-size: 11px; margin: 2px 2px 2px 0; font-family: 'Consolas', 'Courier New', monospace; white-space: nowrap; }}
 </style>
 </head>
 <body>
@@ -298,6 +316,7 @@ def build_html(graph):
     <button class="layer-btn active" data-layer="command">Commands</button>
     <button class="layer-btn" data-layer="mitre">MITRE ATT&CK</button>
     <button class="layer-btn" data-layer="actions">Actions &amp; Effects</button>
+    <button class="layer-btn" data-layer="mal">MAL Model</button>
   </div>
 </div>
 
@@ -312,6 +331,7 @@ def build_html(graph):
     </div>
     <div class="tooltip" id="tooltip" style="display:none"></div>
   </div>
+  <div id="mal-panel"><div id="mal-content"></div></div>
   <div id="detail-panel">
     <div class="panel-header">
       <h3>Details</h3>
@@ -382,8 +402,16 @@ document.querySelectorAll('.layer-btn').forEach(btn => {{
     btn.classList.add('active');
     closePanel();
     activeLayer = btn.dataset.layer;
-    renderGraph();
-    renderLegend();
+    if (activeLayer === 'mal') {{
+      document.getElementById('graph-container').style.display = 'none';
+      document.getElementById('mal-panel').style.display = 'block';
+      renderMAL();
+    }} else {{
+      document.getElementById('graph-container').style.display = '';
+      document.getElementById('mal-panel').style.display = 'none';
+      renderGraph();
+      renderLegend();
+    }}
   }});
 }});
 
@@ -687,6 +715,99 @@ function renderLegend() {{
         `<div class="legend-item"><div class="legend-dot" style="background:${{c}}"></div><span>${{k}}</span></div>`
       ).join('') + `</div>`;
   }}
+}}
+
+// ── MAL Model panel ────────────────────────────────────────────────────────
+function renderMAL() {{
+  const actions = GRAPH.actions_effects_nodes
+    .filter(n => n.node_type === 'action')
+    .sort((a, b) => a.phase.localeCompare(b.phase) || a.name.localeCompare(b.name));
+  const effects = GRAPH.actions_effects_nodes
+    .filter(n => n.node_type === 'effect')
+    .sort((a, b) => a.name.localeCompare(b.name));
+
+  const phaseColors = COLOR_MAPS.phase;
+  const phaseMap = {{}};
+  actions.forEach(a => {{ phaseMap[a.name] = a.phase; }});
+
+  function effectTag(e) {{
+    return `<span class="mal-tag" style="background:#6e48aa22;color:#b388ff;border:1px solid #6e48aa44">${{esc(e)}}</span>`;
+  }}
+  function actionTag(a) {{
+    const c = phaseColors[phaseMap[a] || 'noise'] || '#888888';
+    return `<span class="mal-tag" style="background:${{c}}22;color:${{c}};border:1px solid ${{c}}44">${{esc(a)}}</span>`;
+  }}
+
+  const actionRows = actions.map(a => {{
+    const c = phaseColors[a.phase] || '#888888';
+    return `<tr>
+      <td><span class="mal-aname">${{esc(a.name)}}</span></td>
+      <td><span class="badge" style="background:${{c}}22;color:${{c}};border:1px solid ${{c}}44;font-size:11px">${{esc(a.phase)}}</span></td>
+      <td>${{(a.requires_effects || []).map(effectTag).join('')}}</td>
+      <td>${{(a.produces_effects || []).map(effectTag).join('')}}</td>
+      <td class="mal-desc">${{esc(a.description || '')}}</td>
+    </tr>`;
+  }}).join('');
+
+  const effectRows = effects.map(e => {{
+    return `<tr>
+      <td><span class="mal-ename">${{esc(e.name)}}</span></td>
+      <td>${{(e.produced_by || []).map(actionTag).join('')}}</td>
+      <td>${{(e.enables_actions || []).map(actionTag).join('')}}</td>
+    </tr>`;
+  }}).join('');
+
+  document.getElementById('mal-content').innerHTML = `
+    <div style="margin-bottom:20px">
+      <div style="font-size:18px;font-weight:700;color:#f0f6fc;margin-bottom:4px">MAL Vocabulary</div>
+      <div style="font-size:12px;color:#8b949e">Formally extracted from ${{GRAPH.meta.source_files.length}} flags &middot; ${{GRAPH.meta.total_entries}} commands &middot; EN2720 CTF scenarios</div>
+    </div>
+    <div class="mal-summary">
+      <div class="mal-stat"><div class="num">${{actions.length}}</div><div class="lbl">Actions</div></div>
+      <div class="mal-stat"><div class="num">${{effects.length}}</div><div class="lbl">Effects</div></div>
+      <div class="mal-stat"><div class="num">${{GRAPH.meta.source_files.length}}</div><div class="lbl">Flags</div></div>
+      <div class="mal-stat"><div class="num">${{GRAPH.meta.total_entries}}</div><div class="lbl">Commands</div></div>
+    </div>
+
+    <div class="mal-section">
+      <div class="mal-section-title">
+        Actions
+        <input class="mal-search" id="action-search" type="text" placeholder="filter actions&hellip;">
+      </div>
+      <table class="mal-table">
+        <thead><tr>
+          <th>Action</th><th>Phase</th><th>Requires (preconditions)</th><th>Produces (postconditions)</th><th>Description</th>
+        </tr></thead>
+        <tbody id="actions-tbody">${{actionRows}}</tbody>
+      </table>
+    </div>
+
+    <div class="mal-section">
+      <div class="mal-section-title">
+        Effects
+        <input class="mal-search" id="effect-search" type="text" placeholder="filter effects&hellip;">
+      </div>
+      <table class="mal-table">
+        <thead><tr>
+          <th>Effect</th><th>Produced By</th><th>Enables</th>
+        </tr></thead>
+        <tbody id="effects-tbody">${{effectRows}}</tbody>
+      </table>
+    </div>
+  `;
+
+  document.getElementById('action-search').addEventListener('input', function() {{
+    const q = this.value.toLowerCase();
+    document.querySelectorAll('#actions-tbody tr').forEach(r => {{
+      r.style.display = (!q || r.textContent.toLowerCase().includes(q)) ? '' : 'none';
+    }});
+  }});
+  document.getElementById('effect-search').addEventListener('input', function() {{
+    const q = this.value.toLowerCase();
+    document.querySelectorAll('#effects-tbody tr').forEach(r => {{
+      r.style.display = (!q || r.textContent.toLowerCase().includes(q)) ? '' : 'none';
+    }});
+  }});
 }}
 
 // ── Init ───────────────────────────────────────────────────────────────────
